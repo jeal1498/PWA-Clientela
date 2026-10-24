@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Clientela",
+  "short_name": "Clientela",
+  "description": "Tus clientes, en orden: agenda, cotizaciones, cobros y WhatsApp de tus clientes privados.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0C0C10",
+  "theme_color": "#0C0C10",
+  "icons": [
+    { "src": "marca/png/icono-app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "marca/png/icono-app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "marca/png/icono-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "marca/png/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [{ "name": "Nuevo viaje", "url": "./#/nuevo" }]
+}

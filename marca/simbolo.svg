@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 72" width="448" height="288" role="img" aria-label="Clientela">
+  <rect x="2" y="2" width="108" height="68" rx="20" fill="#222826" stroke="#3A423F" stroke-width="1.6"/>
+    <circle cx="32" cy="36" r="15" fill="#22C55E"/>
+    <path d="M25 36.6l5 5L39.5 31" fill="none" stroke="#04210F" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="56" y="25" width="40" height="8" rx="4" fill="#F4F4EF"/>
+    <rect x="56" y="40" width="26" height="8" rx="4" fill="#5A625F"/>
+</svg>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tarjeta de conductor · Clientela</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0C0C10">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="marca/icono-app.svg" type="image/svg+xml">
+<link rel="stylesheet" href="marca/tokens.css">
+<style>
+/* Tarjeta pública del conductor: la abre quien escanea el QR. Los datos vienen dentro del enlace (#…). */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--asfalto); color: var(--hueso); font: 16px/1.5 var(--fuente-texto); }
+main { max-width: 440px; margin: 0 auto; padding: calc(20px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom)); display: grid; gap: 12px; }
+.card { background: var(--tablero); border-radius: 22px; padding: 18px; display: grid; gap: 10px; }
+.av { width: 64px; height: 64px; border-radius: 50%; background: var(--cuerpo-logo); border: 1.5px solid var(--borde-logo); display: grid; place-items: center; font: 700 20px var(--fuente-datos); }
+h1 { margin: 0; font: 800 32px/1.05 var(--fuente-titulos); letter-spacing: -.02em; }
+.muted { color: var(--gris-texto); font-size: 14px; }
+.eti { font: 500 12px var(--fuente-datos); letter-spacing: .1em; text-transform: uppercase; color: var(--gris-texto); }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { border: 1.5px solid var(--humo); border-radius: 999px; padding: 2px 10px; font: 700 11px/1.5 var(--fuente-datos); letter-spacing: .04em; text-transform: uppercase; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 999px; border: 1.5px solid var(--humo); background: none; color: var(--hueso); font: 700 16px var(--fuente-texto); text-decoration: none; cursor: pointer; }
+.btn.p { background: var(--hueso); border-color: var(--hueso); color: var(--asfalto); }
+.btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.btn:focus-visible { outline: 2px solid var(--hueso); outline-offset: 3px; }
+.ref div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--humo); font-size: 15px; }
+.ref div:last-child { border-bottom: 0; }
+.ref b { font: 700 15px var(--fuente-datos); }
+.copy { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.copy code { font: 700 15px var(--fuente-datos); overflow-wrap: anywhere; }
+.copy button { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--humo); background: none; color: var(--hueso); font: 700 13px var(--fuente-texto); }
+footer { display: grid; justify-items: center; gap: 6px; margin-top: 10px; }
+footer svg { width: 40px; height: auto; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--hueso); color: var(--asfalto); padding: 10px 16px; border-radius: 16px; font-weight: 700; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.on { opacity: 1; }
+</style>
+</head>
+<body>
+<main id="app">
+  <section class="card" id="error" hidden><h1>No se pudo abrir</h1><p class="muted">Esta tarjeta llegó incompleta. Pídele a tu conductor que te la comparta otra vez.</p></section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script type="module">
+// Lee los datos que el conductor eligió compartir: n nombre, c ciudad, w WhatsApp, a auto, r rutas, p pagos, b banco, h horario.
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const money = (n) => '$' + Math.round(+n || 0).toLocaleString('es-MX');
+const ICON = {
+  msg: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
+  user: '<circle cx="10" cy="8" r="3.5"/><path d="M3.5 19c.8-3 3.4-4.5 6.5-4.5s5.7 1.5 6.5 4.5M19 8v6M16 11h6"/>',
+};
+const svg = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
+function bytes(b64) {
+  const s = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from(s, (c) => c.charCodeAt(0));
+}
+async function decode(code) {
+  if (code[0] === 'j') return JSON.parse(new TextDecoder().decode(bytes(code.slice(1))));
+  if (code[0] === 'z') {
+    const raw = await new Response(new Blob([bytes(code.slice(1))]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+    return JSON.parse(new TextDecoder().decode(raw));
+  }
+  throw new Error('formato');
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 1800);
+}
+function vcard(d) {
+  const lines = ['BEGIN:VCARD', 'VERSION:3.0', `FN:${d.n} (chofer)`, `N:;${d.n};;;`, `TEL;TYPE=CELL:+${d.w}`, 'NOTE:Chofer privado. Tarjeta hecha con Clientela.', 'END:VCARD'];
+  return new Blob([lines.join('\r\n')], { type: 'text/vcard' });
+}
+try {
+  const d = await decode(decodeURIComponent(location.hash.slice(1)));
+  if (!d?.n || !d?.w) throw new Error('vacía');
+  const first = d.n.trim().split(/\s+/)[0];
+  const ini = d.n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+  const [car, year, color, seats, extras = []] = d.a || [];
+  document.title = `${d.n} · Chofer privado`;
+  document.getElementById('app').innerHTML = `
+    <section class="card"><span class="av">${esc(ini)}</span><h1>${esc(d.n)}</h1>
+      <span class="muted">Chofer privado${d.c ? ' · ' + esc(d.c) : ''}${d.h ? ' · ' + esc(d.h) : ''}</span>
+      ${d.a ? `<div class="pills"><span class="pill">${esc([car, year].filter(Boolean).join(' '))}${color ? ' · ' + esc(color) : ''}</span>${seats ? `<span class="pill">${esc(seats)} pasajeros</span>` : ''}${extras.map((x) => `<span class="pill">${esc(x)}</span>`).join('')}</div>` : ''}</section>
+    <button class="btn p" id="save">${svg('user')}Guardar contacto</button>
+    <a class="btn" href="https://wa.me/${esc(d.w)}?text=${encodeURIComponent(`Hola ${first}, quiero agendar un viaje.`)}" target="_blank" rel="noopener">${svg('msg')}Pedir viaje por WhatsApp</a>
+    ${d.r?.length ? `<section class="card ref"><span class="eti">Precios de referencia</span>${d.r.map(([l, p]) => `<div><span>${esc(l)}</span><b>${money(p)}</b></div>`).join('')}</section>` : ''}
+    ${d.p?.length ? `<section class="card"><span class="eti">Formas de pago</span><span>${d.p.map(esc).join(' · ')}</span>
+      ${d.b ? `<div class="copy"><span><span class="muted">${esc(d.b[0] || 'Transferencia')} · a nombre de ${esc(d.b[1])}</span><br><code>${esc(d.b[2])}</code></span><button type="button" id="copy">Copiar</button></div>` : ''}</section>` : ''}
+    <footer><svg viewBox="0 0 112 72" aria-hidden="true"><rect x="2" y="2" width="108" height="68" rx="20" fill="#222826" stroke="#3A423F" stroke-width="1.6"/><circle cx="32" cy="36" r="15" fill="#22C55E"/><path d="M25 36.6l5 5L39.5 31" fill="none" stroke="#04210F" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="56" y="25" width="40" height="8" rx="4" fill="#F4F4EF"/><rect x="56" y="40" width="26" height="8" rx="4" fill="#5A625F"/></svg><span class="eti">Hecho con Clientela</span></footer>`;
+  document.getElementById('save').onclick = async () => {
+    const file = new File([vcard(d)], `${first}.vcf`, { type: 'text/vcard' });
+    if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: d.n }); return; } catch {} }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file);
+    a.download = file.name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast('Abre el archivo para guardar el contacto');
+  };
+  document.getElementById('copy')?.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(d.b[2]); toast('Copiado'); } catch { toast('No se pudo copiar'); }
+  });
+} catch {
+  document.getElementById('error').hidden = false;
+}
+addEventListener('hashchange', () => location.reload());
+</script>
+</body>
+</html>

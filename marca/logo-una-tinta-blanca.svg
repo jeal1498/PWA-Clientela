@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 100" width="1120" height="200" role="img" aria-label="Clientela">
+  <g transform="translate(0 8) scale(1.17)">
+    <rect x="4.5" y="4.5" width="103" height="63" rx="17.5" fill="none" stroke="#FFFFFF" stroke-width="5"/>
+    <circle cx="32" cy="36" r="15" fill="#FFFFFF"/>
+    <path d="M25 36.6l5 5L39.5 31" fill="none" stroke="#000000" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="56" y="25" width="40" height="8" rx="4" fill="#FFFFFF"/>
+    <rect x="56" y="40" width="26" height="8" rx="4" fill="#FFFFFF" opacity=".55"/>
+  </g>
+  <text x="152" y="76" font-family="'Bricolage Grotesque','Arial Black',Arial,sans-serif" font-weight="800" font-size="76" letter-spacing="-3" fill="#FFFFFF">Clientela</text>
+</svg>
