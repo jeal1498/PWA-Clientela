@@ -23,6 +23,7 @@ import { createMessaging } from './mensajes.js';
 import { searchPlaces, reverse, route, directionsLink, mapSvg, parseMapLink } from './mapas.js';
 import { numOr, PRESETS, isAirport, isNight, calculateQuote } from './calculos.js';
 import { loadData, saveData } from './almacenamiento.js';
+import * as hoja from './hoja.js';
 
 
 // Clientela: clientes privados del conductor (agenda, cotizaciones, viajes, cobros y WhatsApp).
@@ -42,7 +43,14 @@ const DEFAULTS = { clients: [], trips: [], settings: {
 let data = loadData(KEY, DEFAULTS, EXTRA_DEF);
 // La tarifa por hora siempre equivale a 20 veces la tarifa por kilómetro.
 data.settings.perHour = numOr(data.settings.perKm, 12) * 20;
-function save() { saveData(KEY, data, () => toast('No se pudo guardar')); }
+function save() { saveData(KEY, data, () => toast('No se pudo guardar')); autoSync(); }
+// Con la hoja conectada y «auto», se envía sola unos segundos después del último cambio.
+let autoTimer;
+function autoSync() {
+  if (!hoja.getCfg().auto || !hoja.connection()) return;
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => hoja.push(data).catch((e) => hoja.setCfg({ error: e.message || 'No se pudo sincronizar' })), 4000);
+}
 navigator.storage?.persist?.();
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -174,7 +182,7 @@ const renderSummary = createSummaryView({
 // ---------- Yo (perfil y ajustes) ----------
 const renderMe = createMeView({
   getData: () => data, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile,
-  openCard: () => { location.hash = '#/tarjeta'; }, exportBackup, pickBackup, importContacts, ladaForm, placesForm,
+  openCard: () => { location.hash = '#/tarjeta'; }, exportBackup, pickBackup, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(),
   resetOnboarding: () => { data.settings.onboarded = false; obStep = 0; refresh(); },
 });
 function exportBackup() {
@@ -223,6 +231,51 @@ function ladaForm() {
     <div class="buttons"><button type="button" data-close>Cancelar</button><button class="primary">Guardar</button></div>`, (form) => {
     $('[data-close]', form).onclick = () => sheet.close();
     form.onsubmit = () => { data.settings.lada = form.elements.lada.value.replace(/\D/g, '') || '52'; refresh(); toast('Guardado'); };
+  });
+}
+// Respaldo en tu hoja de Google: conexión, envío manual y «auto».
+function hojaForm(note = '') {
+  const cfg = hoja.getCfg(), conn = hoja.connection();
+  const when = cfg.last ? new Date(cfg.last).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : 'nunca';
+  const msg = note || cfg.error;
+  openSheet(`<h2>Respaldo en Google Sheets</h2>
+    <p class="field wide muted" style="font-weight:400">${conn
+      ? `Tus clientes y viajes van a las pestañas «Clientela · Clientes» y «Clientela · Viajes». Última sincronización: ${when}.`
+      : 'Crea una hoja nueva en tu Drive, pega el script de <b>apps-script/Code.gs</b> (Extensiones → Apps Script), cambia la clave, impleméntalo como aplicación web (acceso: cualquier persona) y copia aquí la URL y la clave.'}</p>
+    ${msg ? `<p class="field wide" role="status" style="font-weight:400">${esc(msg)}</p>` : ''}
+    ${field('URL de la aplicación web', `<input name="url" type="url" inputmode="url" required value="${esc(cfg.url)}" placeholder="https://script.google.com/macros/s/…/exec">`, true)}
+    ${field('Clave', `<input name="token" required autocapitalize="off" spellcheck="false" value="${esc(cfg.token)}">`, true)}
+    <label class="pick wide"><input type="checkbox" name="auto" ${cfg.auto ? 'checked' : ''}><span>Sincronizar sola después de cada cambio</span></label>
+    ${conn ? '<button type="button" class="add wide" data-now>Sincronizar ahora</button><button type="button" class="add wide" data-pull>Traer de la hoja</button>' : ''}
+    <div class="buttons"><button type="button" data-close>Cerrar</button><button class="primary">${conn ? 'Guardar' : 'Conectar y sincronizar'}</button></div>`, (form) => {
+    $('[data-close]', form).onclick = () => sheet.close();
+    const run = async (fn, ok) => {
+      try { await fn(); sheet.close(); hojaForm(ok); } catch (e) { hoja.setCfg({ error: e.message || 'No se pudo sincronizar' }); sheet.close(); hojaForm(); }
+    };
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const f = form.elements;
+      hoja.setCfg({ url: f.url.value.trim(), token: f.token.value.trim(), auto: f.auto.checked, error: '' });
+      run(() => hoja.push(data), 'Listo: tus clientes y viajes ya están en la hoja.');
+    };
+    const now = $('[data-now]', form);
+    if (now) now.onclick = () => run(() => hoja.push(data), 'Listo: tus clientes y viajes ya están en la hoja.');
+    const pull = $('[data-pull]', form);
+    if (pull) pull.onclick = async () => {
+      if (!confirm('Esto suma a este teléfono lo que hay en la hoja (si un cliente o viaje existe en los dos, gana el de la hoja). ¿Continuar?')) return;
+      try {
+        const d = await hoja.pull();
+        if (!d) throw new Error('La hoja aún no tiene una copia. Sincroniza primero.');
+        for (const k of ['clients', 'trips']) {
+          const m = new Map(data[k].map((x) => [x.id, x]));
+          for (const x of d[k] || []) m.set(x.id, x);
+          data[k] = [...m.values()];
+        }
+        refresh();
+        sheet.close();
+        toast('Copia traída de la hoja');
+      } catch (e) { sheet.close(); hojaForm(e.message || 'No se pudo traer la copia'); }
+    };
   });
 }
 function pickBackup() {

@@ -4,7 +4,7 @@ PWA de gestión de **clientes privados** para conductores (los que piden viajes 
 
 ## Reglas
 - Español (México), respuestas **cortas y concisas**. Moneda MXN.
-- **Una aprobación de Eduardo por etapa; no se adelanta la siguiente.** Maqueta en artifact antes de cualquier cambio grande. **Nada a `main` sin su OK.**
+- **Una aprobación de Eduardo por etapa; no se adelanta la siguiente.** Maqueta en artifact antes de cualquier cambio grande. **Nada a `main` sin su OK, salvo el flujo autorizado el 24-oct-2026: tras cada cambio se abre el PR y se hace merge a `main` sin preguntar** (la rama se reinicia desde `main` si el PR anterior ya se fusionó).
 - Repo público: nada de datos personales en el código.
 - Sin build ni dependencias. **Sube `CACHE` (`clientela-vN`) en `sw.js` en cada cambio** o el teléfono no se actualiza; la lista `ASSETS` debe tener todos los módulos de `js/`.
 - Publicada en https://jeal1498.github.io/PWA-Clientela/ (GitHub Pages). Mismo origen (`jeal1498.github.io`) que `PWA-JEAL`: **comparte `localStorage` `cartera`** con el link viejo (`/JEAL/clientela/`, que redirige aquí) y con `cartera/` v1.
@@ -32,6 +32,9 @@ Maqueta aprobada: https://claude.ai/artifact/AmJLsuWugR1ZEeznZxBBmZ. Solo oscuro
 - **Pago y Repetir en 1 toque**: con `lastPay`, «Terminar · Efectivo/Transf./Tarjeta» (`data-fpay`); `finishTrip(t, pay)` en `acciones-pago.js` con toast **Deshacer**; `repeatTrip(src)` en `cartera.js`.
 - **Empalmes de horario**: `clashes(trips, x)` en `utilidades.js`; cada viaje ocupa `max(30, min de la ruta)` min. Es aviso, no bloqueo (segundo toque «Agendar igual»).
 - **Inicio rápido** (`inicio-rapido-*.js`, si `!settings.onboarded`) y **Mi perfil** (`perfil-vistas.js`).
+
+## Respaldo en Google Sheets
+Yo → «Respaldo en Google Sheets» (`js/hoja.js`, `hojaForm` en `cartera.js`): el usuario pega `apps-script/Code.gs` en su hoja, lo implementa como aplicación web y conecta URL + clave (solo en su teléfono, `localStorage` `clientela_hoja`). Escribe «Clientela · Clientes» y «Clientela · Viajes» y una copia exacta oculta (`_respaldo`); con «auto» se envía 4 s después de cada `save()`. «Traer de la hoja» suma por id.
 
 ## Probar
 `python3 -m http.server 8765` en la raíz y Playwright con Chromium en `/opt/pw-browsers/chromium` a 390 px; sembrar `localStorage` y hacer `reload()`.
