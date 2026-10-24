@@ -1,5 +1,5 @@
 // Pantalla Yo: Mi tarjeta, tu perfil (datos, auto, tarifa, cobro) y los ajustes.
-export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, exportBackup, pickBackup, importContacts, ladaForm, placesForm, resetOnboarding }) {
+export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, exportBackup, pickBackup, importContacts, ladaForm, placesForm, hojaForm, hojaOn, resetOnboarding }) {
   function renderMe() {
     const data = getData();
     const s = data.settings;
@@ -25,6 +25,7 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
       </section>
       <section class="filas">
         <button type="button" class="fila" data-export><span class="n">Copia de mis datos<small>Todo se guarda solo en este teléfono</small></span><span class="pill">${backup}</span>${icon('download')}</button>
+        ${row('data-hoja', 'Respaldo en Google Sheets', hojaOn() ? 'Conectado' : 'Conectar')}
         ${row('data-import', 'Cargar una copia', '')}
         ${'contacts' in navigator ? row('data-contacts', 'Importar contactos', '') : ''}
         ${row('data-lada', 'Lada para WhatsApp', `+${esc(s.lada || '52')}`)}
@@ -34,6 +35,7 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
     view.querySelectorAll('[data-edit]').forEach((b) => (b.onclick = () => editProfile(+b.dataset.edit)));
     $('[data-card]', view).onclick = openCard;
     $('[data-export]', view).onclick = exportBackup;
+    $('[data-hoja]', view).onclick = () => hojaForm();
     $('[data-import]', view).onclick = pickBackup;
     $('[data-contacts]', view)?.addEventListener('click', importContacts);
     $('[data-lada]', view).onclick = ladaForm;
