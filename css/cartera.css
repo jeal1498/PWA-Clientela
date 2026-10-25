@@ -472,3 +472,40 @@ body.full .top, body.full .tabs { display: none; }
 .nav button { border-radius: 999px; min-height: 52px; }
 
 .clash { padding: 8px 12px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 13px; font-weight: 600; line-height: 1.35; }
+
+/* =========================================================
+   Tabla de la familia Checa (igual que Pagos en Finanzas): Cobros y Clientes.
+   Fecha grande, estatus con ícono + texto (el color no es la única señal), atrasados teñidos.
+   ========================================================= */
+.ct { background: var(--surface); border-radius: 24px; overflow: hidden; margin-top: 10px; }
+.ct-cols { display: grid; grid-template-columns: 56px 36px minmax(0, 1fr) auto; align-items: center; column-gap: 8px; padding: 0 14px; }
+.ct-th { min-height: 44px; background: var(--surface-2); font: 500 12px var(--fuente-texto); color: var(--muted); }
+.ct-th .r { text-align: right; }
+.ct-row { min-height: 64px; padding-block: 10px; border-top: 1px solid var(--bg); cursor: pointer; list-style: none; }
+.ct-row::-webkit-details-marker { display: none; }
+.ct-row.v, .ct-item.v > .ct-row { background: var(--over-bg); }
+.ct-fecha { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1; }
+.ct-fecha b { font: 800 22px var(--fuente-titulos); letter-spacing: -.02em; }
+.ct-fecha small { font: 500 11px var(--fuente-datos); color: var(--muted); text-transform: uppercase; }
+.ct-row.v .ct-fecha small, .ct-item.v .ct-fecha small { color: var(--over); }
+.ct-est { display: flex; }
+.ct-est .i { width: 22px; height: 22px; stroke-width: 2.2; }
+.ct-est.danger { color: var(--over); } .ct-est.warn { color: var(--warn); } .ct-est.ok { color: var(--ok); } .ct-est.muted { color: var(--muted); }
+.ct-cc { min-width: 0; }
+.ct-name { display: block; font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+.ct-nota { display: block; font-size: 13px; font-weight: 600; margin-top: 2px; line-height: 1.25; }
+.ct-nota.danger { color: var(--over); } .ct-nota.warn { color: var(--warn); } .ct-nota.muted { color: var(--muted); font-weight: 400; }
+.ct-amt { text-align: right; font-family: var(--fuente-datos); }
+.ct-amt b { font-size: 15px; font-weight: 700; }
+.ct-amt small { color: var(--muted); }
+.ct-body { padding: 4px 14px 14px; border-top: 1px solid var(--bg); }
+.ct-body .list { background: var(--bg); }
+.ct-body .actions { margin-top: 10px; }
+.ct-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 16px; border-top: 1px solid var(--bg); background: var(--surface-2); color: var(--muted); font-size: 14px; }
+.ct-foot b { font: 700 17px var(--fuente-datos); color: var(--text); }
+
+/* «Te deben» en la Agenda: tarjeta amarilla llena (roja si hay atrasados), como «Atención inmediata» en Finanzas */
+.strip { background: var(--te-debe); color: var(--texto-sobre-te-debe); border-radius: 28px; padding: 14px 16px; font-size: 15px; }
+.strip.late { background: var(--atrasado); color: var(--texto-sobre-atrasado); }
+.strip .i { color: inherit; width: 22px; height: 22px; }
+.strip .pill, .strip .pill.debe, .strip .pill.late { background: rgb(0 0 0 / .14); border-color: transparent; color: inherit; }

@@ -182,20 +182,9 @@ const renderSummary = createSummaryView({
 // ---------- Yo (perfil y ajustes) ----------
 const renderMe = createMeView({
   getData: () => data, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile,
-  openCard: () => { location.hash = '#/tarjeta'; }, exportBackup, pickBackup, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(),
+  openCard: () => { location.hash = '#/tarjeta'; }, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(),
   resetOnboarding: () => { data.settings.onboarded = false; obStep = 0; refresh(); },
 });
-function exportBackup() {
-  const blob = new Blob([JSON.stringify({ app: 'cartera', exportedAt: new Date().toISOString(), ...data }, null, 1)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `clientela-${today()}.json`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  data.settings.lastBackup = today();
-  refresh();
-  toast('Copia descargada');
-}
 // Lugares con nombre: los tuyos y los de cada cliente. Se crean con la ☆ al elegir un lugar.
 function placesForm() {
   openSheet(`<h2>Mis lugares</h2>

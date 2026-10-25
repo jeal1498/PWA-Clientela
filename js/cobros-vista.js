@@ -1,3 +1,4 @@
+import { ctFecha, ctHead, ctEstado } from './tabla.js';
 // Cobros: quién te debe, en amarillo lo reciente y en rojo lo atrasado (15 días o más).
 export function createChargesView({ getData, view, header, setTabs, tripsOf, owed, lateDebt, byWhen, money, icon, esc, waLink, MSG, cap, fdate, dayLabel, daysBetween, today, bindTrips, $, collectForm, client, shortRoute }) {
   function renderCharges() {
@@ -23,11 +24,14 @@ export function createChargesView({ getData, view, header, setTabs, tripsOf, owe
       : `<section class="hoy"><span class="eti">Te deben</span><b class="big">${money(total)}</b>
           <div class="barra" aria-hidden="true"><i class="debe" style="width:${Math.round(((total - late) / total) * 100)}%"></i><i class="late" style="width:${Math.round((late / total) * 100)}%"></i></div>
           <small class="muted">${money(total - late)} recientes · ${money(late)} atrasados</small></section>
-        ${groups.map(({ c, list, total: t, late: l, days }) => `<section class="cobro">
-          <details><summary><span class="row"><b>${esc(c.name)}</b><span class="pill ${l ? 'late' : 'debe'}">${money(t)}</span></span>
-            <small class="muted">${list.length} viaje${list.length === 1 ? '' : 's'} · ${since(days)} · ver</small></summary>
-            <ul class="list">${list.map((x) => `<li data-trip="${x.id}"><span class="body"><b>${cap(fdate(x.date))}</b><small>${esc(shortRoute(x.from, x.to))}</small></span><span class="amt">${money(x.price)}</span><button type="button" data-paid="${x.id}">Cobrado</button></li>`).join('')}</ul></details>
-          <div class="actions">${c.phone ? `<a class="btn primary" href="${waLink(c, MSG.charge(c, list))}" target="_blank" rel="noopener">${icon('wa')}Recordar</a>` : ''}<button type="button" data-payall="${c.id}">${icon('cash')}Ya me pagó</button></div></section>`).join('')}
+        <div class="ct">${ctHead('Desde', 'Estado', 'Cliente', 'Monto')}
+          ${groups.map(({ c, list, total: t, late: l, days }) => `<details class="ct-item${l ? ' v' : ''}">
+            <summary class="ct-cols ct-row">${ctFecha(list[0].date)}${ctEstado(l ? 'danger' : 'warn', l ? 'Atrasado' : 'Te debe')}
+              <span class="ct-cc"><span class="ct-name">${esc(c.name)}</span><span class="ct-nota ${l ? 'danger' : 'warn'}">${list.length} viaje${list.length === 1 ? '' : 's'} · ${since(days)}</span></span>
+              <span class="ct-amt"><b>${money(t)}</b></span></summary>
+            <div class="ct-body"><ul class="list">${list.map((x) => `<li data-trip="${x.id}"><span class="body"><b>${cap(fdate(x.date))}</b><small>${esc(shortRoute(x.from, x.to))}</small></span><span class="amt">${money(x.price)}</span><button type="button" data-paid="${x.id}">Cobrado</button></li>`).join('')}</ul>
+            <div class="actions">${c.phone ? `<a class="btn primary" href="${waLink(c, MSG.charge(c, list))}" target="_blank" rel="noopener">${icon('wa')}Recordar</a>` : ''}<button type="button" data-payall="${c.id}">${icon('cash')}Ya me pagó</button></div></div></details>`).join('')}
+          <div class="ct-foot"><span>${groups.length} cliente${groups.length === 1 ? '' : 's'} · te deben</span><b>${money(total)}</b></div></div>
         ${paidHtml}`;
     bindTrips();
     view.querySelectorAll('[data-payall]').forEach((b) => (b.onclick = () => collectForm(client(b.dataset.payall))));

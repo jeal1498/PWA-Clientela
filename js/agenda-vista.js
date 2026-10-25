@@ -33,7 +33,7 @@ export function createAgendaView({ getData, view, header, setTabs, today, owed, 
       <section class="hoy"><span class="eti">Hoy</span>
         <div class="fila-hoy"><b class="big">${todays.length ? `${todays.length} viaje${todays.length === 1 ? '' : 's'}` : 'Sin viajes'}</b>${todays.length ? `<span class="mono">${money(sum(todays))}</span>` : ''}</div>
         ${!todays.length && next ? `<small class="muted">El siguiente: ${esc(client(next.clientId)?.name || '')}, ${dayLabel(next.date)}${next.time ? ' a las ' + hour12(next.time) : ''}</small>` : ''}</section>
-      ${debt ? `<a class="strip" href="#/cobros"><span class="pill ${owing.some(lateDebt) ? 'late' : 'debe'}">Te deben</span><span class="grow"><b class="mono">${money(debt)}</b> · ${debtors} cliente${debtors === 1 ? '' : 's'}</span>${icon('right')}</a>` : ''}
+      ${debt ? `<a class="strip${owing.some(lateDebt) ? ' late' : ''}" href="#/cobros"><span class="pill ${owing.some(lateDebt) ? 'late' : 'debe'}">Te deben</span><span class="grow"><b class="mono">${money(debt)}</b> · ${debtors} cliente${debtors === 1 ? '' : 's'}</span>${icon('right')}</a>` : ''}
       ${nudges.map(({ c }) => `<section class="card nudge"><b>¿Agendar la próxima semana de ${esc(firstName(c))}?</b><small class="muted">${esc(weekSummary(c))}</small>
         <div class="actions"><button class="primary" data-nweek="${c.id}">Agendar semana</button><button data-nsnooze="${c.id}">Ahora no</button></div></section>`).join('')}
       ${section('¿Se hizo?', pending)}
