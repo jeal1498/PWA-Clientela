@@ -539,3 +539,15 @@ body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 .trip { padding: 10px 12px; margin-bottom: 6px; }
 .list li { padding: 8px 12px; }
 .card { padding: 12px; margin-bottom: 8px; }
+
+/* Piezas con altura propia: mismas medidas compactas */
+.cta, .nav button { height: 44px; min-height: 44px; padding: 0 14px; font-size: 15px; }
+.paygrid button { min-height: 44px; padding: 0 8px; font-size: 15px; border-radius: 16px; }
+.opcion { min-height: 56px; padding: 8px 12px; gap: 12px; }
+.opcion .ic { width: 38px; height: 38px; border-radius: 12px; }
+.micard { padding: 8px 12px; gap: 12px; margin-bottom: 10px; grid-template-columns: 38px 1fr 20px; }
+.micard .ic { width: 38px; height: 38px; border-radius: 12px; }
+.fila { min-height: 48px; padding: 6px 14px; }
+.avatar.big { width: 64px; height: 64px; font-size: 24px; }
+.hero { padding: 4px 0 10px; }
+.paygrid button { align-content: center; justify-items: center; }
