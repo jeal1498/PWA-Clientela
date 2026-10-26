@@ -509,3 +509,33 @@ body.full .top, body.full .tabs { display: none; }
 .strip.late { background: var(--atrasado); color: var(--texto-sobre-atrasado); }
 .strip .i { color: inherit; width: 22px; height: 22px; }
 .strip .pill, .strip .pill.debe, .strip .pill.late { background: rgb(0 0 0 / .14); border-color: transparent; color: inherit; }
+
+/* ---------- Densidad compacta (mismas alturas que Finanzas) ---------- */
+.top { padding: calc(6px + env(safe-area-inset-top)) 16px 6px; }
+.field input, .field select, .field textarea, .search, .sheet .plain, .stop input, .price-row input, .cuando input[type=time], .pstep .field input {
+  min-height: 38px; padding: 0 12px; border-radius: 16px; font-size: 15px;
+  background: rgb(244 244 239 / .08); border: 1px solid rgb(244 244 239 / .35);
+}
+.field textarea { padding: 8px 12px; }
+.field input:focus, .field select:focus, .field textarea:focus, .search:focus { outline: none; border-color: var(--hueso); }
+.field { gap: 3px; font-size: 12px; }
+.sheet form { gap: 8px; padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); }
+.sheet h2 { font-size: 20px; }
+.grande, .cta, .share, .nav button, .actions button, .actions a, a.btn { min-height: 44px; }
+.grande { font-size: 15px; }
+.tabs { padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+.tabs .plus { width: 52px; height: 52px; margin-top: -24px; }
+.tabs .plus .i { width: 24px; height: 24px; }
+body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+.tiles { gap: 8px; margin: 4px 0 10px; }
+.tile { min-height: 78px; padding: 10px; }
+.strip { height: 78px; padding: 10px 14px; overflow: hidden; border-radius: 22px; margin-bottom: 8px; }
+.strip .grow { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hoy { padding: 10px 14px; margin-bottom: 8px; }
+.ct-th { min-height: 34px; }
+.ct-row { min-height: 44px; padding-block: 5px; }
+.ct-fecha b { font-size: 20px; }
+.ct-foot { padding: 10px 14px; }
+.trip { padding: 10px 12px; margin-bottom: 6px; }
+.list li { padding: 8px 12px; }
+.card { padding: 12px; margin-bottom: 8px; }

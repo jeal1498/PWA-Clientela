@@ -33,6 +33,9 @@ Maqueta aprobada: https://claude.ai/artifact/AmJLsuWugR1ZEeznZxBBmZ. Solo oscuro
 - **Empalmes de horario**: `clashes(trips, x)` en `utilidades.js`; cada viaje ocupa `max(30, min de la ruta)` min. Es aviso, no bloqueo (segundo toque «Agendar igual»).
 - **Inicio rápido** (`inicio-rapido-*.js`, si `!settings.onboarded`) y **Mi perfil** (`perfil-vistas.js`).
 
+## Densidad compacta
+Bloque final de `css/cartera.css`, mismas alturas que Finanzas: campos de 38 px con fondo y borde hueso tenue, botones de 44 px, barra inferior de 56 px (+ de 52), «Te deben» y mosaicos de 78 px, fila de tabla ~44 px. No volver a alturas de 50–52 px.
+
 ## Tabla Checa y tarjeta amarilla
 - **Cobros** y **Clientes** usan la misma tabla que Pagos en Finanzas (`.ct-*` en `cartera.css`, piezas en `js/tabla.js`): fecha grande + mes, estatus con ícono (triángulo rojo atrasado ≥ 15 días, reloj amarillo te debe, palomita al día), cliente con nota debajo y monto en mono; atrasados teñidos de rojo. En Cobros cada fila es un `<details>` que abre sus viajes y las acciones (Recordar / Ya me pagó).
 - «Te deben» en la Agenda (`.strip`) es una tarjeta amarilla llena (roja si hay atrasados), como «Atención inmediata» en Finanzas.
