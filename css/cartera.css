@@ -622,3 +622,25 @@ body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 .fila-c .av.s { width: 36px; height: 36px; border-radius: 50%; background: var(--cuerpo-logo); border: 1.5px solid var(--borde-logo); display: grid; place-items: center; font: 700 12px var(--fuente-datos); flex: none; }
 .fila-c .m.late { color: var(--atrasado); }
 .fila-c .m.debe { color: var(--te-debe); }
+
+/* Cotizar «sus viajes de siempre» + barra de precio fija abajo (rediseño B) */
+.viajes-sig { display: grid; gap: 8px; }
+.opc-v { display: grid; gap: 2px; text-align: left; background: var(--surface); border: 1.5px solid var(--humo); border-radius: 20px; padding: 12px 14px; color: var(--hueso); font: inherit; width: 100%; cursor: pointer; }
+.opc-v.on { border-color: var(--hueso); background: var(--surface-2); }
+.opc-v .r { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.opc-v b { font-size: 15px; min-width: 0; overflow-wrap: anywhere; }
+.opc-v .m { font: 800 22px var(--fuente-titulos); letter-spacing: -.02em; white-space: nowrap; }
+.opc-v small { color: var(--muted); font-size: 12.5px; }
+.qform .otro { border: 1.5px dashed var(--humo); border-radius: 20px; padding: 12px 14px; display: grid; gap: 10px; }
+.qform .otro > summary { display: grid; gap: 2px; cursor: pointer; list-style: none; }
+.qform .otro > summary::-webkit-details-marker { display: none; }
+.qform .otro > summary small { color: var(--muted); font-size: 12.5px; }
+.qform .otro[open] > summary { margin-bottom: 4px; }
+.qform .barra-fija { position: sticky; bottom: calc(-1 * (16px + env(safe-area-inset-bottom))); margin: 4px -16px calc(-1 * (16px + env(safe-area-inset-bottom))); padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); background: var(--surface-2); border-radius: 24px 24px 0 0; box-shadow: 0 -16px 32px rgb(0 0 0 / .45); gap: 8px; z-index: 2; }
+.qform .barra-fija .fila-precio { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.qform .barra-fija .fila-precio .eti { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qform .barra-fija .precio { font-size: 34px; flex: none; justify-content: flex-end; }
+.qform .barra-fija .precio input { width: 4.6ch; flex: none; text-align: left; }
+.qform .barra-fija button { min-height: 48px; }
+.qform .barra-fija .ghost { min-height: 40px; }
+.qform .calc-d summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
