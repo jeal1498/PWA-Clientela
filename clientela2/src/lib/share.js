@@ -7,15 +7,19 @@ const b64url = (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').
 const unb64url = (s) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/'))));
 
 export function publicConfig(cfg) {
-  const { driver, rates, extras } = withDefaults(cfg);
-  return { driver, rates, extras };
+  const { driver, rates, extras, wifi } = withDefaults(cfg);
+  const out = { driver, rates, extras };
+  if (wifi.showPublic && wifi.ssid) out.wifi = { ssid: wifi.ssid, password: wifi.password, security: wifi.security };
+  return out;
 }
 
 export const encodeConfig = (cfg) => b64url(JSON.stringify(publicConfig(cfg)));
 
 export function decodeConfig(code) {
   try {
-    return withDefaults(JSON.parse(unb64url(code)));
+    const raw = JSON.parse(unb64url(code));
+    // El Wi-Fi solo cuenta si el conductor lo compartió en el enlace.
+    return { ...withDefaults(raw), wifi: raw.wifi ? { ...raw.wifi, showPublic: true } : { ssid: '' } };
   } catch {
     return null;
   }

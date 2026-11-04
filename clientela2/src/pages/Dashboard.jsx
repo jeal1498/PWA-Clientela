@@ -1,6 +1,6 @@
 // Panel del conductor (/app): enlace público, métricas de rentabilidad y accesos rápidos.
 import { Link } from 'react-router-dom';
-import { Link2, Copy, ExternalLink, Calculator, TrendingUp, Fuel, Settings, Share2, AlertTriangle } from 'lucide-react';
+import { Link2, Copy, ExternalLink, Calculator, TrendingUp, Fuel, Settings, Share2, AlertTriangle, Wallet, Plus, BookOpen } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { publicLink } from '../lib/share.js';
 import { costPerKm } from '../lib/pricing.js';
@@ -8,10 +8,15 @@ import { money, money2 } from '../lib/format.js';
 import { copyText } from '../lib/whatsapp.js';
 import { Card, CardTitle, Button, Stat } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
+import DayBalance from '../components/DayBalance.jsx';
+import ExpenseQuick from '../components/ExpenseQuick.jsx';
+import TripSheet from '../components/TripSheet.jsx';
+import { useState } from 'react';
 
 export default function Dashboard() {
   const { config, history } = useStore();
   const [toast, showToast] = useToast();
+  const [tripOpen, setTripOpen] = useState(false);
   const link = publicLink(config);
 
   // Métricas a partir del historial.
@@ -33,7 +38,17 @@ export default function Dashboard() {
         </Link>
       )}
 
-      <Link to="/app/manual"><Button icon={Calculator} className="w-full text-base">Cotizar un viaje ahora</Button></Link>
+      {/* Balance en vivo del turno + captura rápida */}
+      <Card>
+        <CardTitle icon={Wallet} right={<Link to="/app/bitacora" className="flex items-center gap-1 text-xs text-cobrado"><BookOpen className="size-3.5" /> Bitácora</Link>}>Hoy</CardTitle>
+        <DayBalance />
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Button icon={Plus} className="whitespace-nowrap px-3" onClick={() => setTripOpen(true)}>Viaje cobrado</Button>
+          <Link to="/app/manual"><Button variant="ghost" icon={Calculator} className="w-full">Cotizar</Button></Link>
+        </div>
+        <div className="mt-3 text-xs text-gris">Registrar gasto</div>
+        <div className="mt-1.5"><ExpenseQuick onSaved={showToast} /></div>
+      </Card>
 
       <Card>
         <CardTitle icon={Link2}>Tu cotizador público</CardTitle>
@@ -48,7 +63,7 @@ export default function Dashboard() {
       </Card>
 
       <Card>
-        <CardTitle icon={TrendingUp} right={<Link to="/app/historial" className="text-xs text-cobrado">Ver historial</Link>}>Rentabilidad</CardTitle>
+        <CardTitle icon={TrendingUp} right={<Link to="/app/historial" className="text-xs text-cobrado">Ver historial</Link>}>Cotizaciones</CardTitle>
         <div className="grid grid-cols-2 gap-2">
           <Stat label="Neto de viajes aceptados" value={money(netSum)} tone="green" />
           <Stat label="Neto promedio por km" value={money2(avgNetKm)} tone={!kmSum ? undefined : avgNetKm >= config.goals.minPerKm ? 'green' : 'red'} />
@@ -67,6 +82,7 @@ export default function Dashboard() {
         </div>
         {config.rates.perKm <= costPerKm(config.costs) && <p className="mt-2 text-xs text-atrasado">Tu tarifa por km no cubre tu costo por km.</p>}
       </Card>
+      <TripSheet open={tripOpen} onClose={() => setTripOpen(false)} onSaved={() => showToast('Viaje guardado en bitácora')} />
       {toast}
     </>
   );
