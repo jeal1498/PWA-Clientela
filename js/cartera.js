@@ -24,6 +24,7 @@ import { searchPlaces, reverse, route, directionsLink, mapSvg, parseMapLink } fr
 import { numOr, PRESETS, isAirport, isNight, calculateQuote } from './calculos.js';
 import { loadData, saveData } from './almacenamiento.js';
 import * as hoja from './hoja.js';
+import * as nube from './nube.js';
 
 
 // Clientela: clientes privados del conductor (agenda, cotizaciones, viajes, cobros y WhatsApp).
@@ -43,7 +44,9 @@ const DEFAULTS = { clients: [], trips: [], settings: {
 let data = loadData(KEY, DEFAULTS, EXTRA_DEF);
 // La tarifa por hora siempre equivale a 20 veces la tarifa por kilómetro.
 data.settings.perHour = numOr(data.settings.perKm, 12) * 20;
-function save() { saveData(KEY, data, () => toast('No se pudo guardar')); autoSync(); }
+function save() { saveData(KEY, data, () => toast('No se pudo guardar')); autoSync(); nube.programar(() => data, aplicarNube); }
+// La nube trajo cambios de otro teléfono: se guardan aquí y se repinta (sin volver a subirlos).
+function aplicarNube() { saveData(KEY, data); render(); }
 // Con la hoja conectada y «auto», se envía sola unos segundos después del último cambio.
 let autoTimer;
 function autoSync() {
@@ -182,7 +185,7 @@ const renderSummary = createSummaryView({
 // ---------- Yo (perfil y ajustes) ----------
 const renderMe = createMeView({
   getData: () => data, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile,
-  openCard: () => { location.hash = '#/tarjeta'; }, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(),
+  openCard: () => { location.hash = '#/tarjeta'; }, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(), cuentaForm, cuentaNube: nube.estado,
   resetOnboarding: () => { data.settings.onboarded = false; obStep = 0; refresh(); },
 });
 // Lugares con nombre: los tuyos y los de cada cliente. Se crean con la ☆ al elegir un lugar.
@@ -220,6 +223,27 @@ function ladaForm() {
     <div class="buttons"><button type="button" data-close>Cancelar</button><button class="primary">Guardar</button></div>`, (form) => {
     $('[data-close]', form).onclick = () => sheet.close();
     form.onsubmit = () => { data.settings.lada = form.elements.lada.value.replace(/\D/g, '') || '52'; refresh(); toast('Guardado'); };
+  });
+}
+// Cuenta de Google: quién entró, última copia en la nube, sincronizar y cerrar sesión.
+function cuentaForm() {
+  const e = nube.estado();
+  const when = e.ultima ? new Date(e.ultima).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : 'aún no';
+  openSheet(`<h2>Cuenta de Google</h2>
+    <p class="field wide" style="font-weight:400"><b>${esc(e.nombre || e.email)}</b>${e.nombre ? `<br><span class="muted">${esc(e.email)}</span>` : ''}</p>
+    <p class="field wide muted" style="font-weight:400">Es la misma cuenta que usas en Checa. Tus clientes, viajes y ajustes se guardan solos en la nube. Última copia: ${when}.</p>
+    ${e.error ? `<p class="field wide" role="status" style="font-weight:400">${esc(e.error)}. Se vuelve a intentar sola.</p>` : ''}
+    <button type="button" class="add wide" data-sync>Sincronizar ahora</button>
+    <div class="buttons"><button type="button" data-close>Cerrar</button><button type="button" class="left" data-out>Cerrar sesión</button></div>`, (form) => {
+    $('[data-close]', form).onclick = () => sheet.close();
+    $('[data-sync]', form).onclick = async () => {
+      try { await nube.sincronizar(() => data, aplicarNube); toast('Listo, todo está en la nube'); } catch { toast('No se pudo sincronizar'); }
+      sheet.close(); cuentaForm();
+    };
+    $('[data-out]', form).onclick = () => {
+      if (!confirm('Al cerrar sesión la app pedirá entrar otra vez. Tus datos siguen guardados en este teléfono y en la nube. ¿Cerrar sesión?')) return;
+      nube.cerrarSesion(); location.reload();
+    };
   });
 }
 // Respaldo en tu hoja de Google: conexión, envío manual y «auto».
@@ -771,7 +795,13 @@ const renderClient = createClientDetailView({
 });
 
 // ---------- Inicio ----------
-render();
+// Acceso con Google obligatorio: sin sesión no se abre la app; con sesión abre directo y sincroniza al fondo.
+nube.arrancar({
+  getData: () => data,
+  hayDatos: () => data.clients.length > 0 || data.trips.length > 0 || data.settings.onboarded,
+  empezar: render,
+  aplicar: aplicarNube,
+});
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 // ---------- Semana completa ----------

@@ -48,10 +48,10 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 
 ### 5. Acceso con Google y nube
 - [x] Maqueta de la pantalla de acceso (falta OK de Eduardo): https://claude.ai/artifact/8GchMPGtNoTpUhSJ4UjVCZ (copia en `docs/maqueta-acceso.html`).
-- [ ] Decidir: mismo proyecto de Supabase de Checa o uno nuevo.
-- [ ] Acceso obligatorio con Google, como Checa.
-- [ ] Subir solos los datos del teléfono la primera vez.
-- [ ] Sincronizar clientes, viajes y ajustes.
+- [x] Decidir: mismo proyecto de Supabase de Checa (4 nov).
+- [x] Acceso obligatorio con Google, como Checa (`js/nube.js`, botón de Google sin SDK). **Falta que Eduardo agregue `https://jeal1498.github.io` como origen autorizado del cliente web en Google Cloud.**
+- [x] Subir solos los datos del teléfono la primera vez.
+- [x] Sincronizar clientes, viajes y ajustes (probado con nube simulada; falta con Google real).
 - [ ] Prueba de punta a punta.
 
 ### 6. APK
@@ -84,7 +84,7 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrihfipz`) y la misma cuenta de Google. Cada una conserva su propósito; se enlazan.
 - [x] Esquema compartido, listo en `supabase/clientela.sql` (probado en Postgres local; **falta pegarlo** en SQL Editor o en `esquema.sql` de `APK-CHECA`): `perfil_conductor` (moneda, tarifas, teléfono, ciudad, enlace público), `clientes`, `viajes_privados`, `contactos_sos`, `viajes_checa`; todas con RLS por usuario.
 - [x] Decidir el rediseño A/B (etapa 4): mezcla sugerida.
-- [ ] Login con Google y nube (etapa 5) con la misma cuenta de Checa; subir solos los datos de `cartera` la primera vez.
+- [x] Login con Google y nube (etapa 5) con la misma cuenta de Checa; subir solos los datos de `cartera` la primera vez (falta prueba con Google real).
 - [ ] Moneda: selector (símbolo, formato) guardado en `perfil_conductor`; hoy todo es MXN.
 - [ ] Tarjeta con QR leyendo del perfil en la nube.
 - [ ] Usar el costo de gasolina de Checa para mostrar cuánto te queda de un viaje privado.
