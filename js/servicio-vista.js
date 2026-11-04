@@ -1,4 +1,5 @@
 // Tarjeta editable de un servicio frecuente de cliente.
+import { sym } from './moneda.js';
 export function createServiceCard({ placeInput, wirePlace, fillRoute, stopsField, placeBar, $, esc, suggestPrice, svcCtx, autoName, mapSvg, money, priceMath, directionsLink }) {
   function serviceCard(sv, onRemove, getClient) {
     const el = document.createElement('section');
@@ -6,7 +7,7 @@ export function createServiceCard({ placeInput, wirePlace, fillRoute, stopsField
     el.innerHTML = `<div class="svc-head"><b data-title>${esc(sv.name || 'Servicio nuevo')}</b><button type="button" data-rm>Quitar</button></div>
       <div class="route">${placeInput(sv.a, 'a', 'Punto A · ¿de dónde sale?')}${placeInput(sv.b, 'b', 'Punto B · ¿a dónde va?')}</div>
       <div data-route></div>
-      <div class="price-row"><label><span>Tu precio $</span><input data-price type="number" inputmode="numeric" min="0" step="10" value="${sv.price ?? ''}" placeholder="${sv.km ? suggestPrice(sv.km, sv.min, svcCtx(sv)) : ''}"></label><small class="muted">vacío = sugerido</small></div>`;
+      <div class="price-row"><label><span>Tu precio ${sym()}</span><input data-price type="number" inputmode="numeric" min="0" step="10" value="${sv.price ?? ''}" placeholder="${sv.km ? suggestPrice(sv.km, sv.min, svcCtx(sv)) : ''}"></label><small class="muted">vacío = sugerido</small></div>`;
     sv.stops ||= [];
     const titleEl = $('[data-title]', el);
     let auto = sv.name && sv.name === autoName(sv) ? sv.name : '';

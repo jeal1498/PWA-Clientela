@@ -1,4 +1,5 @@
 // Reglas de tarifa de Cartera. Funciones de cálculo sin acceso al DOM ni al almacenamiento.
+import { rate } from './moneda.js';
 export const numOr = (v, d) => (v === '' || v == null || isNaN(+v) ? d : +v);
 export const EXTRAS_INFO = [
   ['base', 'Banderazo', '$', 'Se suma a cada viaje'],
@@ -14,7 +15,7 @@ export function calculateQuote(km, min, { airport = false, night = false, wait =
   const X = s.extra || EXTRA_DEF, lines = [];
   const byKm = km * numOr(s.perKm, 12), byHour = (min / 60) * numOr(s.perHour, numOr(s.perKm, 12) * 20);
   let p = Math.max(byKm, byHour);
-  lines.push([`Por km · ${km} km × $${s.perKm}`, byKm, byKm >= byHour], [`Por hora · ${min} min a $${s.perHour}/h`, byHour, byHour > byKm]);
+  lines.push([`Por km · ${km} km × ${rate(s.perKm)}`, byKm, byKm >= byHour], [`Por hora · ${min} min a ${rate(s.perHour)}/h`, byHour, byHour > byKm]);
   if (X.base.on) { p += +X.base.v; lines.push(['Banderazo', +X.base.v, true]); }
   if (X.airport.on && airport) { p += +X.airport.v; lines.push(['Extra aeropuerto', +X.airport.v, true]); }
   if (X.wait.on && wait) { p += wait * X.wait.v; lines.push([`Espera · ${wait} min`, wait * X.wait.v, true]); }

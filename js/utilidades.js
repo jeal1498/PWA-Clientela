@@ -1,7 +1,7 @@
 // Utilidades puras compartidas por las pantallas de Cartera.
 export const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-export const money = (n) => '$' + Math.round(+n || 0).toLocaleString('es-MX');
+export { money } from './moneda.js';
 export const today = () => new Date().toLocaleDateString('en-CA');
 export const addDays = (d, n) => { const x = new Date(d + 'T00:00'); x.setDate(x.getDate() + n); return x.toLocaleDateString('en-CA'); };
 export const daysBetween = (a, b) => Math.round((new Date(b + 'T00:00') - new Date(a + 'T00:00')) / 864e5);

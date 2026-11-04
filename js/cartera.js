@@ -25,6 +25,7 @@ import { numOr, PRESETS, isAirport, isNight, calculateQuote } from './calculos.j
 import { loadData, saveData } from './almacenamiento.js';
 import * as hoja from './hoja.js';
 import * as nube from './nube.js';
+import { MONEDAS, setMoneda, moneda, sym, money as fmtMoney } from './moneda.js';
 
 
 // Clientela: clientes privados del conductor (agenda, cotizaciones, viajes, cobros y WhatsApp).
@@ -44,9 +45,10 @@ const DEFAULTS = { clients: [], trips: [], settings: {
 let data = loadData(KEY, DEFAULTS, EXTRA_DEF);
 // La tarifa por hora siempre equivale a 20 veces la tarifa por kilómetro.
 data.settings.perHour = numOr(data.settings.perKm, 12) * 20;
+setMoneda(data.settings.currency);
 function save() { saveData(KEY, data, () => toast('No se pudo guardar')); autoSync(); nube.programar(() => data, aplicarNube); }
 // La nube trajo cambios de otro teléfono: se guardan aquí y se repinta (sin volver a subirlos).
-function aplicarNube() { saveData(KEY, data); render(); }
+function aplicarNube() { setMoneda(data.settings.currency); saveData(KEY, data); render(); }
 // Con la hoja conectada y «auto», se envía sola unos segundos después del último cambio.
 let autoTimer;
 function autoSync() {
@@ -185,7 +187,7 @@ const renderSummary = createSummaryView({
 // ---------- Yo (perfil y ajustes) ----------
 const renderMe = createMeView({
   getData: () => data, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile,
-  openCard: () => { location.hash = '#/tarjeta'; }, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(), cuentaForm, cuentaNube: nube.estado,
+  openCard: () => { location.hash = '#/tarjeta'; }, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(), cuentaForm, cuentaNube: nube.estado, monedaForm,
   resetOnboarding: () => { data.settings.onboarded = false; obStep = 0; refresh(); },
 });
 // Lugares con nombre: los tuyos y los de cada cliente. Se crean con la ☆ al elegir un lugar.
@@ -223,6 +225,38 @@ function ladaForm() {
     <div class="buttons"><button type="button" data-close>Cancelar</button><button class="primary">Guardar</button></div>`, (form) => {
     $('[data-close]', form).onclick = () => sheet.close();
     form.onsubmit = () => { data.settings.lada = form.elements.lada.value.replace(/\D/g, '') || '52'; refresh(); toast('Guardado'); };
+  });
+}
+// Moneda: símbolo, lado del símbolo, separadores y decimales (se guarda en tu cuenta y la usa Checa).
+function monedaForm() {
+  let c = moneda();
+  const opts = MONEDAS.map((m) => `<option value="${m.code}" ${m.code === c.code ? 'selected' : ''}>${m.code} · ${esc(m.name)} (${esc(m.sym)})</option>`).join('')
+    + (MONEDAS.some((m) => m.code === c.code) ? '' : `<option value="${esc(c.code)}" selected>${esc(c.code)} (${esc(c.sym)})</option>`);
+  const sel = (name, list, v) => `<select class="plain" name="${name}">${list.map(([val, lab]) => `<option value="${val}" ${val === v ? 'selected' : ''}>${lab}</option>`).join('')}</select>`;
+  openSheet(`<h2>Moneda</h2>
+    <label class="field wide">Moneda<select class="plain" name="code">${opts}</select></label>
+    ${field('Símbolo', `<input class="plain" name="sym" maxlength="4" value="${esc(c.sym)}" autocomplete="off">`)}
+    <label class="field">Decimales${sel('digits', [[0, 'Sin decimales'], [2, '2 decimales']], c.digits)}</label>
+    <label class="field">Separador de miles${sel('thou', [[',', 'Coma (1,250)'], ['.', 'Punto (1.250)'], [' ', 'Espacio (1 250)'], ["'", "Apóstrofo (1'250)"], ['', 'Ninguno (1250)']], c.thou)}</label>
+    <label class="field">Separador decimal${sel('dec', [['.', 'Punto (12.50)'], [',', 'Coma (12,50)']], c.dec)}</label>
+    <label class="pick wide"><input type="checkbox" name="after" ${c.after ? 'checked' : ''}><span>Símbolo después del monto<small>12,50 € en vez de €12,50</small></span></label>
+    <p class="wide" style="margin:0;font-family:var(--fuente-datos);font-size:18px" data-prev></p>
+    <div class="buttons"><button type="button" data-close>Cancelar</button><button class="primary">Guardar</button></div>`, (form) => {
+    $('[data-close]', form).onclick = () => sheet.close();
+    const f = form.elements;
+    const read = () => ({ code: f.code.value, sym: f.sym.value.trim() || '$', after: f.after.checked, thou: f.thou.value, dec: f.dec.value, digits: +f.digits.value });
+    const prev = () => { $('[data-prev]', form).textContent = `Vista previa: ${fmtMoney(1250.5, read())} · ${fmtMoney(80, read())}`; };
+    f.code.onchange = () => {
+      const m = MONEDAS.find((x) => x.code === f.code.value);
+      if (m) { f.sym.value = m.sym; f.after.checked = m.after; f.thou.value = m.thou; f.dec.value = m.dec; f.digits.value = m.digits; }
+      prev();
+    };
+    form.addEventListener('input', prev); form.addEventListener('change', prev); prev();
+    form.onsubmit = (e) => {
+      const n = read();
+      if (n.thou === n.dec) { e.preventDefault(); toast('El separador de miles y el decimal deben ser distintos'); return; }
+      data.settings.currency = n; setMoneda(n); refresh(); toast('Guardado');
+    };
   });
 }
 // Cuenta de Google: quién entró, última copia en la nube, sincronizar y cerrar sesión.
@@ -667,7 +701,7 @@ function quoteForm(preset = {}) {
     <input type="hidden" name="date" value="${today()}">
     <div class="wide cuando">${whenHtml}<input name="time" type="time" aria-label="Hora"></div>
     <div class="cotiza wide"><span class="eti">Precio con tu tarifa</span>
-      <label class="precio"><span>$</span><input name="price" type="number" inputmode="numeric" min="0" step="10" placeholder="0" aria-label="Precio"></label>
+      <label class="precio"><span>${sym()}</span><input name="price" type="number" inputmode="numeric" min="0" step="10" placeholder="0" aria-label="Precio"></label>
       <div id="qcalc" class="muted"></div></div>
     <button type="button" class="primary wide grande" data-send>${icon('wa')} Mandar precio por WhatsApp</button>
     <button type="button" class="wide grande" data-book>Agendar este viaje</button>
@@ -929,7 +963,7 @@ function cardSettings() {
     const drawRoutes = () => {
       if (o.routesOn && !o.routes.length) o.routes.push({ label: '', price: '' });
       routesBox.hidden = !o.routesOn;
-      routesBox.innerHTML = o.routes.map((r, i) => `<div class="rrow"><input class="plain" data-rl="${i}" value="${esc(r.label)}" placeholder="Ej. Aeropuerto → Centro"><input class="plain" data-rp="${i}" type="number" inputmode="decimal" min="0" value="${esc(r.price)}" placeholder="$"><button type="button" data-rx="${i}" aria-label="Quitar">${icon('close')}</button></div>`).join('')
+      routesBox.innerHTML = o.routes.map((r, i) => `<div class="rrow"><input class="plain" data-rl="${i}" value="${esc(r.label)}" placeholder="Ej. Aeropuerto → Centro"><input class="plain" data-rp="${i}" type="number" inputmode="decimal" min="0" value="${esc(r.price)}" placeholder="${sym()}"><button type="button" data-rx="${i}" aria-label="Quitar">${icon('close')}</button></div>`).join('')
         + (o.routes.length < 8 ? '<button type="button" class="add" data-addroute>＋ Agregar ruta</button>' : '');
     };
     form.addEventListener('change', (e) => {

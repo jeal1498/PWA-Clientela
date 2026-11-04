@@ -52,7 +52,7 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [x] Acceso obligatorio con Google, como Checa (`js/nube.js`, botón de Google sin SDK). **Falta que Eduardo agregue `https://jeal1498.github.io` como origen autorizado del cliente web en Google Cloud.**
 - [x] Subir solos los datos del teléfono la primera vez.
 - [x] Sincronizar clientes, viajes y ajustes (probado con nube simulada; falta con Google real).
-- [ ] Prueba de punta a punta.
+- [x] Prueba de punta a punta (Eduardo dio el OK, 4 nov).
 
 ### 6. APK
 - [ ] Elegir cómo empaquetar: TWA (Bubblewrap) o Capacitor.
@@ -85,7 +85,7 @@ Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrih
 - [x] Esquema compartido, listo en `supabase/clientela.sql` (probado en Postgres local; **falta pegarlo** en SQL Editor o en `esquema.sql` de `APK-CHECA`): `perfil_conductor` (moneda, tarifas, teléfono, ciudad, enlace público), `clientes`, `viajes_privados`, `contactos_sos`, `viajes_checa`; todas con RLS por usuario.
 - [x] Decidir el rediseño A/B (etapa 4): mezcla sugerida.
 - [x] Login con Google y nube (etapa 5) con la misma cuenta de Checa; subir solos los datos de `cartera` la primera vez (falta prueba con Google real).
-- [ ] Moneda: selector (símbolo, formato) guardado en `perfil_conductor`; hoy todo es MXN.
+- [x] Moneda: selector (símbolo, formato, separadores, decimales) en Yo → Moneda, guardado en `perfil_conductor` (`js/moneda.js`); lo usan cotizar, cobros, mensajes y la tarjeta. Falta la prueba en el teléfono.
 - [ ] Tarjeta con QR leyendo del perfil en la nube.
 - [ ] Usar el costo de gasolina de Checa para mostrar cuánto te queda de un viaje privado.
 - [ ] APK (etapa 6) y licencias combinadas con Checa.

@@ -46,7 +46,13 @@ footer svg { width: 40px; height: auto; }
 <script type="module">
 // Lee los datos que el conductor eligió compartir: n nombre, c ciudad, w WhatsApp, a auto, r rutas, p pagos, b banco, h horario.
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-const money = (n) => '$' + Math.round(+n || 0).toLocaleString('es-MX');
+let MON = ['$', 0, ',', '.', 0]; // símbolo, después, miles, decimal, decimales (d.m en el enlace)
+const money = (n) => {
+  const [sym, after, thou, dec, dig] = MON, v = Math.abs(+n || 0);
+  const [e, f = ''] = v.toFixed(dig).split('.');
+  const t = e.replace(/\B(?=(\d{3})+(?!\d))/g, thou) + (dig ? dec + f : '');
+  return after ? `${t} ${sym}` : `${sym}${t}`;
+};
 const ICON = {
   msg: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
   user: '<circle cx="10" cy="8" r="3.5"/><path d="M3.5 19c.8-3 3.4-4.5 6.5-4.5s5.7 1.5 6.5 4.5M19 8v6M16 11h6"/>',
@@ -77,6 +83,7 @@ function vcard(d) {
 try {
   const d = await decode(decodeURIComponent(location.hash.slice(1)));
   if (!d?.n || !d?.w) throw new Error('vacía');
+  if (Array.isArray(d.m) && d.m.length === 5) MON = d.m;
   const first = d.n.trim().split(/\s+/)[0];
   const ini = d.n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
   const [car, year, color, seats, extras = []] = d.a || [];

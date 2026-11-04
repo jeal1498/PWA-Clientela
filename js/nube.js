@@ -103,6 +103,7 @@ function filaPerfil(s) {
     nombre: String(s.driver || '').slice(0, 80) || null, telefono: /^\d{10,15}$/.test(tel) ? tel : null,
     ciudad: String(s.city || '').slice(0, 80) || null,
     tarifas: { perKm: s.perKm, perHour: s.perHour, extra: s.extra }, ajustes: s,
+    ...(s.currency ? { moneda: s.currency.code, simbolo: s.currency.sym, simbolo_despues: !!s.currency.after, sep_miles: s.currency.thou, sep_decimal: s.currency.dec, decimales: s.currency.digits } : {}),
   };
 }
 
@@ -161,7 +162,7 @@ export function sincronizar(getData, onCambio) {
       const [cs, vs, pf] = await Promise.all([
         pedir('GET', `/rest/v1/clientes?select=id,datos,borrado,actualizado&order=actualizado${desde}`),
         pedir('GET', `/rest/v1/viajes_privados?select=id,datos,borrado,actualizado&order=actualizado${desdeV}`),
-        pedir('GET', '/rest/v1/perfil_conductor?select=ajustes,actualizado'),
+        pedir('GET', '/rest/v1/perfil_conductor?select=ajustes,actualizado,moneda,simbolo,simbolo_despues,sep_miles,sep_decimal,decimales'),
       ]);
       let cambio = mezclar(data.clients, cs, c);
       cambio = mezclar(data.trips, vs, t) || cambio;
@@ -170,6 +171,11 @@ export function sincronizar(getData, onCambio) {
       if (remoto?.ajustes?.onboarded && (!data.settings.onboarded || (remoto.actualizado > (st.pp || '') && sh === st.ps))) {
         const nuevos = { ...data.settings, ...remoto.ajustes };
         if (hash(nuevos) !== sh) { data.settings = nuevos; cambio = true; }
+      }
+      // Moneda puesta desde Checa u otro teléfono: si aquí aún no se eligió una, se toma la de la cuenta.
+      if (remoto?.moneda && !data.settings.currency && remoto.moneda !== 'MXN') {
+        data.settings.currency = { code: remoto.moneda, sym: remoto.simbolo, after: !!remoto.simbolo_despues, thou: remoto.sep_miles, dec: remoto.sep_decimal, digits: remoto.decimales };
+        cambio = true;
       }
       // Subir lo que cambió aquí.
       await subirLista('clientes', data.clients, c, filaCliente);

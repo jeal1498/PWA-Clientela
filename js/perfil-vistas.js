@@ -1,6 +1,7 @@
 // Vistas del inicio rápido y del editor de perfil.
 import { esc } from './utilidades.js';
 import { EXTRAS_INFO, PRESETS } from './calculos.js';
+import { sym } from './moneda.js';
 
 export const PROFILE_STEPS = ['Tú', 'Tu auto', 'Tu tarifa', 'Cómo cobras'];
 export const CAR_EXTRAS = ['Aire acondicionado', 'Cajuela amplia', 'Acepta mascotas', 'Silla para bebé', 'Factura'];
@@ -27,10 +28,10 @@ export function stepHtml(n, D, { onboarding = false } = {}) {
   if (n === 3) return `<h2>¿Cuánto cobras?</h2><div class="pbody">
     <p class="muted">Como en Checa: tu meta por km y por hora. El precio usa la que deje más.</p>
     <div class="field">Empieza con una tarifa${chipsOf(Object.keys(PRESETS), Object.keys(PRESETS).filter((k) => PRESETS[k].join() === [D.perKm, D.perHour].join()), 'preset')}</div>
-    <div class="row2">${pin('perKm', 'Por km $', D.perKm, 'type="number" inputmode="decimal" step="0.5" min="0"')}${pin('perHour', 'Por hora $', D.perHour, 'type="number" readonly aria-readonly="true" tabindex="-1"')}</div>
+    <div class="row2">${pin('perKm', `Por km ${sym()}`, D.perKm, 'type="number" inputmode="decimal" step="0.5" min="0"')}${pin('perHour', `Por hora ${sym()}`, D.perHour, 'type="number" readonly aria-readonly="true" tabindex="-1"')}</div>
     <details class="more" ${Object.values(D.extra).some((x) => x.on) ? 'open' : ''}><summary>Más detalles <small>opcional</small></summary>
       ${EXTRAS_INFO.map(([k, l, u, h]) => `<div class="opt"><label class="sw"><input type="checkbox" data-on="${k}" ${D.extra[k].on ? 'checked' : ''}><span>${l}<small>${h}</small></span></label>
-        ${D.extra[k].on ? `<label class="unit"><input data-x="${k}" type="number" inputmode="decimal" min="0" value="${D.extra[k].v}" aria-label="${l}"><span>${u}</span></label>` : ''}</div>`).join('')}
+        ${D.extra[k].on ? `<label class="unit"><input data-x="${k}" type="number" inputmode="decimal" min="0" value="${D.extra[k].v}" aria-label="${l}"><span>${u.replace('$', sym())}</span></label>` : ''}</div>`).join('')}
     </details>
     <div class="example" data-ex></div></div>`;
   if (n === 4) return `<h2>¿Cómo te pagan?</h2><div class="pbody">
