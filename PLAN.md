@@ -1,6 +1,6 @@
 # Plan de Clientela
 
-Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 4 nov 2026.
+Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 5 nov 2026.
 
 ## Resultado final
 Clientela publicada para conductores de Uber, DiDi, taxi y choferes independientes, gratis por ahora para recibir comentarios:
@@ -91,6 +91,17 @@ Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrih
 - [x] Costo de gasolina de `perfil_conductor.gasolina_km` (lo escribe Checa; mientras tanto se pone en Yo → Gasolina) y «Te quedan $x» en Cotizar. **Pendiente en Checa:** escribir `gasolina_km` (precio por litro ÷ km por litro). Falta la prueba en el teléfono.
 - [x] APK (etapa 6) · [ ] licencias combinadas con Checa.
 - Orden global y razones: `docs/web-y-ventas.md` de `jeal1498/APK-CHECA` («Pendientes de funciones nuevas»).
+
+### 11. Clientela 2.0 · Cotizador (`clientela2/` → `cotiza/`) — 5 nov 2026
+React + Vite + Tailwind aislado del resto; se publica en `/cotiza/` y no toca la app de la raíz.
+- [x] Motor de cálculo (combustible, desgaste, tiempo, regreso vacío, rentabilidad neta) con pruebas (`npm test`).
+- [x] Costos y tarifas (`#/app/settings`): gasolina, rendimiento, desgaste, banderazo, km, minuto, mínima, recargos, caseta habitual y metas $/km y $/h.
+- [x] Cotizador público para Linktree (`#/`) con «Solicitar por WhatsApp»; las tarifas viajan en el enlace, costos y metas no.
+- [x] Cotizador exprés (`#/app/manual`): ruta o km/min, ganancia neta privada, semáforo, ajustes y redondeo, WhatsApp / copiar / guardar.
+- [x] Panel e historial (`#/app`, `#/app/historial`).
+- [ ] Prueba en el teléfono (instalar, offline, enlace público en el Linktree).
+- [ ] Decidir si la raíz del repo apunta al cotizador o se mantiene la app Clientela.
+- [ ] Respaldo en la nube (Supabase) del historial y las tarifas.
 
 ## Pendientes sueltos
 - [ ] Tu WhatsApp sigue en el historial de git (se borró del código). ¿Limpiar el historial?

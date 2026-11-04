@@ -27,6 +27,7 @@ export const DEFAULT_CONFIG = {
     freeBags: 2, // maletas incluidas
     bagFee: 20, // $ por maleta extra
     stopFee: 30, // $ por parada intermedia
+    tollDefault: 0, // caseta habitual (opcional): un toque la agrega a la cotización
   },
   goals: { minPerKm: 10, minPerHour: 200 },
 };

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Search, Keyboard, Luggage, Milestone, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, ArrowDownUp, Loader2, Info } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
-import { quote, evaluate } from '../lib/pricing.js';
+import { quote, evaluate, roundUp } from '../lib/pricing.js';
 import { money, money2, kmText, minText } from '../lib/format.js';
 import { driverProposalMessage, waLink, copyText } from '../lib/whatsapp.js';
 import { useRoute } from '../hooks/useRoute.js';
@@ -86,7 +86,14 @@ export default function ManualQuote() {
         <Stepper label="Maletas" icon={Luggage} value={f.bags} onChange={(bags) => set({ bags })} />
         <Stepper label="Paradas" icon={Milestone} value={f.stops} onChange={(stops) => set({ stops })} />
         <div className="grid grid-cols-2 gap-2">
-          <Field label="Casetas"><NumberInput prefix="$" value={f.tolls} onChange={(tolls) => set({ tolls })} placeholder="0" /></Field>
+          <Field label="Casetas">
+            <NumberInput prefix="$" value={f.tolls} onChange={(tolls) => set({ tolls })} placeholder="0" />
+            {config.extras.tollDefault > 0 && (
+              <button type="button" onClick={() => set({ tolls: +f.tolls === config.extras.tollDefault ? '' : config.extras.tollDefault })} className={cx('mt-1.5 h-8 rounded-lg px-2 text-xs', +f.tolls === config.extras.tollDefault ? 'bg-cobrado/15 text-cobrado' : 'bg-asfalto text-gris')}>
+                Caseta habitual {money(config.extras.tollDefault)}
+              </button>
+            )}
+          </Field>
           <Field label="Cliente"><TextInput value={f.clientName} onChange={(e) => setF((s) => ({ ...s, clientName: e.target.value }))} placeholder="Nombre" /></Field>
           <Field label="Fecha"><TextInput type="date" value={f.date} onChange={(e) => setF((s) => ({ ...s, date: e.target.value }))} /></Field>
           <Field label="Hora"><TextInput type="time" value={f.time} onChange={(e) => setF((s) => ({ ...s, time: e.target.value }))} /></Field>
@@ -117,6 +124,12 @@ export default function ManualQuote() {
         <div className="mt-3 grid grid-cols-4 gap-1.5">
           {adjust.map((a) => (
             <button key={a.label} type="button" disabled={!ready} onClick={() => setOverride(Math.max(0, a.fn(price)))} className="h-10 rounded-xl bg-asfalto font-mono text-sm active:scale-95 disabled:opacity-40">{a.label}</button>
+          ))}
+        </div>
+        <div className="mt-1.5 grid grid-cols-4 gap-1.5">
+          <span className="grid place-items-center text-xs text-gris">Redondear</span>
+          {[10, 50, 100].map((step) => (
+            <button key={step} type="button" disabled={!ready} onClick={() => setOverride(roundUp(price, step))} className="h-10 rounded-xl bg-asfalto font-mono text-sm active:scale-95 disabled:opacity-40">↑ {step}</button>
           ))}
         </div>
         <div className="mt-1.5 grid grid-cols-2 gap-1.5">

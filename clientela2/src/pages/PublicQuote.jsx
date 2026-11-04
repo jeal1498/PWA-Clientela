@@ -29,9 +29,11 @@ export default function PublicQuote() {
   const [bags, setBags] = useState(0);
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
+  const [toll, setToll] = useState(false);
+  const tollFee = config.extras.tollDefault;
 
   const r = useRoute(from, to);
-  const q = useMemo(() => quote({ km: r.km, min: r.min, bags }, config), [r.km, r.min, bags, config]);
+  const q = useMemo(() => quote({ km: r.km, min: r.min, bags, tolls: toll ? tollFee : 0 }, config), [r.km, r.min, bags, toll, tollFee, config]);
   const ready = from && to && !r.loading && q.price > 0;
   const msg = ready ? clientRequestMessage({ from, to, date, time, passengers, bags, name, notes, q }) : '';
 
@@ -70,6 +72,12 @@ export default function PublicQuote() {
           </div>
           <Stepper label="Pasajeros" icon={Users} value={passengers} onChange={setPassengers} min={1} max={8} />
           <Stepper label="Maletas" icon={Luggage} value={bags} onChange={setBags} max={10} />
+          {tollFee > 0 && (
+            <label className="flex items-center gap-2 rounded-2xl border border-white/10 bg-asfalto/40 p-3 text-sm text-gris">
+              <input type="checkbox" className="size-4 accent-[#22C55E]" checked={toll} onChange={(e) => setToll(e.target.checked)} />
+              Ir por autopista de cuota (+{money(tollFee)})
+            </label>
+          )}
         </Card>
 
         {/* Resultado */}
