@@ -804,7 +804,7 @@ const { finishTrip, finishForm, payForm, collectForm } = createPaymentHandlers({
 
 const renderCharges = createChargesView({
   getData: () => data, view, header, setTabs, tripsOf, owed, lateDebt, byWhen, money, icon,
-  esc, waLink, MSG, cap, fdate, dayLabel, daysBetween, today, bindTrips, $, collectForm, client, shortRoute,
+  esc, waLink, MSG, cap, fdate, dayLabel, daysBetween, today, bindTrips, $, collectForm, client, shortRoute, initials,
 });
 
 const renderClient = createClientDetailView({

@@ -44,7 +44,7 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [x] OK de Eduardo para pasarlo a `main` (18 oct).
 - [x] Prueba en el teléfono: a Eduardo **no lo convence el diseño de las pantallas** (23 oct).
 - [x] Nuevo acomodo de pantallas (https://claude.ai/artifact/LNFP8ikEjpyCwYPuhnnphm): Eduardo eligió la **mezcla sugerida** (4 nov): B en Agenda, Cobros, Cotizar y Ficha; A en Clientes (cuenta de viajes). Resumen, Yo, Mi tarjeta y arranque quedan igual.
-- [ ] Migrar las pantallas a la mezcla, una por una con su OK: [x] Agenda (un solo foco, 4 nov) · [ ] Cobros (B) · [ ] Cotizar (B) · [ ] Ficha (B) · [ ] Clientes (A).
+- [ ] Migrar las pantallas a la mezcla, una por una con su OK: [x] Agenda (un solo foco, 4 nov) · [x] Cobros (B, 4 nov) · [ ] Cotizar (B) · [ ] Ficha (B) · [ ] Clientes (A).
 
 ### 5. Acceso con Google y nube
 - [x] Maqueta de la pantalla de acceso (falta OK de Eduardo): https://claude.ai/artifact/8GchMPGtNoTpUhSJ4UjVCZ (copia en `docs/maqueta-acceso.html`).
@@ -83,7 +83,7 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 
 ### 10. Puente con Checa (Supabase compartido) — 4 nov 2026
 Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrihfipz`) y la misma cuenta de Google. Cada una conserva su propósito; se enlazan.
-- [x] Esquema compartido, listo en `supabase/clientela.sql` (probado en Postgres local; **falta pegarlo** en SQL Editor o en `esquema.sql` de `APK-CHECA`): `perfil_conductor` (moneda, tarifas, teléfono, ciudad, enlace público), `clientes`, `viajes_privados`, `contactos_sos`, `viajes_checa`; todas con RLS por usuario.
+- [x] Esquema compartido, listo en `supabase/clientela.sql` (probado en Postgres local; **ya corrido en SQL Editor de Supabase el 4 nov y verificado**; falta copiarlo a `esquema.sql` de `APK-CHECA` para que `supabase.yml` lo mantenga): `perfil_conductor` (moneda, tarifas, teléfono, ciudad, enlace público), `clientes`, `viajes_privados`, `contactos_sos`, `viajes_checa`; todas con RLS por usuario.
 - [x] Decidir el rediseño A/B (etapa 4): mezcla sugerida.
 - [x] Login con Google y nube (etapa 5) con la misma cuenta de Checa; subir solos los datos de `cartera` la primera vez (falta prueba con Google real).
 - [x] Moneda: selector (símbolo, formato, separadores, decimales) en Yo → Moneda, guardado en `perfil_conductor` (`js/moneda.js`); lo usan cotizar, cobros, mensajes y la tarjeta. Falta la prueba en el teléfono.
