@@ -44,7 +44,7 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [x] OK de Eduardo para pasarlo a `main` (18 oct).
 - [x] Prueba en el teléfono: a Eduardo **no lo convence el diseño de las pantallas** (23 oct).
 - [x] Nuevo acomodo de pantallas (https://claude.ai/artifact/LNFP8ikEjpyCwYPuhnnphm): Eduardo eligió la **mezcla sugerida** (4 nov): B en Agenda, Cobros, Cotizar y Ficha; A en Clientes (cuenta de viajes). Resumen, Yo, Mi tarjeta y arranque quedan igual.
-- [ ] Migrar las pantallas a la mezcla, una por una con su OK: [x] Agenda (un solo foco, 4 nov) · [x] Cobros (B, 4 nov) · [x] Cotizar (B, 4 nov) · [x] Ficha (B, 4 nov) · [ ] Clientes (A).
+- [x] Migrar las pantallas a la mezcla, una por una con su OK: [x] Agenda (un solo foco, 4 nov) · [x] Cobros (B, 4 nov) · [x] Cotizar (B, 4 nov) · [x] Ficha (B, 4 nov) · [x] Clientes (A, 4 nov).
 
 ### 5. Acceso con Google y nube
 - [x] Maqueta de la pantalla de acceso (falta OK de Eduardo): https://claude.ai/artifact/8GchMPGtNoTpUhSJ4UjVCZ (copia en `docs/maqueta-acceso.html`).
