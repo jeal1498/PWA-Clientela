@@ -17,6 +17,11 @@ function escribir(st) {
 }
 const parche = (p) => escribir({ ...leer(), ...p });
 export const sesion = () => leer().ses || null;
+let armar = {};
+/** cartera.js da aquí cómo armar el contenido de la tarjeta pública (null si aún no se puede). */
+export const configurar = (o) => { armar = o; };
+/** Enlace corto de la tarjeta (slug) si ya está en la nube; '' si todavía no. */
+export const slugListo = () => leer().slugOk || '';
 export const estado = () => { const s = leer(); return { email: s.ses?.email || '', nombre: s.ses?.nombre || '', ultima: s.ultima || 0, error: s.error || '' }; };
 
 // ---------- Peticiones ----------
@@ -107,6 +112,29 @@ function filaPerfil(s) {
   };
 }
 
+// Slug público de la tarjeta: nombre sin acentos + 5 letras al azar (no se adivina contando).
+function crearSlug(nombre) {
+  const base = String(nombre || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(/\s+/)[0].replace(/[^a-z0-9]/g, '').slice(0, 20) || 'chofer';
+  const letras = 'abcdefghjkmnpqrstuvwxyz23456789';
+  let r = '';
+  const a = crypto.getRandomValues(new Uint8Array(5));
+  for (const x of a) r += letras[x % letras.length];
+  return `${base}-${r}`;
+}
+// Sube el perfil con la tarjeta pública. Si el slug ya lo tiene otra cuenta (409), prueba con otro.
+async function subirPerfil(s, tarj) {
+  for (let i = 0; i < 6; i++) {
+    if (!s.slug && tarj) s.slug = crearSlug(s.driver);
+    try {
+      await subir('perfil_conductor', [{ ...filaPerfil(s), ...(s.slug ? { slug: s.slug } : {}), tarjeta: tarj }]);
+      return;
+    } catch (e) {
+      if (e.message === 'nube_409' && i < 5) { s.slug = null; continue; }
+      throw e;
+    }
+  }
+}
+
 // Trae filas nuevas y las mezcla en la lista local. Devuelve true si algo cambió.
 function mezclar(lista, filas, conocidos) {
   let cambio = false;
@@ -180,9 +208,16 @@ export function sincronizar(getData, onCambio) {
       // Subir lo que cambió aquí.
       await subirLista('clientes', data.clients, c, filaCliente);
       await subirLista('viajes_privados', data.trips, t, filaViaje);
+      const tarj = armar.tarjeta?.() || null, th = hash(tarj);
+      let slugOk = st.slugOk || '';
+      if (data.settings.onboarded && (hash(data.settings) !== st.ps || th !== st.th || (tarj && !slugOk))) {
+        const antes = data.settings.slug;
+        await subirPerfil(data.settings, tarj);
+        if (data.settings.slug !== antes) cambio = true;
+        slugOk = tarj ? data.settings.slug || '' : '';
+      }
       const ph = hash(data.settings);
-      if (ph !== st.ps && data.settings.onboarded) await subir('perfil_conductor', [filaPerfil(data.settings)]);
-      parche({ c, t, pc: masNuevo(cs, st.pc || ''), pt: masNuevo(vs, st.pt || ''), pp: remoto?.actualizado || st.pp || '', ps: data.settings.onboarded ? ph : st.ps, ultima: Date.now(), error: '' });
+      parche({ c, t, pc: masNuevo(cs, st.pc || ''), pt: masNuevo(vs, st.pt || ''), pp: remoto?.actualizado || st.pp || '', ps: data.settings.onboarded ? ph : st.ps, th, slugOk, ultima: Date.now(), error: '' });
       if (cambio) onCambio?.();
       return cambio;
     } catch (e) {

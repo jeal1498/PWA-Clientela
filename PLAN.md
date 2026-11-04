@@ -86,7 +86,7 @@ Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrih
 - [x] Decidir el rediseño A/B (etapa 4): mezcla sugerida.
 - [x] Login con Google y nube (etapa 5) con la misma cuenta de Checa; subir solos los datos de `cartera` la primera vez (falta prueba con Google real).
 - [x] Moneda: selector (símbolo, formato, separadores, decimales) en Yo → Moneda, guardado en `perfil_conductor` (`js/moneda.js`); lo usan cotizar, cobros, mensajes y la tarjeta. Falta la prueba en el teléfono.
-- [ ] Tarjeta con QR leyendo del perfil en la nube.
+- [x] Tarjeta con QR leyendo del perfil en la nube: enlace corto `tarjeta.html?c=slug` (función `tarjeta_publica`); el enlace `#j…`/`#z…` anterior sigue funcionando. Falta la prueba en el teléfono.
 - [ ] Usar el costo de gasolina de Checa para mostrar cuánto te queda de un viaje privado.
 - [ ] APK (etapa 6) y licencias combinadas con Checa.
 - Orden global y razones: `docs/web-y-ventas.md` de `jeal1498/APK-CHECA` («Pendientes de funciones nuevas»).
