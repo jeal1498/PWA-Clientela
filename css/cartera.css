@@ -603,3 +603,22 @@ body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 .aviso .pq small { color: var(--muted); }
 .aviso button { flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--humo); background: none; color: var(--hueso); font-weight: 700; }
 .aviso button.primary { background: var(--hueso); border-color: var(--hueso); color: var(--asfalto); }
+
+/* Cobros «toca cobrar a…» */
+.cuenta-total { font-size: 20px; }
+.avance { display: flex; gap: 4px; margin: 6px 0 12px; }
+.avance i { flex: 1; height: 4px; border-radius: 2px; background: var(--humo); }
+.avance i.on { background: var(--hueso); }
+.foco.cobrar { justify-items: start; }
+.foco.cobrar.late { border-color: var(--atrasado); }
+.foco.cobrar.debe { border-color: var(--te-debe); }
+.foco.cobrar .nombre.grande { font-size: 28px; }
+.numgrande { font: 800 52px/1 var(--fuente-titulos); letter-spacing: -.03em; }
+.foco.cobrar .actions { width: 100%; }
+.ct-viajes { width: 100%; }
+.ct-viajes summary { cursor: pointer; color: var(--muted); font-size: 13px; padding: 4px 0; }
+.ct-viajes .list { margin-top: 6px; }
+.fila-c.cobro { width: 100%; border: 0; color: var(--hueso); text-align: left; font: inherit; }
+.fila-c .av.s { width: 36px; height: 36px; border-radius: 50%; background: var(--cuerpo-logo); border: 1.5px solid var(--borde-logo); display: grid; place-items: center; font: 700 12px var(--fuente-datos); flex: none; }
+.fila-c .m.late { color: var(--atrasado); }
+.fila-c .m.debe { color: var(--te-debe); }
