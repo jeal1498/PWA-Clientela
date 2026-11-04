@@ -55,8 +55,8 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [x] Prueba de punta a punta (Eduardo dio el OK, 4 nov).
 
 ### 6. APK
-- [ ] Elegir cómo empaquetar: TWA (Bubblewrap) o Capacitor.
-- [ ] Compilar con GitHub Actions como `build.yml` de Checa (si el push de `.github/workflows/` se rechaza, Eduardo lo sube a mano).
+- [x] Empaquetado elegido: **TWA** (4 nov). Proyecto Gradle propio en `android/` (androidbrowserhelper, paquete `com.jeal1498.clientela`), sin Bubblewrap; compila y firma bien en pruebas locales.
+- [x] Compilar con GitHub Actions (`.github/workflows/apk.yml`; falta correrlo con los secretos) como `build.yml` de Checa (si el push de `.github/workflows/` se rechaza, Eduardo lo sube a mano).
 - [ ] Firma para que las actualizaciones se instalen encima.
 - [ ] Release con link directo al APK.
 - [ ] Prueba en el teléfono.
