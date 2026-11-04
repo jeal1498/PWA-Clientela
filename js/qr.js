@@ -29,6 +29,8 @@ export function buildPagePayload(s, phoneIntl) {
   if (o.auto && s.car) p.a = [s.car, s.year, s.color, s.seats, s.extras];
   const routes = o.routes.filter((r) => r.label.trim() && +r.price > 0);
   if (o.routesOn && routes.length) p.r = routes.map((r) => [r.label.trim(), Math.round(+r.price)]);
+  const m = s.currency;
+  if (m && (m.sym !== '$' || m.after || m.thou !== ',' || m.dec !== '.' || m.digits)) p.m = [m.sym, m.after ? 1 : 0, m.thou, m.dec, m.digits];
   p.p = s.pays;
   if (o.clabe && s.pays.includes('Transferencia') && s.clabe && s.holder.trim()) p.b = [s.bank, s.holder.trim(), s.clabe.replace(/\s/g, '')];
   if (o.hours.trim()) p.h = o.hours.trim();

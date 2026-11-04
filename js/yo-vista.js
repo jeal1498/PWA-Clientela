@@ -1,5 +1,6 @@
 // Pantalla Yo: Mi tarjeta, tu perfil (datos, auto, tarifa, cobro) y los ajustes.
-export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, hojaForm, hojaOn, cuentaForm, cuentaNube, resetOnboarding }) {
+import { rate, moneda } from './moneda.js';
+export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, hojaForm, hojaOn, cuentaForm, cuentaNube, monedaForm, resetOnboarding }) {
   function renderMe() {
     const data = getData();
     const s = data.settings;
@@ -17,7 +18,8 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
       <section class="filas">
         ${row('data-edit="1"', 'Mis datos', esc([s.driver, nicePhone].filter(Boolean).join(' · ') || 'Completa'))}
         ${row('data-edit="2"', 'Mi auto', esc(s.car ? `${s.car} ${s.year}`.trim() : 'Agrégalo'))}
-        ${row('data-edit="3"', 'Mi tarifa', `$${esc(s.perKm)}/km · $${esc(s.perHour)}/h`)}
+        ${row('data-edit="3"', 'Mi tarifa', `${esc(rate(s.perKm))}/km · ${esc(rate(s.perHour))}/h`)}
+        ${row('data-moneda', 'Moneda', esc(`${moneda().code} · ${moneda().sym}`))}
         ${row('data-edit="4"', 'Cómo cobro', esc((s.pays || []).join(', ') || 'Sin elegir'))}
         ${row('data-places', 'Mis lugares', esc(nPlaces ? `${nPlaces} con nombre` : 'Casa, Trabajo…'))}
       </section>
@@ -32,6 +34,7 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
     view.querySelectorAll('[data-edit]').forEach((b) => (b.onclick = () => editProfile(+b.dataset.edit)));
     $('[data-card]', view).onclick = openCard;
     $('[data-cuenta]', view).onclick = cuentaForm;
+    $('[data-moneda]', view).onclick = monedaForm;
     $('[data-hoja]', view).onclick = () => hojaForm();
     $('[data-contacts]', view)?.addEventListener('click', importContacts);
     $('[data-lada]', view).onclick = ladaForm;
