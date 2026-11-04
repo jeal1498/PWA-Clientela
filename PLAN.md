@@ -1,6 +1,6 @@
 # Plan de Clientela
 
-Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 24 oct 2026.
+Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 4 nov 2026.
 
 ## Resultado final
 Clientela publicada para conductores de Uber, DiDi, taxi y choferes independientes, gratis por ahora para recibir comentarios:
@@ -43,7 +43,8 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [x] Parte 7: arranque con la marca y repaso a 390 px con Playwright.
 - [x] OK de Eduardo para pasarlo a `main` (18 oct).
 - [x] Prueba en el teléfono: a Eduardo **no lo convence el diseño de las pantallas** (23 oct).
-- [ ] Nuevo acomodo de pantallas: dos direcciones en https://claude.ai/artifact/LNFP8ikEjpyCwYPuhnnphm (A línea del día, B un solo foco). Esperando que Eduardo elija; no se toca el código hasta entonces. Resumen, Yo, Mi tarjeta y arranque quedan igual por ahora.
+- [x] Nuevo acomodo de pantallas (https://claude.ai/artifact/LNFP8ikEjpyCwYPuhnnphm): Eduardo eligió la **mezcla sugerida** (4 nov): B en Agenda, Cobros, Cotizar y Ficha; A en Clientes (cuenta de viajes). Resumen, Yo, Mi tarjeta y arranque quedan igual.
+- [ ] Migrar las pantallas a la mezcla (después de la nube).
 
 ### 5. Acceso con Google y nube
 - [ ] Maqueta de la pantalla de acceso.
@@ -81,8 +82,8 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 
 ### 10. Puente con Checa (Supabase compartido) — 4 nov 2026
 Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrihfipz`) y la misma cuenta de Google. Cada una conserva su propósito; se enlazan.
-- [ ] Esquema compartido (se despliega desde `supabase/` del repo `APK-CHECA`): `perfil_conductor` (moneda, tarifas, teléfono, ciudad, enlace público), `clientes`, `viajes_privados`, `contactos_sos`, `viajes_checa`; todas con RLS por usuario.
-- [ ] Decidir el rediseño A/B (etapa 4) **antes** de migrar pantallas.
+- [x] Esquema compartido, listo en `supabase/clientela.sql` (probado en Postgres local; **falta pegarlo** en SQL Editor o en `esquema.sql` de `APK-CHECA`): `perfil_conductor` (moneda, tarifas, teléfono, ciudad, enlace público), `clientes`, `viajes_privados`, `contactos_sos`, `viajes_checa`; todas con RLS por usuario.
+- [x] Decidir el rediseño A/B (etapa 4): mezcla sugerida.
 - [ ] Login con Google y nube (etapa 5) con la misma cuenta de Checa; subir solos los datos de `cartera` la primera vez.
 - [ ] Moneda: selector (símbolo, formato) guardado en `perfil_conductor`; hoy todo es MXN.
 - [ ] Tarjeta con QR leyendo del perfil en la nube.
