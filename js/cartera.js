@@ -666,20 +666,24 @@ function tripForm(t = null, preset = {}) {
 // Te escriben manejando: de, a y listo. El precio sale con tu tarifa y se manda por WhatsApp sin agendar.
 function quoteForm(preset = {}) {
   openSheet(`<h2>Cotizar</h2>
-    <div class="wide para"><span class="eti">Para · opcional</span><div class="chips wrap" id="qchips"></div><div class="chips wrap" id="qsvc" hidden></div></div>
+    <div class="wide para"><span class="eti">¿Para quién? · opcional</span><div class="chips wrap" id="qchips"></div></div>
     <input type="hidden" name="clientId" value="${esc(preset.clientId || '')}">
-    <div class="route wide">${placeInput(null, 'a', 'De dónde', true)}${placeInput(null, 'b', 'A dónde')}</div>
-    <small class="field wide muted" id="pnote"></small>
-    <div class="wide svc" id="troute" hidden></div>
+    <div class="wide para" id="qsvcbox" hidden><span class="eti">Sus viajes de siempre</span><div class="viajes-sig" id="qsvc"></div></div>
+    <details class="wide otro" id="qotro" open><summary><b>Otro viaje</b><small>De → A: escribe dos lugares y calculo el precio</small></summary>
+      <div class="route">${placeInput(null, 'a', 'De dónde', true)}${placeInput(null, 'b', 'A dónde')}</div>
+      <small class="field wide muted" id="pnote"></small>
+      <div class="wide svc" id="troute" hidden></div></details>
     <input type="hidden" name="date" value="${today()}">
     <div class="wide cuando">${whenHtml}<input name="time" type="time" aria-label="Hora"></div>
-    <div class="cotiza wide"><span class="eti">Precio con tu tarifa</span>
-      <label class="precio"><span>${sym()}</span><input name="price" type="number" inputmode="numeric" min="0" step="10" placeholder="0" aria-label="Precio"></label>
+    <div class="wide barra-fija cotiza">
+      <div class="fila-precio"><span class="eti" id="qlabel">Precio con tu tarifa</span>
+        <label class="precio"><span>${sym()}</span><input name="price" type="number" inputmode="numeric" min="0" step="10" placeholder="0" aria-label="Precio"></label></div>
       <div id="qleft" class="queda" hidden></div>
-      <div id="qcalc" class="muted"></div></div>
-    <button type="button" class="primary wide grande" data-send>${icon('wa')} Mandar precio por WhatsApp</button>
-    <button type="button" class="wide grande" data-book>Agendar este viaje</button>
-    <button type="button" class="wide ghost" data-close>Cerrar</button>`, (form) => {
+      <details class="calc-d"><summary>Cómo se calculó</summary><div id="qcalc" class="muted"></div></details>
+      <button type="button" class="primary wide grande" data-send>${icon('wa')} Mandar precio por WhatsApp</button>
+      <button type="button" class="wide grande" data-book>Agendar este viaje</button>
+      <button type="button" class="wide ghost" data-close>Cerrar</button>
+    </div>`, (form) => {
     form.classList.add('qform');
     const els = form.elements;
     const fromIn = $('[data-pt=a]', form);
@@ -698,6 +702,7 @@ function quoteForm(preset = {}) {
       box.innerHTML = `<b style="${price - gas < 0 ? 'color:var(--atrasado)' : ''}">Te quedan ${fmtMoney(price - gas)}</b><small>${fmtMoney(price)} − gasolina ${fmtMoney(gas)} (${km} km)</small>`;
     };
     els.price.addEventListener('input', left);
+    const label = () => { $('#qlabel', form).textContent = fromIn.value.trim() || toIn.value.trim() ? shortRoute(fromIn.value.trim(), toIn.value.trim()) : 'Precio con tu tarifa'; };
     const cur = () => client(els.clientId.value);
     const read = () => ({ clientId: els.clientId.value, from: fromIn.value.trim(), to: toIn.value.trim(), fromPt: rt.fromPt, toPt: rt.toPt, stops: st.get(), km: rt.km, min: rt.min, path: rt.path, price: +els.price.value || 0, date: els.date.value || today(), time: els.time.value || '' });
     const suggest = () => {
@@ -706,6 +711,7 @@ function quoteForm(preset = {}) {
       const q = rt.km ? quote(+rt.km, +rt.min || Math.round(rt.km * 2), ctx) : null;
       $('#qcalc', form).innerHTML = (q ? calcTable(q) : '<small>Elige de dónde y a dónde para calcular, o escribe el precio.</small>') + (same ? `<small>La última vez le cobraste ${money(same.price)}.</small>` : '');
       if (!typed && q) els.price.value = q.total;
+      label();
       left();
     };
     const recalc = async () => {
@@ -753,10 +759,12 @@ function quoteForm(preset = {}) {
     };
     // Sus viajes de siempre: un toque llena de dónde, a dónde y el precio.
     const qsvc = $('#qsvc', form);
+    const qotro = $('#qotro', form);
     function drawServices() {
       const svs = cur()?.services || [];
-      qsvc.hidden = !svs.length;
-      qsvc.innerHTML = svs.map((sv) => `<button type="button" data-sv="${sv.id}">${esc(sv.name || autoName(sv))} · ${money(svcPrice(sv))}</button>`).join('');
+      $('#qsvcbox', form).hidden = !svs.length;
+      qotro.open = !svs.length; // con viajes de siempre, «Otro viaje» queda cerrado
+      qsvc.innerHTML = svs.map((sv) => `<button type="button" class="opc-v" data-sv="${sv.id}"><span class="r"><b>${esc(sv.name || autoName(sv))}</b><span class="m">${money(svcPrice(sv))}</span></span>${sv.km ? `<small>${esc(sv.km)} km${sv.min ? ` · ${esc(sv.min)} min` : ''}</small>` : ''}</button>`).join('');
     }
     qsvc.onclick = (e) => {
       const b = e.target.closest('[data-sv]');
@@ -768,6 +776,8 @@ function quoteForm(preset = {}) {
       st.set(f.stops);
       els.price.value = f.price; typed = true;
       qsvc.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+      qotro.open = false;
+      label();
       routeEl.hidden = !(f.fromPt && f.toPt && f.path);
       if (!routeEl.hidden) routeEl.innerHTML = `${mapSvg(f.path, 'Ruta', f.stops)}<div class="stats"><div><small>Distancia</small><b>${f.km} km</b></div><div><small>Tiempo</small><b>${f.min} min</b></div></div>`;
       $('#qcalc', form).innerHTML = '<small>Precio de su viaje de siempre.</small>';
