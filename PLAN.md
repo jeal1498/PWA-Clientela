@@ -56,10 +56,11 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 
 ### 6. APK
 - [x] Empaquetado elegido: **TWA** (4 nov). Proyecto Gradle propio en `android/` (androidbrowserhelper, paquete `com.jeal1498.clientela`), sin Bubblewrap; compila y firma bien en pruebas locales.
-- [x] Compilar con GitHub Actions (`.github/workflows/apk.yml`; falta correrlo con los secretos) como `build.yml` de Checa (si el push de `.github/workflows/` se rechaza, Eduardo lo sube a mano).
-- [ ] Firma para que las actualizaciones se instalen encima.
-- [ ] Release con link directo al APK.
-- [ ] Prueba en el teléfono.
+- [x] Compilar con GitHub Actions (`.github/workflows/apk.yml`; corrido el 4 nov con los secretos `CLIENTELA_KEYSTORE_B64` y `CLIENTELA_FIRMA`, que viven solo ahí, nunca en el repo) como `build.yml` de Checa (si el push de `.github/workflows/` se rechaza, Eduardo lo sube a mano).
+- [x] Firma para que las actualizaciones se instalen encima (misma llave siempre; Eduardo guarda copia de los dos secretos).
+- [x] Release con link directo: https://github.com/jeal1498/PWA-Clientela/releases/latest/download/Clientela.apk (con `assetlinks.json` adjunto).
+- [x] Quitar la barra de direcciones: repo `jeal1498/jeal1498.github.io` con `.well-known/assetlinks.json` y `.nojekyll` (4 nov); la app abre a pantalla completa.
+- [x] Prueba en el teléfono (4 nov): instala, abre sin barra y con tus datos. Falta probar el login de Google desde cero dentro del APK.
 
 ### 7. Link de reserva y anticipo
 - [ ] Maqueta.
@@ -88,7 +89,7 @@ Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrih
 - [x] Moneda: selector (símbolo, formato, separadores, decimales) en Yo → Moneda, guardado en `perfil_conductor` (`js/moneda.js`); lo usan cotizar, cobros, mensajes y la tarjeta. Falta la prueba en el teléfono.
 - [x] Tarjeta con QR leyendo del perfil en la nube: enlace corto `tarjeta.html?c=slug` (función `tarjeta_publica`); el enlace `#j…`/`#z…` anterior sigue funcionando. Falta la prueba en el teléfono.
 - [x] Costo de gasolina de `perfil_conductor.gasolina_km` (lo escribe Checa; mientras tanto se pone en Yo → Gasolina) y «Te quedan $x» en Cotizar. **Pendiente en Checa:** escribir `gasolina_km` (precio por litro ÷ km por litro). Falta la prueba en el teléfono.
-- [ ] APK (etapa 6) y licencias combinadas con Checa.
+- [x] APK (etapa 6) · [ ] licencias combinadas con Checa.
 - Orden global y razones: `docs/web-y-ventas.md` de `jeal1498/APK-CHECA` («Pendientes de funciones nuevas»).
 
 ## Pendientes sueltos
