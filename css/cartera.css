@@ -662,3 +662,17 @@ nav.redondos { margin-bottom: 10px; }
 .acord-body { padding: 0 12px 12px; display: grid; gap: 8px; }
 .acord-body .trip { margin-bottom: 0; background: var(--bg); }
 nav.redondos .redondo { background: var(--surface); }
+
+/* Clientes con su cuenta de viajes (rediseño A) */
+.cl-lista { background: var(--surface); border-radius: 20px; overflow: hidden; margin-bottom: 8px; }
+.cl-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-top: 1px solid var(--bg); cursor: pointer; }
+.cl-row:first-child { border-top: 0; }
+.cl-row .n { flex: 1; min-width: 0; display: grid; }
+.cl-row .n b, .cl-row .n small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cl-row .n small { color: var(--muted); font-size: 12.5px; }
+.cl-row .av.s { width: 36px; height: 36px; border-radius: 50%; background: var(--cuerpo-logo); border: 1.5px solid var(--borde-logo); display: grid; place-items: center; font: 700 12px var(--fuente-datos); flex: none; }
+.cl-row .cuenta { display: grid; justify-items: end; line-height: 1.1; min-width: 44px; }
+.cl-row .cuenta b { font: 700 16px var(--fuente-datos); }
+.cl-row .cuenta small { color: var(--muted); font-size: 11px; }
+.cl-pie { display: flex; justify-content: space-between; padding: 8px 4px; color: var(--muted); font: 500 12px var(--fuente-datos); }
+.cl-pie b { color: var(--hueso); }
