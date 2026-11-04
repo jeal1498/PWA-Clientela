@@ -2,9 +2,12 @@
 // Lee las tarifas del enlace (#/?c=…); si no hay, usa las del propio teléfono (vista previa del conductor).
 import { useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Users, Luggage, CalendarClock, MessageCircle, Loader2, Info, Route, Clock, ArrowDownUp, Settings, ShieldCheck } from 'lucide-react';
+import { Users, Luggage, CalendarClock, MessageCircle, Loader2, Info, Route, Clock, ArrowDownUp, Settings, ShieldCheck, UserPlus, Wifi } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
-import { decodeConfig } from '../lib/share.js';
+import { decodeConfig, publicLink } from '../lib/share.js';
+import { downloadVCard } from '../lib/vcard.js';
+import WifiCard from '../components/WifiCard.jsx';
+import { useToast } from '../components/Toast.jsx';
 import { quote } from '../lib/pricing.js';
 import { money, kmText, minText } from '../lib/format.js';
 import { clientRequestMessage, waLink } from '../lib/whatsapp.js';
@@ -20,6 +23,12 @@ export default function PublicQuote() {
   const config = shared || store.config;
   const { driver } = config;
   const isPreview = !shared;
+  const [toast, showToast] = useToast();
+  // El contacto lleva el enlace del cotizador: el compartido, o el que generaría el conductor.
+  const saveContact = () => {
+    downloadVCard({ ...driver, link: shared ? location.href : publicLink(config) });
+    showToast('Abre el archivo para guardar el contacto');
+  };
 
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
@@ -41,13 +50,24 @@ export default function PublicQuote() {
     <div className="mx-auto min-h-dvh max-w-lg px-4 pt-8 pb-28">
       {/* Encabezado tipo tarjeta de presentación */}
       <header className="mb-6 text-center">
-        <img src="./icon.svg" alt="" className="mx-auto mb-3 size-16" />
+        {driver.photo
+          ? <img src={driver.photo} alt={driver.name || 'Conductor'} className="mx-auto mb-3 size-20 rounded-full object-cover ring-2 ring-cobrado/40" />
+          : <img src="./icon.svg" alt="" className="mx-auto mb-3 size-16" />}
         <h1 className="font-titulo text-3xl leading-tight">{driver.name ? `Viaja con ${driver.name}` : 'Cotiza tu viaje'}</h1>
         <p className="mt-1 text-gris">Transporte privado{driver.city ? ` en ${driver.city}` : ''}. Precio al instante, sin apps.</p>
         <div className="mt-3 flex justify-center gap-3 text-xs text-gris">
           <span className="flex items-center gap-1"><ShieldCheck className="size-3.5 text-cobrado" /> Precio claro</span>
           <span className="flex items-center gap-1"><MessageCircle className="size-3.5 text-cobrado" /> Confirmas por WhatsApp</span>
         </div>
+        {config.wifi?.ssid && (
+          <button type="button" onClick={() => document.getElementById('wifi')?.scrollIntoView({ behavior: 'smooth' })} className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-cobrado/10 px-3 py-1.5 text-xs text-cobrado">
+            <Wifi className="size-3.5" /> ¿Vas a bordo? Conéctate al Wi-Fi
+          </button>
+        )}
+        {/* Fidelización: guardar el contacto con un toque */}
+        <Button variant="outline" icon={UserPlus} className="mt-4 w-full border-cobrado/40 text-cobrado" onClick={saveContact}>
+          Guardar contacto{driver.name ? ` de ${driver.name}` : ''}
+        </Button>
       </header>
 
       {isPreview && (
@@ -105,6 +125,8 @@ export default function PublicQuote() {
           )}
         </Card>
 
+        <div id="wifi" className="scroll-mt-4"><WifiCard wifi={config.wifi} onToast={showToast} /></div>
+
         {ready && (
           <Card className="space-y-2">
             <TextInput placeholder="Tu nombre (opcional)" value={name} onChange={(e) => setName(e.target.value)} />
@@ -122,6 +144,7 @@ export default function PublicQuote() {
         </div>
       </div>
       <p className="mt-6 text-center text-xs text-gris/60">Precio estimado; puede variar por tráfico, casetas o cambios de ruta.</p>
+      {toast}
     </div>
   );
 }

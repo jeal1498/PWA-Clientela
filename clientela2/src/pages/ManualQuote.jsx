@@ -1,7 +1,7 @@
 // Módulo C · Cotizador Exprés para el conductor (/app/manual).
 // Para cuando el cliente llama o escribe: cotiza en segundos, ve su ganancia real y negocia con datos.
 import { useMemo, useState } from 'react';
-import { Search, Keyboard, Luggage, Milestone, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, ArrowDownUp, Loader2, Info } from 'lucide-react';
+import { Search, Keyboard, Luggage, Milestone, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, ArrowDownUp, Loader2, Info, CheckCheck, BookmarkPlus, Star } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { quote, evaluate, roundUp } from '../lib/pricing.js';
 import { money, money2, kmText, minText } from '../lib/format.js';
@@ -12,11 +12,13 @@ import PlaceInput from '../components/PlaceInput.jsx';
 import ProfitBadge, { toneOf } from '../components/ProfitBadge.jsx';
 import Breakdown from '../components/Breakdown.jsx';
 import { useToast } from '../components/Toast.jsx';
+import TripSheet from '../components/TripSheet.jsx';
 
-const EMPTY = { mode: 'search', from: null, to: null, km: '', min: '', bags: 0, stops: 0, tolls: '', date: '', time: '', clientName: '', clientPhone: '' };
+const EMPTY = { mode: 'search', from: null, to: null, km: '', min: '', bags: 0, stops: 0, tolls: '', date: '', time: '', clientId: '', clientName: '', clientPhone: '' };
 
 export default function ManualQuote() {
-  const { config, addQuote } = useStore();
+  const { config, addQuote, clients, update } = useStore();
+  const [tripOpen, setTripOpen] = useState(false);
   const [f, setF] = useState(EMPTY);
   const [override, setOverride] = useState(null); // precio negociado; null = sugerido
   const [showPrivate, setShowPrivate] = useState(true);
@@ -42,6 +44,20 @@ export default function ManualQuote() {
   ];
 
   const message = () => driverProposalMessage({ clientName: f.clientName, from: f.from, to: f.to, date: f.date, time: f.time, q, price, driverName: config.driver.name, includeBreakdown: withBreakdown });
+
+  // Cliente frecuente elegido (CRM): llena teléfono y ofrece su tarifa preferencial.
+  const client = clients.find((c) => c.id === f.clientId);
+  const pickClient = (name) => {
+    const c = clients.find((x) => x.name.toLowerCase() === name.trim().toLowerCase());
+    setF((s) => ({ ...s, clientName: name, clientId: c?.id || '', clientPhone: c?.phone || s.clientPhone }));
+  };
+  const prefPrice = client && +client.discount > 0 && q.price > 0 ? roundUp(q.price * (1 - client.discount / 100), config.rates.rounding) : 0;
+
+  function saveRoute() {
+    const r = { id: crypto.randomUUID?.() || String(Date.now()), name: '', from: f.from?.label || '', to: f.to?.label || '', km, min, price: override ?? 0 };
+    update('clients', client.id, { routes: [...(client.routes || []), r] });
+    showToast(`Ruta guardada en ${client.name}`);
+  }
 
   function save() {
     addQuote({
@@ -94,7 +110,10 @@ export default function ManualQuote() {
               </button>
             )}
           </Field>
-          <Field label="Cliente"><TextInput value={f.clientName} onChange={(e) => setF((s) => ({ ...s, clientName: e.target.value }))} placeholder="Nombre" /></Field>
+          <Field label="Cliente">
+            <TextInput list="mq-clientes" value={f.clientName} onChange={(e) => pickClient(e.target.value)} placeholder="Nombre" />
+            <datalist id="mq-clientes">{clients.map((c) => <option key={c.id} value={c.name} />)}</datalist>
+          </Field>
           <Field label="Fecha"><TextInput type="date" value={f.date} onChange={(e) => setF((s) => ({ ...s, date: e.target.value }))} /></Field>
           <Field label="Hora"><TextInput type="time" value={f.time} onChange={(e) => setF((s) => ({ ...s, time: e.target.value }))} /></Field>
         </div>
@@ -133,6 +152,11 @@ export default function ManualQuote() {
           ))}
         </div>
         <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+          {prefPrice > 0 && (
+            <button type="button" onClick={() => setOverride(prefPrice)} className="col-span-2 flex h-10 items-center justify-center gap-1 rounded-xl bg-tedebe/10 text-sm text-tedebe active:scale-95">
+              <Star className="size-4" /> Tarifa preferencial de {client.name} (−{client.discount} %): {money(prefPrice)}
+            </button>
+          )}
           <button type="button" disabled={!ready} onClick={() => setOverride(ev.minPriceForGoals)} className="flex h-10 items-center justify-center gap-1 rounded-xl bg-asfalto text-sm text-tedebe active:scale-95 disabled:opacity-40"><Wand2 className="size-4" /> Mínimo de mi meta</button>
           <button type="button" disabled={override == null} onClick={() => setOverride(null)} className="h-10 rounded-xl bg-asfalto text-sm text-gris active:scale-95 disabled:opacity-40">Volver al sugerido</button>
         </div>
@@ -182,8 +206,16 @@ export default function ManualQuote() {
         <div className="grid grid-cols-2 gap-2">
           <Button variant="ghost" icon={Copy} disabled={!ready} onClick={async () => showToast((await copyText(message())) ? 'Texto copiado' : 'No se pudo copiar')}>Copiar</Button>
           <Button variant="outline" icon={Save} disabled={!ready} onClick={save}>Guardar</Button>
+          <Button variant="ghost" icon={CheckCheck} disabled={!ready} onClick={() => setTripOpen(true)}>Ya se hizo</Button>
+          <Button variant="ghost" icon={BookmarkPlus} disabled={!client || !(km > 0)} onClick={saveRoute} title={client ? `Guardar esta ruta en ${client.name}` : 'Elige un cliente guardado'}>Guardar ruta</Button>
         </div>
       </Card>
+      <TripSheet
+        open={tripOpen}
+        onClose={() => setTripOpen(false)}
+        prefill={{ clientId: f.clientId, clientName: f.clientName, from: f.from?.label || '', to: f.to?.label || '', km, amount: price, ...(f.date ? { date: f.date } : {}) }}
+        onSaved={() => showToast('Viaje guardado en bitácora')}
+      />
       {toast}
     </>
   );

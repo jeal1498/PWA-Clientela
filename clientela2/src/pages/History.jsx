@@ -1,5 +1,8 @@
 // Historial de cotizaciones (offline). Marca aceptada/rechazada para medir tu tasa de cierre.
-import { Check, X, Trash2, MessageCircle, Inbox } from 'lucide-react';
+import { useState } from 'react';
+import { Check, X, Trash2, MessageCircle, Inbox, CheckCheck } from 'lucide-react';
+import TripSheet from '../components/TripSheet.jsx';
+import { useToast } from '../components/Toast.jsx';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/AppStore.jsx';
 import { money, kmText, minText, dateText } from '../lib/format.js';
@@ -15,6 +18,8 @@ const STATUS = {
 
 export default function History() {
   const { history, updateQuote, removeQuote, config } = useStore();
+  const [done, setDone] = useState(null); // cotización que se pasa a la bitácora
+  const [toast, showToast] = useToast();
 
   if (!history.length) {
     return (
@@ -51,6 +56,7 @@ export default function History() {
               <div className="ml-auto flex gap-1.5">
                 <a className={icon} href={waLink(h.clientPhone, msg, config.driver.lada)} target="_blank" rel="noopener" aria-label="Reenviar por WhatsApp"><MessageCircle className="size-4 text-[#25D366]" /></a>
                 <button className={icon} onClick={() => updateQuote(h.id, { status: 'aceptada' })} aria-label="Marcar aceptada"><Check className="size-4 text-cobrado" /></button>
+                <button className={icon} onClick={() => setDone(h)} aria-label="Ya se hizo: pasar a bitácora" disabled={!!h.tripId}><CheckCheck className={h.tripId ? 'size-4 text-gris/40' : 'size-4 text-hueso'} /></button>
                 <button className={icon} onClick={() => updateQuote(h.id, { status: 'rechazada' })} aria-label="Marcar rechazada"><X className="size-4 text-gris" /></button>
                 <button className={icon} onClick={() => confirm('¿Borrar esta cotización?') && removeQuote(h.id)} aria-label="Borrar"><Trash2 className="size-4 text-atrasado" /></button>
               </div>
@@ -58,6 +64,13 @@ export default function History() {
           </Card>
         );
       })}
+      <TripSheet
+        open={!!done}
+        onClose={() => setDone(null)}
+        prefill={done && { clientName: done.clientName, from: done.from, to: done.to, km: done.km, amount: done.price, ...(done.date ? { date: done.date } : {}) }}
+        onSaved={(t) => { updateQuote(done.id, { status: 'aceptada', tripId: t.id }); showToast('Viaje guardado en bitácora'); }}
+      />
+      {toast}
     </>
   );
 }
