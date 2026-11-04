@@ -1,0 +1,83 @@
+name: Compilar APK
+
+# Empaqueta la PWA como app de Android (TWA, carpeta android/). Se corre a mano desde Actions → «Compilar APK» → Run workflow,
+# o sola al cambiar android/. La web se actualiza sola dentro de la app: solo hace falta un APK nuevo si cambia android/.
+on:
+  push:
+    branches: [main]
+    paths: ["android/**", ".github/workflows/apk.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Llave de firma: siempre la misma, para que cada APK se instale encima del anterior.
+      # Vive solo en los secretos del repo (nunca en el código): CLIENTELA_KEYSTORE_B64 (el archivo .p12 en base64)
+      # y CLIENTELA_FIRMA (su contraseña). Guarda una copia de los dos: sin ellos habría que desinstalar la app.
+      - name: Llave de firma
+        env:
+          KEYSTORE_B64: ${{ secrets.CLIENTELA_KEYSTORE_B64 }}
+          FIRMA: ${{ secrets.CLIENTELA_FIRMA }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ] || [ -z "$FIRMA" ]; then
+            echo "::error::Faltan los secretos CLIENTELA_KEYSTORE_B64 y CLIENTELA_FIRMA (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/clientela.p12"
+          echo "CLIENTELA_KEYSTORE_PATH=$RUNNER_TEMP/clientela.p12" >> "$GITHUB_ENV"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Compilar
+        working-directory: android
+        env:
+          CLIENTELA_FIRMA: ${{ secrets.CLIENTELA_FIRMA }}
+          VERSION_CODE: ${{ github.run_number }}
+        run: gradle assembleRelease --no-daemon
+
+      - name: Preparar descarga
+        env:
+          CLIENTELA_FIRMA: ${{ secrets.CLIENTELA_FIRMA }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk Clientela.apk
+          HUELLA=$(keytool -list -v -keystore "$CLIENTELA_KEYSTORE_PATH" -alias clientela -storepass "$CLIENTELA_FIRMA" | sed -n 's/.*SHA256: //p' | head -1)
+          echo "HUELLA=$HUELLA" >> "$GITHUB_ENV"
+          # Archivo que Android consulta para quitar la barra de direcciones (va en la raíz de jeal1498.github.io).
+          cat > assetlinks.json <<EOF
+          [{
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+              "namespace": "android_app",
+              "package_name": "com.jeal1498.clientela",
+              "sha256_cert_fingerprints": ["$HUELLA"]
+            }
+          }]
+          EOF
+          cat assetlinks.json
+
+      - name: Publicar
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-v${{ github.run_number }}
+          name: Clientela APK v${{ github.run_number }}
+          body: |
+            Descarga `Clientela.apk` e instálalo (Android). Se instala encima de la versión anterior.
+
+            Huella SHA-256 de la firma (para `assetlinks.json`):
+            `${{ env.HUELLA }}`
+          files: |
+            Clientela.apk
+            assetlinks.json
