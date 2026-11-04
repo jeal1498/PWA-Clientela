@@ -47,7 +47,7 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [ ] Migrar las pantallas a la mezcla (después de la nube).
 
 ### 5. Acceso con Google y nube
-- [ ] Maqueta de la pantalla de acceso.
+- [x] Maqueta de la pantalla de acceso (falta OK de Eduardo): https://claude.ai/artifact/8GchMPGtNoTpUhSJ4UjVCZ (copia en `docs/maqueta-acceso.html`).
 - [ ] Decidir: mismo proyecto de Supabase de Checa o uno nuevo.
 - [ ] Acceso obligatorio con Google, como Checa.
 - [ ] Subir solos los datos del teléfono la primera vez.
