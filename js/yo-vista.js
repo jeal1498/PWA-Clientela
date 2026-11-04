@@ -1,6 +1,6 @@
 // Pantalla Yo: Mi tarjeta, tu perfil (datos, auto, tarifa, cobro) y los ajustes.
 import { rate, moneda } from './moneda.js';
-export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, hojaForm, hojaOn, cuentaForm, cuentaNube, monedaForm, gasolinaForm, resetOnboarding }) {
+export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, cuentaForm, cuentaNube, monedaForm, gasolinaForm, resetOnboarding }) {
   function renderMe() {
     const data = getData();
     const s = data.settings;
@@ -26,7 +26,6 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
       </section>
       <section class="filas">
         ${row('data-cuenta', 'Cuenta de Google', esc(cuentaNube().email || 'Sin sesión'))}
-        ${row('data-hoja', 'Respaldo en Google Sheets', hojaOn() ? 'Conectado' : 'Conectar')}
         ${'contacts' in navigator ? row('data-contacts', 'Importar contactos', '') : ''}
         ${row('data-lada', 'Lada para WhatsApp', `+${esc(s.lada || '52')}`)}
         ${row('data-tour', 'Ver el inicio rápido otra vez', '')}
@@ -37,7 +36,6 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
     $('[data-cuenta]', view).onclick = cuentaForm;
     $('[data-moneda]', view).onclick = monedaForm;
     $('[data-gas]', view).onclick = gasolinaForm;
-    $('[data-hoja]', view).onclick = () => hojaForm();
     $('[data-contacts]', view)?.addEventListener('click', importContacts);
     $('[data-lada]', view).onclick = ladaForm;
     $('[data-places]', view).onclick = placesForm;

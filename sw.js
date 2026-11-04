@@ -1,5 +1,5 @@
 // Service worker de Clientela: funciona sin internet. Sube CACHE al publicar cambios.
-const CACHE = 'clientela-v27';
+const CACHE = 'clientela-v28';
 const ASSETS = [
   './',
   'index.html',
@@ -15,7 +15,6 @@ const ASSETS = [
   'js/cliente-detalle-vista.js',
   'js/clientes-vista.js',
   'js/cobros-vista.js',
-  'js/hoja.js',
   'js/iconos.js',
   'js/inicio-rapido-campos.js',
   'js/inicio-rapido-vista.js',
