@@ -1,6 +1,6 @@
 // Pantalla Yo: Mi tarjeta, tu perfil (datos, auto, tarifa, cobro) y los ajustes.
 import { rate, moneda } from './moneda.js';
-export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, hojaForm, hojaOn, cuentaForm, cuentaNube, monedaForm, resetOnboarding }) {
+export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, hojaForm, hojaOn, cuentaForm, cuentaNube, monedaForm, gasolinaForm, resetOnboarding }) {
   function renderMe() {
     const data = getData();
     const s = data.settings;
@@ -19,6 +19,7 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
         ${row('data-edit="1"', 'Mis datos', esc([s.driver, nicePhone].filter(Boolean).join(' · ') || 'Completa'))}
         ${row('data-edit="2"', 'Mi auto', esc(s.car ? `${s.car} ${s.year}`.trim() : 'Agrégalo'))}
         ${row('data-edit="3"', 'Mi tarifa', `${esc(rate(s.perKm))}/km · ${esc(rate(s.perHour))}/h`)}
+        ${row('data-gas', 'Gasolina', +s.gasKm > 0 ? esc(`${rate(s.gasKm)}/km`) : 'Agrégala')}
         ${row('data-moneda', 'Moneda', esc(`${moneda().code} · ${moneda().sym}`))}
         ${row('data-edit="4"', 'Cómo cobro', esc((s.pays || []).join(', ') || 'Sin elegir'))}
         ${row('data-places', 'Mis lugares', esc(nPlaces ? `${nPlaces} con nombre` : 'Casa, Trabajo…'))}
@@ -35,6 +36,7 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
     $('[data-card]', view).onclick = openCard;
     $('[data-cuenta]', view).onclick = cuentaForm;
     $('[data-moneda]', view).onclick = monedaForm;
+    $('[data-gas]', view).onclick = gasolinaForm;
     $('[data-hoja]', view).onclick = () => hojaForm();
     $('[data-contacts]', view)?.addEventListener('click', importContacts);
     $('[data-lada]', view).onclick = ladaForm;

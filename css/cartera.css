@@ -568,3 +568,8 @@ body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 .acceso .barra i { display: block; height: 100%; width: 40%; background: var(--cobrado); border-radius: 4px; animation: sube 1.2s var(--curva) infinite alternate; }
 @keyframes sube { to { width: 92%; } }
 @media (prefers-reduced-motion: reduce) { .acceso .barra i { animation: none; width: 70%; } }
+
+/* «Te quedan $x» al cotizar */
+.queda { display: grid; gap: 2px; background: var(--tablero); border-radius: 14px; padding: 8px 12px; }
+.queda b { font: 700 17px var(--fuente-datos); color: var(--cobrado); }
+.queda small { color: var(--gris-texto); font-size: 12px; }

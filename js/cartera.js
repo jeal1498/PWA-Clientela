@@ -25,7 +25,7 @@ import { numOr, PRESETS, isAirport, isNight, calculateQuote } from './calculos.j
 import { loadData, saveData } from './almacenamiento.js';
 import * as hoja from './hoja.js';
 import * as nube from './nube.js';
-import { MONEDAS, setMoneda, moneda, sym, money as fmtMoney } from './moneda.js';
+import { MONEDAS, setMoneda, moneda, sym, rate, money as fmtMoney } from './moneda.js';
 
 
 // Clientela: clientes privados del conductor (agenda, cotizaciones, viajes, cobros y WhatsApp).
@@ -187,7 +187,7 @@ const renderSummary = createSummaryView({
 // ---------- Yo (perfil y ajustes) ----------
 const renderMe = createMeView({
   getData: () => data, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile,
-  openCard: () => { location.hash = '#/tarjeta'; }, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(), cuentaForm, cuentaNube: nube.estado, monedaForm,
+  openCard: () => { location.hash = '#/tarjeta'; }, importContacts, ladaForm, placesForm, hojaForm, hojaOn: () => !!hoja.connection(), cuentaForm, cuentaNube: nube.estado, monedaForm, gasolinaForm,
   resetOnboarding: () => { data.settings.onboarded = false; obStep = 0; refresh(); },
 });
 // Lugares con nombre: los tuyos y los de cada cliente. Se crean con la ☆ al elegir un lugar.
@@ -225,6 +225,32 @@ function ladaForm() {
     <div class="buttons"><button type="button" data-close>Cancelar</button><button class="primary">Guardar</button></div>`, (form) => {
     $('[data-close]', form).onclick = () => sheet.close();
     form.onsubmit = () => { data.settings.lada = form.elements.lada.value.replace(/\D/g, '') || '52'; refresh(); toast('Guardado'); };
+  });
+}
+// Gasolina: cuánto gastas por km. Si Checa ya lo tiene en tu cuenta, se toma de ahí (settings.gasKm).
+const gasKm = () => (+data.settings.gasKm > 0 ? +data.settings.gasKm : 0);
+function gasolinaForm() {
+  const f0 = data.settings.fuel || {};
+  openSheet(`<h2>Gasolina</h2>
+    <p class="field wide muted" style="font-weight:400">Con esto, al cotizar ves cuánto te queda del viaje. Checa usa el mismo dato en tu cuenta.</p>
+    ${field(`Precio por litro (${esc(sym())})`, `<input class="plain" name="litro" type="number" inputmode="decimal" min="0" step="0.01" value="${esc(f0.litro ?? '')}" placeholder="24.50">`)}
+    ${field('Km por litro', `<input class="plain" name="kml" type="number" inputmode="decimal" min="0" step="0.1" value="${esc(f0.kml ?? '')}" placeholder="12">`)}
+    <p class="wide" style="margin:0;font-family:var(--fuente-datos)" data-res></p>
+    <div class="buttons"><button type="button" data-close>Cancelar</button><button class="primary">Guardar</button></div>`, (form) => {
+    $('[data-close]', form).onclick = () => sheet.close();
+    const f = form.elements;
+    const calc = () => (+f.litro.value > 0 && +f.kml.value > 0 ? +f.litro.value / +f.kml.value : 0);
+    const prev = () => {
+      const c = calc();
+      $('[data-res]', form).textContent = c ? `Gastas ${rate(c)} por km` : (gasKm() && !f.litro.value ? `Ahora: ${rate(gasKm())} por km (de tu cuenta)` : '');
+    };
+    form.addEventListener('input', prev); prev();
+    form.onsubmit = () => {
+      const c = calc();
+      if (c) { data.settings.fuel = { litro: +f.litro.value, kml: +f.kml.value }; data.settings.gasKm = Math.round(c * 10000) / 10000; }
+      else { delete data.settings.fuel; delete data.settings.gasKm; }
+      refresh(); toast('Guardado');
+    };
   });
 }
 // Moneda: símbolo, lado del símbolo, separadores y decimales (se guarda en tu cuenta y la usa Checa).
@@ -702,6 +728,7 @@ function quoteForm(preset = {}) {
     <div class="wide cuando">${whenHtml}<input name="time" type="time" aria-label="Hora"></div>
     <div class="cotiza wide"><span class="eti">Precio con tu tarifa</span>
       <label class="precio"><span>${sym()}</span><input name="price" type="number" inputmode="numeric" min="0" step="10" placeholder="0" aria-label="Precio"></label>
+      <div id="qleft" class="queda" hidden></div>
       <div id="qcalc" class="muted"></div></div>
     <button type="button" class="primary wide grande" data-send>${icon('wa')} Mandar precio por WhatsApp</button>
     <button type="button" class="wide grande" data-book>Agendar este viaje</button>
@@ -715,6 +742,15 @@ function quoteForm(preset = {}) {
     let typed = false;
     els.price.addEventListener('input', () => { typed = true; });
     $('[data-close]', form).onclick = () => sheet.close();
+    // «Te quedan $x»: el precio menos la gasolina del recorrido (costo por km de Checa o de Yo → Gasolina).
+    const left = () => {
+      const box = $('#qleft', form), km = +rt.km, price = +els.price.value;
+      box.hidden = !(gasKm() && km && price);
+      if (box.hidden) return;
+      const gas = gasKm() * km;
+      box.innerHTML = `<b style="${price - gas < 0 ? 'color:var(--atrasado)' : ''}">Te quedan ${fmtMoney(price - gas)}</b><small>${fmtMoney(price)} − gasolina ${fmtMoney(gas)} (${km} km)</small>`;
+    };
+    els.price.addEventListener('input', left);
     const cur = () => client(els.clientId.value);
     const read = () => ({ clientId: els.clientId.value, from: fromIn.value.trim(), to: toIn.value.trim(), fromPt: rt.fromPt, toPt: rt.toPt, stops: st.get(), km: rt.km, min: rt.min, path: rt.path, price: +els.price.value || 0, date: els.date.value || today(), time: els.time.value || '' });
     const suggest = () => {
@@ -723,6 +759,7 @@ function quoteForm(preset = {}) {
       const q = rt.km ? quote(+rt.km, +rt.min || Math.round(rt.km * 2), ctx) : null;
       $('#qcalc', form).innerHTML = (q ? calcTable(q) : '<small>Elige de dónde y a dónde para calcular, o escribe el precio.</small>') + (same ? `<small>La última vez le cobraste ${money(same.price)}.</small>` : '');
       if (!typed && q) els.price.value = q.total;
+      left();
     };
     const recalc = async () => {
       routeEl.hidden = !(rt.fromPt && rt.toPt) || st.bad();
@@ -787,6 +824,7 @@ function quoteForm(preset = {}) {
       routeEl.hidden = !(f.fromPt && f.toPt && f.path);
       if (!routeEl.hidden) routeEl.innerHTML = `${mapSvg(f.path, 'Ruta', f.stops)}<div class="stats"><div><small>Distancia</small><b>${f.km} km</b></div><div><small>Tiempo</small><b>${f.min} min</b></div></div>`;
       $('#qcalc', form).innerHTML = '<small>Precio de su viaje de siempre.</small>';
+      left();
       checkPlaces();
     };
     function prefillFrom() {
