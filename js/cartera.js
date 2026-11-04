@@ -109,7 +109,7 @@ function refresh() { save(); render(); }
 
 // ---------- Tarjeta de viaje ----------
 const tripCard = createTripCard({
-  client, today, owed, lateDebt, cap, waLink, MSG, icon, hour12, dayLabel, esc, money, payLabel: PAY_LABEL,
+  client, today, owed, lateDebt, cap, waLink, MSG, icon, hour12, dayLabel, esc, money, payLabel: PAY_LABEL, directionsLink, fdate,
 });
 
 // Repetir un viaje en un toque: mismo cliente, ruta, paradas y precio, para hoy. Se ajusta tocando la tarjeta.

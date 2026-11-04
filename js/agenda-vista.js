@@ -25,22 +25,33 @@ export function createAgendaView({ getData, view, header, setTabs, today, owed, 
     const debt = owing.reduce((s, x) => s + +x.price, 0);
     const debtors = new Set(owing.map((x) => x.clientId)).size;
     const sum = (list) => list.reduce((s, x) => s + +x.price, 0);
-    const section = (title, list, opts) => (list.length ? `<p class="group"><span>${title}</span><em>${money(sum(list))}</em></p>${list.map((x) => tripCard(x, opts)).join('')}` : '');
-    const next = upcoming[0];
+    // «Un solo foco»: lo siguiente en grande y el resto del día como lista corta.
+    const eyebrowOf = (x) => {
+      if (x.date !== t) return `Siguiente · ${dayLabel(x.date)}`;
+      if (!x.time) return 'Siguiente · hoy';
+      const [h, m] = x.time.split(':').map(Number);
+      const now = new Date();
+      const min = h * 60 + m - (now.getHours() * 60 + now.getMinutes());
+      if (min < -5) return 'Era a las ' + hour12(x.time);
+      if (min <= 1) return 'Ahora';
+      return min < 60 ? `Siguiente · en ${min} min` : `Siguiente · en ${Math.floor(min / 60)} h${min % 60 ? ` ${min % 60} min` : ''}`;
+    };
+    const focus = todays[0] || upcoming[0];
+    const rows = (list, opts) => list.map((x) => tripCard.row(x, opts)).join('');
+    const section = (title, list, opts) => (list.length ? `<p class="group"><span>${title}</span><em>${money(sum(list))}</em></p>${rows(list, opts)}` : '');
     const nudges = weekNudges();
     view.innerHTML = `
-      <p class="fecha">${cap(fdate(t, { weekday: 'long', day: 'numeric', month: 'short' }))}</p>
-      <section class="hoy"><span class="eti">Hoy</span>
-        <div class="fila-hoy"><b class="big">${todays.length ? `${todays.length} viaje${todays.length === 1 ? '' : 's'}` : 'Sin viajes'}</b>${todays.length ? `<span class="mono">${money(sum(todays))}</span>` : ''}</div>
-        ${!todays.length && next ? `<small class="muted">El siguiente: ${esc(client(next.clientId)?.name || '')}, ${dayLabel(next.date)}${next.time ? ' a las ' + hour12(next.time) : ''}</small>` : ''}</section>
+      <p class="fecha">${cap(fdate(t, { weekday: 'long', day: 'numeric', month: 'short' }))}${todays.length ? ` · ${todays.length} viaje${todays.length === 1 ? '' : 's'} · ${money(sum(todays))}` : ''}</p>
+      ${pending.map((x) => tripCard.ask(x)).join('')}
+      ${focus ? tripCard.focus(focus, { eyebrow: eyebrowOf(focus) })
+        : `<section class="hoy"><span class="eti">Hoy</span><div class="fila-hoy"><b class="big">Sin viajes</b></div><small class="muted">Toca + para cotizar o agendar uno.</small></section>`}
+      ${section('Después hoy', todays.filter((x) => x !== focus))}
       ${debt ? `<a class="strip${owing.some(lateDebt) ? ' late' : ''}" href="#/cobros"><span class="pill ${owing.some(lateDebt) ? 'late' : 'debe'}">Te deben</span><span class="grow"><b class="mono">${money(debt)}</b> · ${debtors} cliente${debtors === 1 ? '' : 's'}</span>${icon('right')}</a>` : ''}
       ${nudges.map(({ c }) => `<section class="card nudge"><b>¿Agendar la próxima semana de ${esc(firstName(c))}?</b><small class="muted">${esc(weekSummary(c))}</small>
         <div class="actions"><button class="primary" data-nweek="${c.id}">Agendar semana</button><button data-nsnooze="${c.id}">Ahora no</button></div></section>`).join('')}
-      ${section('¿Se hizo?', pending)}
-      ${section('Hoy', todays)}
-      ${section('Mañana', tomorrow)}
-      ${section('Esta semana', week, { showDate: true })}
-      ${section('Más adelante', later, { showDate: true })}`;
+      ${section('Mañana', tomorrow.filter((x) => x !== focus))}
+      ${section('Esta semana', week.filter((x) => x !== focus), { showDate: true })}
+      ${section('Más adelante', later.filter((x) => x !== focus), { showDate: true })}`;
     bindTrips();
     view.querySelectorAll('[data-nweek]').forEach((b) => (b.onclick = () => weekForm(client(b.dataset.nweek), { start: 'next' })));
     view.querySelectorAll('[data-nsnooze]').forEach((b) => (b.onclick = () => { const n = nudges.find((x) => x.c.id === b.dataset.nsnooze); client(n.c.id).weekSnooze = n.next; refresh(); }));
