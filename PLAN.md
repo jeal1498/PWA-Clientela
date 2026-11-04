@@ -95,4 +95,5 @@ Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrih
 ## Pendientes sueltos
 - [ ] Tu WhatsApp sigue en el historial de git (se borró del código). ¿Limpiar el historial?
 - [ ] `cartera/` (versión 1) sigue publicada: ¿la redirigimos a `clientela/`?
+- [x] Respaldo en Google Sheets reemplazado por Supabase (4 nov): se quitó `hoja.js` y `apps-script/`.
 - [ ] Clave de Google Maps (opcional; hoy se usan mapas gratuitos).
