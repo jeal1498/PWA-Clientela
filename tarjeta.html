@@ -62,6 +62,19 @@ function bytes(b64) {
   const s = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
   return Uint8Array.from(s, (c) => c.charCodeAt(0));
 }
+const SB = 'https://gqsadclvftkzwrihfipz.supabase.co';
+// Anon key pública: la tarjeta se lee solo con tarjeta_publica(slug), que devuelve lo que el conductor eligió mostrar.
+const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxc2FkY2x2ZnRrendyaWhmaXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NDY5NTEsImV4cCI6MjEwNzMyMjk1MX0.yLcJBXuE8kz_PXiUpCL_7ArDoINhce6NbbsBo2NMQTc';
+async function fromCloud(slug) {
+  const r = await fetch(`${SB}/rest/v1/rpc/tarjeta_publica`, {
+    method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_slug: slug }),
+  });
+  if (!r.ok) throw new Error('nube');
+  const d = await r.json();
+  if (!d) throw new Error('sin tarjeta');
+  if (d.simbolo) MON = [d.simbolo, d.simbolo_despues ? 1 : 0, d.sep_miles, d.sep_decimal, d.decimales];
+  return d;
+}
 async function decode(code) {
   if (code[0] === 'j') return JSON.parse(new TextDecoder().decode(bytes(code.slice(1))));
   if (code[0] === 'z') {
@@ -81,9 +94,12 @@ function vcard(d) {
   return new Blob([lines.join('\r\n')], { type: 'text/vcard' });
 }
 try {
-  const d = await decode(decodeURIComponent(location.hash.slice(1)));
+  // Enlace corto (?c=slug, lee la nube) o el enlace de siempre (#j… / #z…, con los datos dentro).
+  const slug = new URLSearchParams(location.search).get('c');
+  const code = decodeURIComponent(location.hash.slice(1));
+  const d = code ? await decode(code) : await fromCloud(String(slug || '').toLowerCase());
   if (!d?.n || !d?.w) throw new Error('vacía');
-  if (Array.isArray(d.m) && d.m.length === 5) MON = d.m;
+  if (code && Array.isArray(d.m) && d.m.length === 5) MON = d.m;
   const first = d.n.trim().split(/\s+/)[0];
   const ini = d.n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
   const [car, year, color, seats, extras = []] = d.a || [];

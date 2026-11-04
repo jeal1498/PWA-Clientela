@@ -828,14 +828,6 @@ const renderClient = createClientDetailView({
   svcPrice, sleeping, weekForm, collectForm, quickTrip, repeatTrip, fromService, bindTrips,
 });
 
-// ---------- Inicio ----------
-// Acceso con Google obligatorio: sin sesión no se abre la app; con sesión abre directo y sincroniza al fondo.
-nube.arrancar({
-  getData: () => data,
-  hayDatos: () => data.clients.length > 0 || data.trips.length > 0 || data.settings.onboarded,
-  empezar: render,
-  aplicar: aplicarNube,
-});
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 // ---------- Semana completa ----------
@@ -936,11 +928,20 @@ function weekForm(c, { start } = {}) {
 // Marcas qué viajes te pagó (o escribes cuánto te dio y se marcan los más antiguos).
 // ---------- Mi tarjeta (QR) ----------
 // El enlace lleva dentro solo lo que elegiste mostrar; tarjeta.html lo lee sin servidor.
+// Con la tarjeta ya en la nube, el enlace es corto (?c=slug) y se actualiza solo; si no, lleva los datos dentro (#j…).
 async function cardUrl() {
   const u = new URL('tarjeta.html', location.href);
+  const slug = nube.slugListo();
+  if (slug) { u.search = '?c=' + slug; return u.href; }
   u.hash = await encodePage(buildPagePayload(data.settings, phoneIntl));
   return u.href;
 }
+nube.configurar({
+  tarjeta: () => {
+    const s = data.settings;
+    return s.driver?.trim() && phoneIntl(s.phone) ? buildPagePayload(s, phoneIntl) : null;
+  },
+});
 const renderCard = createCardView({
   getData: () => data, view, icon, esc, $, toast, cardUrl, qrSvg, openSettings: () => cardSettings(),
 });
@@ -995,3 +996,11 @@ function cardSettings() {
   });
 }
 
+// ---------- Inicio (al final: render() necesita que todas las vistas ya existan) ----------
+// Acceso con Google obligatorio: sin sesión no se abre la app; con sesión abre directo y sincroniza al fondo.
+nube.arrancar({
+  getData: () => data,
+  hayDatos: () => data.clients.length > 0 || data.trips.length > 0 || data.settings.onboarded,
+  empezar: render,
+  aplicar: aplicarNube,
+});
