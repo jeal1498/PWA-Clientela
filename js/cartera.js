@@ -820,7 +820,7 @@ const renderCharges = createChargesView({
 const renderClient = createClientDetailView({
   client, header, top, icon, esc, $, clientForm, setTabs, tripsOf, byWhen, debtOf, lateDebt, owed, tripForm,
   view, initials, firstName, phoneIntl, waLink, MSG, weekSummary, money, dayLabel, hour12, cap, autoName,
-  svcPrice, sleeping, weekForm, collectForm, quickTrip, repeatTrip, fromService, bindTrips,
+  svcPrice, sleeping, weekForm, collectForm, quickTrip, repeatTrip, fromService, bindTrips, quoteForm,
 });
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
