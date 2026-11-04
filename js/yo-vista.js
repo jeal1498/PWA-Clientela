@@ -1,5 +1,5 @@
 // Pantalla Yo: Mi tarjeta, tu perfil (datos, auto, tarifa, cobro) y los ajustes.
-export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, hojaForm, hojaOn, resetOnboarding }) {
+export function createMeView({ getData, header, setTabs, view, icon, esc, initials, $, today, daysBetween, editProfile, openCard, importContacts, ladaForm, placesForm, hojaForm, hojaOn, cuentaForm, cuentaNube, resetOnboarding }) {
   function renderMe() {
     const data = getData();
     const s = data.settings;
@@ -22,6 +22,7 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
         ${row('data-places', 'Mis lugares', esc(nPlaces ? `${nPlaces} con nombre` : 'Casa, Trabajo…'))}
       </section>
       <section class="filas">
+        ${row('data-cuenta', 'Cuenta de Google', esc(cuentaNube().email || 'Sin sesión'))}
         ${row('data-hoja', 'Respaldo en Google Sheets', hojaOn() ? 'Conectado' : 'Conectar')}
         ${'contacts' in navigator ? row('data-contacts', 'Importar contactos', '') : ''}
         ${row('data-lada', 'Lada para WhatsApp', `+${esc(s.lada || '52')}`)}
@@ -30,6 +31,7 @@ export function createMeView({ getData, header, setTabs, view, icon, esc, initia
       <p class="pie">Clientela · v2.0</p>`;
     view.querySelectorAll('[data-edit]').forEach((b) => (b.onclick = () => editProfile(+b.dataset.edit)));
     $('[data-card]', view).onclick = openCard;
+    $('[data-cuenta]', view).onclick = cuentaForm;
     $('[data-hoja]', view).onclick = () => hojaForm();
     $('[data-contacts]', view)?.addEventListener('click', importContacts);
     $('[data-lada]', view).onclick = ladaForm;
