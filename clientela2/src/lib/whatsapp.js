@@ -19,7 +19,7 @@ export function clientRequestMessage({ from, to, date, time, passengers, bags, n
     `📅 *Fecha:* ${dateText(date, time) || 'Lo antes posible'}`,
     `👥 *Pasajeros:* ${passengers || 1}  ·  🧳 *Maletas:* ${bags || 0}`,
     '',
-    `📏 ${kmText(q.km)} · ⏱️ ${minText(q.min)}`,
+    `📏 ${kmText(q.km)} · ⏱️ ${minText(q.min)}${q.tolls ? ' · 🛣️ con caseta' : ''}`,
     `💰 *Tarifa estimada:* ${money(q.price)}`,
     notes ? `📝 ${notes}` : null,
     name ? `Soy *${name}*.` : null,

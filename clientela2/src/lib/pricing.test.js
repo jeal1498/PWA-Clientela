@@ -48,3 +48,11 @@ test('precio mínimo para metas cumple las metas', () => {
   const e = evaluate(1, trip, C);
   assert.equal(evaluate(e.minPriceForGoals, trip, C).status, 'green');
 });
+
+test('redondeo hacia arriba a 10, 50 y 100', async () => {
+  const { roundUp } = await import('./pricing.js');
+  assert.equal(roundUp(171, 10), 180);
+  assert.equal(roundUp(171, 50), 200);
+  assert.equal(roundUp(200, 100), 200);
+  assert.equal(roundUp(201, 100), 300);
+});

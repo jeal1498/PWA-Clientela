@@ -31,7 +31,7 @@ export default function History() {
       <h1 className="font-titulo text-2xl">Historial</h1>
       {history.map((h) => {
         const msg = driverProposalMessage({ clientName: h.clientName, from: h.from, to: h.to, date: h.date, time: h.time, q: { km: h.km, min: h.min, tolls: h.tolls, lines: [] }, price: h.price, driverName: config.driver.name });
-        const icon = 'grid size-10 place-items-center rounded-xl bg-asfalto active:scale-95';
+        const icon = 'grid size-9 place-items-center rounded-xl bg-asfalto active:scale-95';
         return (
           <Card key={h.id} className="space-y-2">
             <div className="flex items-start justify-between gap-2">
@@ -45,7 +45,7 @@ export default function History() {
                 <div className={cx('font-mono text-xs', h.net > 0 ? 'text-cobrado' : 'text-atrasado')}>neto {money(h.net)}</div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className={cx('rounded-full px-2.5 py-1 text-xs font-semibold capitalize', STATUS[h.status])}>{h.status}</span>
               {h.profit && <ProfitBadge status={h.profit} compact />}
               <div className="ml-auto flex gap-1.5">

@@ -61,8 +61,9 @@ export default function Settings() {
           <Field label="Maletas incluidas"><NumberInput suffix="pzas" step="1" {...bind('extras', 'freeBags')} /></Field>
           <Field label="Maleta extra"><NumberInput prefix="$" {...bind('extras', 'bagFee')} /></Field>
           <Field label="Parada intermedia"><NumberInput prefix="$" {...bind('extras', 'stopFee')} /></Field>
+          <Field label="Caseta habitual" hint="Opcional. 0 = no se ofrece."><NumberInput prefix="$" {...bind('extras', 'tollDefault')} /></Field>
         </div>
-        <p className="mt-3 text-xs text-gris">Las casetas se capturan en cada viaje y se cobran tal cual.</p>
+        <p className="mt-3 text-xs text-gris">La caseta habitual se agrega con un toque; en cada viaje puedes poner otro monto.</p>
       </Card>
 
       <Card>
