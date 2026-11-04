@@ -49,3 +49,6 @@ Acceso con Google obligatorio (`js/nube.js`, botón GIS sin SDK → `id_token` e
 
 ## Probar
 `python3 -m http.server 8765` en la raíz y Playwright con Chromium en `/opt/pw-browsers/chromium` a 390 px; sembrar `localStorage` y hacer `reload()`.
+
+## Clientela 2.0 · Cotizador (`clientela2/` → `cotiza/`)
+Excepción a «sin build»: React 18 + Vite + Tailwind 4 + lucide-react, aislado en `clientela2/`; `npm run build` escribe `cotiza/` (se sube al repo). HashRouter: `#/` público (tarifas en `#/?c=` base64, sin costos ni metas), `#/app`, `#/app/manual`, `#/app/historial`, `#/app/settings`. `localStorage` `clientela2` (importa nombre/teléfono/ciudad de `cartera` la 1.ª vez). Motor en `src/lib/pricing.js` (`npm test`). Sube `CACHE` en `clientela2/public/sw.js` en cada cambio.

@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* Marca Clientela (fuente única: /marca/tokens.css). Solo oscuro. */
+@font-face { font-family: 'Bricolage Grotesque'; font-weight: 800; font-display: swap; src: url('/fonts/bricolage-800.woff2') format('woff2'); }
+@font-face { font-family: 'DM Sans'; font-weight: 100 1000; font-display: swap; src: url('/fonts/dmsans.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 100 800; font-display: swap; src: url('/fonts/jetbrains.woff2') format('woff2'); }
+
+@theme {
+  --color-asfalto: #0C0C10;
+  --color-tablero: #16161C;
+  --color-humo: #3A3A45;
+  --color-hueso: #F4F4EF;
+  --color-gris: #A3A3AD;
+  --color-cobrado: #22C55E;
+  --color-tedebe: #FACC15;
+  --color-atrasado: #EF4444;
+  --font-titulo: 'Bricolage Grotesque', 'Arial Black', sans-serif;
+  --font-sans: 'DM Sans', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+html { color-scheme: dark; -webkit-tap-highlight-color: transparent; }
+body { @apply bg-asfalto text-hueso font-sans antialiased; min-height: 100dvh; }
+input, select, textarea { font-size: 16px; } /* evita zoom en iOS */
+input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; }
+.pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 5rem); }
