@@ -79,6 +79,17 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [ ] Plantilla de video con la marca (molde `checa-marca-v2`).
 - [ ] Skill `videos-clientela`.
 
+### 10. Puente con Checa (Supabase compartido) — 4 nov 2026
+Checa y Clientela comparten **el mismo proyecto de Supabase** (`gqsadclvftkzwrihfipz`) y la misma cuenta de Google. Cada una conserva su propósito; se enlazan.
+- [ ] Esquema compartido (se despliega desde `supabase/` del repo `APK-CHECA`): `perfil_conductor` (moneda, tarifas, teléfono, ciudad, enlace público), `clientes`, `viajes_privados`, `contactos_sos`, `viajes_checa`; todas con RLS por usuario.
+- [ ] Decidir el rediseño A/B (etapa 4) **antes** de migrar pantallas.
+- [ ] Login con Google y nube (etapa 5) con la misma cuenta de Checa; subir solos los datos de `cartera` la primera vez.
+- [ ] Moneda: selector (símbolo, formato) guardado en `perfil_conductor`; hoy todo es MXN.
+- [ ] Tarjeta con QR leyendo del perfil en la nube.
+- [ ] Usar el costo de gasolina de Checa para mostrar cuánto te queda de un viaje privado.
+- [ ] APK (etapa 6) y licencias combinadas con Checa.
+- Orden global y razones: `docs/web-y-ventas.md` de `jeal1498/APK-CHECA` («Pendientes de funciones nuevas»).
+
 ## Pendientes sueltos
 - [ ] Tu WhatsApp sigue en el historial de git (se borró del código). ¿Limpiar el historial?
 - [ ] `cartera/` (versión 1) sigue publicada: ¿la redirigimos a `clientela/`?
