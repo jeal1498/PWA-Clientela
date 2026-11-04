@@ -231,7 +231,7 @@ function cuentaForm() {
   const when = e.ultima ? new Date(e.ultima).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : 'aún no';
   openSheet(`<h2>Cuenta de Google</h2>
     <p class="field wide" style="font-weight:400"><b>${esc(e.nombre || e.email)}</b>${e.nombre ? `<br><span class="muted">${esc(e.email)}</span>` : ''}</p>
-    <p class="field wide muted" style="font-weight:400">Es la misma cuenta que usas en Checa. Tus clientes, viajes y ajustes se guardan solos en la nube. Última copia: ${when}.</p>
+    <p class="field wide muted" style="font-weight:400">Es la misma cuenta que usas en Checa. Tus clientes, viajes y ajustes se guardan solos en la nube. Última copia: ${when}</p>
     ${e.error ? `<p class="field wide" role="status" style="font-weight:400">${esc(e.error)}. Se vuelve a intentar sola.</p>` : ''}
     <button type="button" class="add wide" data-sync>Sincronizar ahora</button>
     <div class="buttons"><button type="button" data-close>Cerrar</button><button type="button" class="left" data-out>Cerrar sesión</button></div>`, (form) => {
