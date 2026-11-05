@@ -1,15 +1,15 @@
 // Módulo A · Configuración de costos del conductor (/app/settings).
-// Todo se guarda al instante en localStorage; no hay botón «Guardar».
-import { Fuel, Wrench, Receipt, Sparkles, Target, User, RotateCcw, Wifi, ShieldAlert, Camera, Trash2 } from 'lucide-react';
+// Todo se guarda al instante en localStorage. Lo público (datos, vehículo, Wi-Fi) está en «Mi página».
+import { Link } from 'react-router-dom';
+import { Fuel, Wrench, Receipt, Sparkles, Target, User, RotateCcw, ShieldAlert, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { Card, CardTitle, Field, NumberInput, TextInput, Stat, Button, Segmented } from '../components/ui.jsx';
 import { fuelPerKm, costPerKm } from '../lib/pricing.js';
 import { money2 } from '../lib/format.js';
-import { resizePhoto } from '../lib/image.js';
 
 export default function Settings() {
   const { config, setSection, resetConfig } = useStore();
-  const { driver, costs, rates, extras, goals, wifi, sos } = config;
+  const { costs, rates, extras, goals, sos } = config;
   const text = (section, key) => ({ value: config[section][key], onChange: (e) => setSection(section, { [key]: e.target.value }) });
   // Atajo para enlazar un campo numérico a su sección.
   const bind = (section, key) => ({ value: config[section][key], onChange: (v) => setSection(section, { [key]: v }) });
@@ -18,26 +18,12 @@ export default function Settings() {
     <>
       <h1 className="font-titulo text-2xl">Costos y tarifas</h1>
 
-      <Card>
-        <CardTitle icon={User}>Tus datos</CardTitle>
-        <div className="space-y-3">
-          {/* Foto: se reduce a 160×160 y va en la página pública y en el contacto (.vcf) */}
-          <div className="flex items-center gap-3">
-            {driver.photo ? <img src={driver.photo} alt="Tu foto" className="size-16 rounded-full object-cover" /> : <div className="grid size-16 place-items-center rounded-full bg-asfalto text-gris"><Camera className="size-6" /></div>}
-            <label className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl bg-white/5 px-4 text-sm">
-              <Camera className="size-4" /> {driver.photo ? 'Cambiar foto' : 'Subir foto'}
-              <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (f) setSection('driver', { photo: await resizePhoto(f) }); e.target.value = ''; }} />
-            </label>
-            {driver.photo && <button type="button" aria-label="Quitar foto" onClick={() => setSection('driver', { photo: '' })} className="grid size-11 place-items-center rounded-2xl bg-white/5"><Trash2 className="size-4 text-atrasado" /></button>}
-          </div>
-          <Field label="Nombre que verá el cliente"><TextInput value={driver.name} onChange={(e) => setSection('driver', { name: e.target.value })} placeholder="Ej. Eduardo" /></Field>
-          <div className="grid grid-cols-[80px_1fr] gap-2">
-            <Field label="Lada"><TextInput inputMode="numeric" value={driver.lada} onChange={(e) => setSection('driver', { lada: e.target.value.replace(/\D/g, '') })} /></Field>
-            <Field label="WhatsApp (10 dígitos)"><TextInput type="tel" inputMode="tel" value={driver.phone} onChange={(e) => setSection('driver', { phone: e.target.value })} placeholder="998 123 4567" /></Field>
-          </div>
-          <Field label="Ciudad base" hint="Ayuda a encontrar direcciones más rápido."><TextInput value={driver.city} onChange={(e) => setSection('driver', { city: e.target.value })} placeholder="Ej. Cancún" /></Field>
-        </div>
-      </Card>
+      {/* Nombre, foto, WhatsApp, ciudad y Wi-Fi viven en «Mi página» (todo lo que ve el pasajero en un solo lugar). */}
+      <Link to="/app/pagina" className="flex items-center gap-3 rounded-3xl border border-white/5 bg-tablero p-4">
+        <User className="size-5 text-gris" />
+        <span className="flex-1"><span className="block">Tus datos, vehículo y Wi-Fi</span><span className="text-xs text-gris">Se editan en Más → Mi página</span></span>
+        <ChevronRight className="size-4 text-gris" />
+      </Link>
 
       <Card>
         <CardTitle icon={Fuel}>Costos variables</CardTitle>
@@ -84,21 +70,6 @@ export default function Settings() {
           <Field label="Neto mínimo por hora"><NumberInput prefix="$" suffix="/ h" {...bind('goals', 'minPerHour')} /></Field>
         </div>
         <p className="mt-3 text-xs text-gris"><span className="text-cobrado">Verde</span> cumple ambas · <span className="text-tedebe">amarillo</span> solo una · <span className="text-atrasado">rojo</span> ninguna.</p>
-      </Card>
-
-      <Card id="wifi" className="scroll-mt-20">
-        <CardTitle icon={Wifi}>Wi-Fi a bordo</CardTitle>
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-2">
-            <Field label="Nombre de la red"><TextInput {...text('wifi', 'ssid')} placeholder="SSID" autoComplete="off" /></Field>
-            <Field label="Contraseña"><TextInput {...text('wifi', 'password')} placeholder="Sin contraseña" autoComplete="off" /></Field>
-          </div>
-          <Segmented value={wifi.security} onChange={(security) => setSection('wifi', { security })} options={[{ value: 'WPA', label: 'WPA/WPA2' }, { value: 'WEP', label: 'WEP' }]} />
-          <label className="flex items-start gap-2 text-sm text-gris">
-            <input type="checkbox" className="mt-0.5 size-4 accent-[#22C55E]" checked={wifi.showPublic} onChange={(e) => setSection('wifi', { showPublic: e.target.checked })} />
-            <span>Mostrar en mi página pública. <span className="text-tedebe">Quien tenga tu enlace verá la contraseña.</span> Si lo apagas, enséñala desde Más → Wi-Fi a bordo.</span>
-          </label>
-        </div>
       </Card>
 
       <Card id="sos" className="scroll-mt-20">

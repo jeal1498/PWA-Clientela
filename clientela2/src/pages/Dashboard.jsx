@@ -33,7 +33,7 @@ export default function Dashboard() {
       <h1 className="font-titulo text-2xl">Hola{config.driver.name ? `, ${config.driver.name}` : ''} 👋</h1>
 
       {!config.driver.phone && (
-        <Link to="/app/settings" className="flex items-center gap-2 rounded-2xl border border-tedebe/30 bg-tedebe/10 p-3 text-sm text-tedebe">
+        <Link to="/app/pagina" className="flex items-center gap-2 rounded-2xl border border-tedebe/30 bg-tedebe/10 p-3 text-sm text-tedebe">
           <AlertTriangle className="size-4 shrink-0" /> Agrega tu WhatsApp para que los clientes te escriban.
         </Link>
       )}

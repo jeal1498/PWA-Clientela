@@ -6,7 +6,7 @@ const toMin = (hhmm) => { const [h, m] = String(hhmm || '0:0').split(':').map(Nu
 export const STATUS = {
   available: { tone: 'green', label: 'Disponible para viajes' },
   reservations: { tone: 'yellow', label: 'En servicio · Reservas abiertas' },
-  off: { tone: 'gray', label: 'Fuera de servicio · Agenda para otro día' },
+  off: { tone: 'red', label: 'Fuera de servicio' },
 };
 
 /** ¿Está dentro del horario? Admite horarios que cruzan la medianoche (22:00 → 06:00). */

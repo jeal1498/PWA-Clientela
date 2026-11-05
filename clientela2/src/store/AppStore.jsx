@@ -4,9 +4,9 @@
 //  clients  → clientes frecuentes (CRM)
 //  trips    → bitácora de viajes realizados
 //  expenses → gastos del turno
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { DEFAULT_CONFIG, withDefaults } from '../lib/pricing.js';
-import { load, save, importFromCartera } from '../lib/storage.js';
+import { load, save, importFromCartera, KEY } from '../lib/storage.js';
 
 const Store = createContext(null);
 export const COLLECTIONS = ['history', 'clients', 'trips', 'expenses'];
@@ -17,21 +17,46 @@ const newId = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toSt
 function initial() {
   const s = load();
   const base = Object.fromEntries(COLLECTIONS.map((c) => [c, s[c] || []]));
-  if (s.config) return { config: withDefaults(s.config), ...base };
+  // published: el último enlace público que el conductor «guardó» (para avisar si su enlace ya no está al día).
+  const published = s.published || null;
+  if (s.config) return { config: withDefaults(s.config), ...base, published };
   const imported = importFromCartera();
-  return { config: withDefaults({ driver: { ...DEFAULT_CONFIG.driver, ...(imported || {}) } }), ...base };
+  return { config: withDefaults({ driver: { ...DEFAULT_CONFIG.driver, ...(imported || {}) } }), ...base, published };
 }
 
 export function AppStoreProvider({ children }) {
   const [state, setState] = useState(initial);
-  useEffect(() => save(state), [state]);
+  const written = useRef('');
+  useEffect(() => { written.current = JSON.stringify(state); save(state); }, [state]);
+
+  // Tiempo real entre pestañas: si el panel cambia algo, la vista pública abierta en otra pestaña se actualiza.
+  // (Se ignora el eco de lo que esta misma pestaña acaba de escribir para no entrar en bucle.)
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key !== KEY || !e.newValue || e.newValue === written.current) return;
+      try {
+        const s = JSON.parse(e.newValue);
+        setState((cur) => ({ ...cur, ...s, config: withDefaults(s.config || {}) }));
+      } catch { /* dato corrupto: se ignora */ }
+    };
+    addEventListener('storage', onStorage);
+    return () => removeEventListener('storage', onStorage);
+  }, []);
 
   /** Actualiza una sección de la configuración: setSection('costs', { gasPrice: 25 }) */
   const setSection = useCallback((section, patch) => {
     setState((s) => ({ ...s, config: { ...s.config, [section]: { ...s.config[section], ...patch } } }));
   }, []);
 
-  const resetConfig = useCallback(() => setState((s) => ({ ...s, config: withDefaults({ driver: s.config.driver, wifi: s.config.wifi, sos: s.config.sos }) })), []);
+  // Costos y tarifas a valores sugeridos (no toca la página pública ni tus datos).
+  const resetConfig = useCallback(() => setState((s) => ({ ...s, config: withDefaults({ driver: s.config.driver, wifi: s.config.wifi, sos: s.config.sos, vehicle: s.config.vehicle, page: s.config.page }) })), []);
+
+  // Página pública a valores predeterminados (estado, servicios, amenidades, pagos, políticas, redes y vehículo).
+  // Conserva nombre, foto, WhatsApp, Wi-Fi, costos y tarifas.
+  const resetPublic = useCallback(() => setState((s) => ({ ...s, config: { ...s.config, page: withDefaults({}).page, vehicle: withDefaults({}).vehicle } })), []);
+
+  /** Marca el enlace actual como publicado (botón «Guardar cambios»). */
+  const markPublished = useCallback((code) => setState((s) => ({ ...s, published: { code, at: new Date().toISOString() } })), []);
 
   // CRUD genérico para las colecciones. Lo más nuevo va primero.
   const add = useCallback((coll, item) => {
@@ -48,6 +73,8 @@ export function AppStoreProvider({ children }) {
     ...state,
     setSection,
     resetConfig,
+    resetPublic,
+    markPublished,
     add,
     update,
     remove,
@@ -55,7 +82,7 @@ export function AppStoreProvider({ children }) {
     addQuote: (q) => add('history', { status: 'pendiente', ...q }),
     updateQuote: (id, p) => update('history', id, p),
     removeQuote: (id) => remove('history', id),
-  }), [state, setSection, resetConfig, add, update, remove]);
+  }), [state, setSection, resetConfig, resetPublic, markPublished, add, update, remove]);
 
   return <Store.Provider value={value}>{children}</Store.Provider>;
 }

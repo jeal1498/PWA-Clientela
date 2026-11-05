@@ -25,6 +25,7 @@ export function buildVCard({ name, phone, lada = '52', link, photo, city, vehicl
   // Foto: data URL JPEG → base64 embebido.
   const m = /^data:image\/(jpeg|png);base64,(.+)$/.exec(photo || '');
   if (m) lines.push(`PHOTO;ENCODING=b;TYPE=${m[1].toUpperCase()}:${m[2]}`);
+  else if (/^https:\/\//.test(photo || '')) lines.push(`PHOTO;VALUE=URI:${photo}`); // foto por URL
   lines.push('END:VCARD');
   return lines.filter(Boolean).map(fold).join('\r\n');
 }

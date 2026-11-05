@@ -4,7 +4,7 @@ import WifiCard from '../WifiCard.jsx';
 import Section from './Section.jsx';
 
 export const AMENITIES = [
-  { key: 'chargers', icon: BatteryCharging, label: 'Cargadores', sub: 'Android y iPhone' },
+  { key: 'chargers', icon: BatteryCharging, label: 'Cargadores USB', sub: 'Android y iPhone' },
   { key: 'ac', icon: Snowflake, label: 'Aire acondicionado' },
   { key: 'music', icon: Music, label: 'Música a tu elección', sub: 'Bluetooth' },
   { key: 'trunk', icon: Package, label: 'Cajuela amplia' },
