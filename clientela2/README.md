@@ -23,7 +23,7 @@ Publicado en **https://jeal1498.github.io/PWA-Clientela/cotiza/** (el build vive
 5. `PaymentsPolicies`: Efectivo / SPEI / Tarjeta, validez, espera y reservas.
 6. `PublicFooter`: redes y acceso discreto «Soy el conductor».
 
-Todo se edita en **Más → Mi página** (`#/app/pagina`), que también da el **QR para el vehículo** (sin foto, para que se lea fácil). El enlace va comprimido (`z…`, deflate); los enlaces viejos siguen abriendo. El botón rojo **SOS** del encabezado: **un toque** manda «Estoy iniciando un viaje en [ubicación]» al contacto de emergencia (WhatsApp o SMS); **mantenerlo presionado** ofrece «En ruta», «Necesito ayuda» y 911.
+Todo se edita en **Más → Mi página** (`#/app/pagina`): identidad (nombre, foto por archivo o URL, WhatsApp, ciudad), vehículo, estado (Automático / 🟢 / 🟡 / 🔴), Wi-Fi, amenidades, redes, pagos, políticas, servicios y el **QR para el vehículo**. Cada cambio se guarda al instante y se ve en la vista pública (también en otra pestaña abierta). «Guardar cambios» marca el enlace como publicado y el panel avisa si después hay cambios sin compartir; «Restablecer» vuelve la página a valores predeterminados (conserva nombre, foto, WhatsApp y Wi-Fi). El enlace va comprimido (`z…`, deflate); los enlaces viejos siguen abriendo. El botón rojo **SOS** del encabezado: **un toque** manda «Estoy iniciando un viaje en [ubicación]» al contacto de emergencia (WhatsApp o SMS); **mantenerlo presionado** ofrece «En ruta», «Necesito ayuda» y 911.
 
 **Datos** (`localStorage` `clientela2`): `config` (driver, costs, rates, extras, goals, wifi, sos), `history`, `clients`, `trips`, `expenses`.
 

@@ -8,12 +8,12 @@ export default function Mas() {
   const { history, config } = useStore();
   const pending = history.filter((h) => h.status === 'pendiente').length;
   const items = [
-    { to: '/app/pagina', icon: Globe, label: 'Mi página', hint: 'Vehículo, estado, servicios, políticas y QR del auto' },
+    { to: '/app/pagina', icon: Globe, label: 'Mi página', hint: 'Datos, foto, vehículo, estado, Wi-Fi, pagos, políticas y QR' },
     { to: '/app/gastos', icon: Receipt, label: 'Gastos', hint: 'Combustible, casetas, lavado, hormiga' },
     { to: '/app/historial', icon: History, label: 'Cotizaciones', hint: pending ? `${pending} pendientes` : 'Guardadas' },
     { to: '/app/wifi', icon: Wifi, label: 'Wi-Fi a bordo', hint: config.wifi.ssid ? `QR de «${config.wifi.ssid}»` : 'Sin configurar' },
     { to: '/app/settings#sos', icon: ShieldAlert, label: 'Seguridad', hint: config.sos.phone ? `Contacto: ${config.sos.name || config.sos.phone}` : 'Agrega tu contacto de emergencia' },
-    { to: '/app/settings', icon: Settings, label: 'Costos y ajustes', hint: 'Tarifas, metas, perfil' },
+    { to: '/app/settings', icon: Settings, label: 'Costos y ajustes', hint: 'Costos, tarifas, metas y seguridad' },
     { to: '/', icon: Globe, label: 'Ver mi página pública', hint: 'Como la ve tu cliente' },
   ];
   return (

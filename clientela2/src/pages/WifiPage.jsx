@@ -14,7 +14,7 @@ export default function WifiPage() {
       {config.wifi.ssid ? (
         <WifiCard wifi={config.wifi} onToast={showToast} startWithQr />
       ) : (
-        <Card className="text-sm text-gris">Agrega el nombre y la contraseña de tu red en <Link to="/app/settings#wifi" className="text-cobrado underline">Ajustes → Wi-Fi</Link>.</Card>
+        <Card className="text-sm text-gris">Agrega el nombre y la contraseña de tu red en <Link to="/app/pagina#wifi" className="text-cobrado underline">Ajustes → Wi-Fi</Link>.</Card>
       )}
       {toast}
     </>

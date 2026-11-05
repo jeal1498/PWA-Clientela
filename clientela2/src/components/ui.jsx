@@ -33,6 +33,10 @@ export function TextInput({ className, ...p }) {
   return <input className={cx(fieldCls, className)} {...p} />;
 }
 
+export function TextArea({ className, rows = 3, ...p }) {
+  return <textarea rows={rows} className={cx(fieldCls, 'h-auto py-2.5 leading-snug', className)} {...p} />;
+}
+
 /** Input numérico con prefijo/sufijo. Devuelve número (o '' si está vacío para poder borrar). */
 export function NumberInput({ value, onChange, prefix, suffix, step = 'any', className, ...p }) {
   return (

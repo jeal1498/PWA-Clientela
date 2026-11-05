@@ -17,7 +17,8 @@ const legacy = (s) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replac
 /** `withPhoto: false` para el QR: la foto es lo más pesado y haría el código difícil de escanear. */
 export function publicConfig(cfg, { withPhoto = true } = {}) {
   const { driver, rates, extras, wifi, vehicle, page } = withDefaults(cfg);
-  const out = { driver: withPhoto ? driver : { ...driver, photo: '' }, rates, extras, vehicle, page };
+  const heavy = String(driver.photo || '').startsWith('data:'); // foto subida (pesada); una URL es corta
+  const out = { driver: withPhoto || !heavy ? driver : { ...driver, photo: '' }, rates, extras, vehicle, page };
   if (wifi.showPublic && wifi.ssid) out.wifi = { ssid: wifi.ssid, password: wifi.password, security: wifi.security };
   return out;
 }

@@ -7,9 +7,10 @@ import { Button, cx } from '../ui.jsx';
 const TONE = {
   green: 'bg-cobrado/15 text-cobrado border-cobrado/30',
   yellow: 'bg-tedebe/15 text-tedebe border-tedebe/30',
+  red: 'bg-atrasado/15 text-atrasado border-atrasado/30',
   gray: 'bg-white/5 text-gris border-white/10',
 };
-const DOT = { green: 'bg-cobrado', yellow: 'bg-tedebe', gray: 'bg-gris' };
+const DOT = { green: 'bg-cobrado', yellow: 'bg-tedebe', red: 'bg-atrasado', gray: 'bg-gris' };
 
 export default function ProfileHeader({ driver, vehicle, page, hasWifi, onSaveContact }) {
   const status = currentStatus(page);
