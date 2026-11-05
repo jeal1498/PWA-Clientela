@@ -92,3 +92,33 @@ export function myLocation() {
     );
   });
 }
+
+// --- Ubicación lista para el SOS de un toque ---
+// El navegador solo deja abrir WhatsApp/SMS justo después del toque. Si hubiera que esperar al GPS,
+// el aviso podría bloquearse; por eso se guarda la última ubicación conocida y se usa al instante.
+let lastFix = null; // { lat, lon, at }
+let watching = false;
+
+const keep = (p) => { lastFix = { lat: p.coords.latitude, lon: p.coords.longitude, at: Date.now() }; return lastFix; };
+
+/** Si el permiso ya está dado, sigue la ubicación en segundo plano (no muestra ninguna pregunta). */
+export async function warmLocation() {
+  if (watching || !navigator.geolocation || !navigator.permissions) return;
+  try {
+    const st = await navigator.permissions.query({ name: 'geolocation' });
+    if (st.state !== 'granted') return;
+  } catch { return; }
+  watching = true;
+  navigator.geolocation.watchPosition(keep, () => {}, { enableHighAccuracy: true, maximumAge: 60000 });
+}
+
+/** Última ubicación si tiene menos de `maxAgeMs` (10 min por defecto); si no, null. */
+export const freshLocation = (maxAgeMs = 600000) => (lastFix && Date.now() - lastFix.at <= maxAgeMs ? lastFix : null);
+
+/** Pide la ubicación ahora (máx. `timeout` ms) y la guarda; null si no se pudo. */
+export function locateNow(timeout = 4000) {
+  return new Promise((ok) => {
+    if (!navigator.geolocation) return ok(null);
+    navigator.geolocation.getCurrentPosition((p) => { ok(keep(p)); warmLocation(); }, () => ok(null), { enableHighAccuracy: true, timeout, maximumAge: 600000 });
+  });
+}
