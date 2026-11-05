@@ -4,6 +4,7 @@ PWA de gestión de **clientes privados** para conductores (los que piden viajes 
 
 ## Reglas
 - Español (México), respuestas **cortas y concisas**. Moneda MXN.
+- **Modo TDAH permanente** (pedido por Eduardo el 5-nov-2026; skill `i-have-adhd`): en cada respuesta, **la primera línea es la acción**; pasos numerados (uno por línea); al final **un solo siguiente paso de menos de 2 min**; sin saludos, recaps ni temas extra; tiempos concretos («15 min»); lo logrado se muestra con cómo probarlo; errores con causa y arreglo; listas de máx. 5 elementos. Si pide «explica», se puede alargar con títulos. Solo se apaga si dice «stop adhd mode» o «normal mode».
 - **Una aprobación de Eduardo por etapa; no se adelanta la siguiente.** Maqueta en artifact antes de cualquier cambio grande. **Nada a `main` sin su OK, salvo el flujo autorizado el 24-oct-2026: tras cada cambio se abre el PR y se hace merge a `main` sin preguntar** (la rama se reinicia desde `main` si el PR anterior ya se fusionó).
 - Repo público: nada de datos personales en el código.
 - Sin build ni dependencias. **Sube `CACHE` (`clientela-vN`) en `sw.js` en cada cambio** o el teléfono no se actualiza; la lista `ASSETS` debe tener todos los módulos de `js/`.
