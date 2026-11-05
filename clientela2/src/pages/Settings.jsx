@@ -110,7 +110,7 @@ export default function Settings() {
           </div>
           <Segmented value={sos.channel} onChange={(channel) => setSection('sos', { channel })} options={[{ value: 'whatsapp', label: 'WhatsApp' }, { value: 'sms', label: 'SMS' }]} />
           <Field label="Enlace de rastreo en vivo (opcional)" hint="Ej. el enlace de «Compartir ubicación en tiempo real» de Google Maps."><TextInput type="url" {...text('sos', 'trackingLink')} placeholder="https://maps.app.goo.gl/…" /></Field>
-          <p className="text-xs text-gris">El botón rojo <b className="text-atrasado">SOS</b> del encabezado manda tu ubicación a este contacto.</p>
+          <p className="text-xs text-gris">Botón rojo <b className="text-atrasado">SOS</b> del encabezado: <b className="text-hueso">un toque</b> manda «Estoy iniciando un viaje en [tu ubicación]»; <b className="text-hueso">mantenlo presionado</b> para «En ruta», «Necesito ayuda» o llamar al 911. La primera vez el teléfono te pide permiso de ubicación.</p>
         </div>
       </Card>
 

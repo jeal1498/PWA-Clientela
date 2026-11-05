@@ -15,7 +15,7 @@ Publicado en **https://jeal1498.github.io/PWA-Clientela/cotiza/** (el build vive
 | `#/app/mas` | Conductor | Gastos, cotizaciones, Wi-Fi a bordo, seguridad, ajustes. |
 | `#/app/gastos` · `#/app/historial` · `#/app/wifi` · `#/app/settings` | Conductor | Gastos de la semana · cotizaciones · QR del Wi-Fi · costos, perfil (foto), Wi-Fi y contacto SOS. |
 
-En la página pública también: **Guardar contacto** (.vcf con nombre, teléfono, WhatsApp, enlace y foto) y **Wi-Fi a bordo** (copiar clave + QR). El botón rojo **SOS** del encabezado manda «Estoy iniciando un viaje / En ruta en [ubicación]» al contacto de emergencia por WhatsApp o SMS.
+En la página pública también: **Guardar contacto** (.vcf con nombre, teléfono, WhatsApp, enlace y foto) y **Wi-Fi a bordo** (copiar clave + QR). El botón rojo **SOS** del encabezado: **un toque** manda «Estoy iniciando un viaje en [ubicación]» al contacto de emergencia (WhatsApp o SMS); **mantenerlo presionado** ofrece «En ruta», «Necesito ayuda» y 911.
 
 **Datos** (`localStorage` `clientela2`): `config` (driver, costs, rates, extras, goals, wifi, sos), `history`, `clients`, `trips`, `expenses`.
 
