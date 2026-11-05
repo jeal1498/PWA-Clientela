@@ -15,7 +15,15 @@ Publicado en **https://jeal1498.github.io/PWA-Clientela/cotiza/** (el build vive
 | `#/app/mas` | Conductor | Gastos, cotizaciones, Wi-Fi a bordo, seguridad, ajustes. |
 | `#/app/gastos` · `#/app/historial` · `#/app/wifi` · `#/app/settings` | Conductor | Gastos de la semana · cotizaciones · QR del Wi-Fi · costos, perfil (foto), Wi-Fi y contacto SOS. |
 
-En la página pública también: **Guardar contacto** (.vcf con nombre, teléfono, WhatsApp, enlace y foto) y **Wi-Fi a bordo** (copiar clave + QR). El botón rojo **SOS** del encabezado: **un toque** manda «Estoy iniciando un viaje en [ubicación]» al contacto de emergencia (WhatsApp o SMS); **mantenerlo presionado** ofrece «En ruta», «Necesito ayuda» y 911.
+**Página pública** (Linktree / QR del auto), en orden de conversión — componentes en `src/components/public/`:
+1. `ProfileHeader`: foto, nombre, estado (🟢/🟡 automático por horario), vehículo con placas, **Guardar contacto** (.vcf; iPhone abre la tarjeta, Android descarga, Instagram/TikTok muestran cómo abrir en el navegador) y **WhatsApp directo**.
+2. `QuoteSection`: servicio, origen/destino, Ahora/Programar, pasajeros, maletas, caseta; precio en vivo; por horas usa la tarifa por hora.
+3. `ServicesSection`: aeropuerto, punto a punto, foráneo, por horas + zonas de cobertura.
+4. `AmenitiesSection`: Wi-Fi (copiar contraseña con «¡Copiada!» + QR) y amenidades.
+5. `PaymentsPolicies`: Efectivo / SPEI / Tarjeta, validez, espera y reservas.
+6. `PublicFooter`: redes y acceso discreto «Soy el conductor».
+
+Todo se edita en **Más → Mi página** (`#/app/pagina`), que también da el **QR para el vehículo** (sin foto, para que se lea fácil). El enlace va comprimido (`z…`, deflate); los enlaces viejos siguen abriendo. El botón rojo **SOS** del encabezado: **un toque** manda «Estoy iniciando un viaje en [ubicación]» al contacto de emergencia (WhatsApp o SMS); **mantenerlo presionado** ofrece «En ruta», «Necesito ayuda» y 911.
 
 **Datos** (`localStorage` `clientela2`): `config` (driver, costs, rates, extras, goals, wifi, sos), `history`, `clients`, `trips`, `expenses`.
 

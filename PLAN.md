@@ -101,6 +101,8 @@ React + Vite + Tailwind aislado del resto; se publica en `/cotiza/` y no toca la
 - [x] Panel e historial (`#/app`, `#/app/historial`).
 - [x] Fase 2 (5 nov): .vcf con foto y Wi-Fi a bordo (copiar + QR) en la página pública; clientes frecuentes con rutas y Re-cotizar; gastos del día y balance en vivo; bitácora con Efectivo/SPEI/Tarjeta y semana bruto vs. km; botón SOS con ubicación por WhatsApp/SMS.
 - [x] SOS de un toque (5 nov): toque = «Estoy iniciando un viaje»; mantener = más opciones.
+- [x] Página pública completa (5 nov): perfil con estado y vehículo, cotizador con servicios y por horas, servicios y cobertura, a bordo, pagos y políticas, pie con redes; editor «Mi página» y QR para el auto; enlace comprimido.
+- [ ] Probar en iPhone y Android reales: guardar el .vcf, copiar la clave del Wi-Fi, escanear el QR impreso.
 - [ ] Prueba en el teléfono (instalar, offline, enlace público en el Linktree, .vcf en iPhone y Android, SOS real).
 - [ ] Decidir si la raíz del repo apunta al cotizador o se mantiene la app Clientela.
 - [ ] Respaldo en la nube (Supabase) del historial y las tarifas.
