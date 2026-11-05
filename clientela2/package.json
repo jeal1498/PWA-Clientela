@@ -10,6 +10,7 @@
     "test": "node --test src/lib/*.test.js"
   },
   "dependencies": {
+    "fflate": "^0.8.2",
     "lucide-react": "^0.460.0",
     "qrcode-generator": "^1.4.4",
     "react": "^18.3.1",

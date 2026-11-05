@@ -8,6 +8,7 @@ export default function Mas() {
   const { history, config } = useStore();
   const pending = history.filter((h) => h.status === 'pendiente').length;
   const items = [
+    { to: '/app/pagina', icon: Globe, label: 'Mi página', hint: 'Vehículo, estado, servicios, políticas y QR del auto' },
     { to: '/app/gastos', icon: Receipt, label: 'Gastos', hint: 'Combustible, casetas, lavado, hormiga' },
     { to: '/app/historial', icon: History, label: 'Cotizaciones', hint: pending ? `${pending} pendientes` : 'Guardadas' },
     { to: '/app/wifi', icon: Wifi, label: 'Wi-Fi a bordo', hint: config.wifi.ssid ? `QR de «${config.wifi.ssid}»` : 'Sin configurar' },

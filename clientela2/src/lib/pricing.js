@@ -34,6 +34,25 @@ export const DEFAULT_CONFIG = {
   wifi: { ssid: '', password: '', security: 'WPA', showPublic: true },
   // Contacto de emergencia para el botón SOS. trackingLink: enlace de rastreo en vivo (opcional).
   sos: { name: '', phone: '', channel: 'whatsapp', trackingLink: '' },
+  // Vehículo: para que el pasajero lo identifique al llegar.
+  vehicle: { model: '', color: '', plates: '' },
+  // Página pública (landing / QR del vehículo).
+  page: {
+    statusMode: 'auto', // auto (según horario) | available | reservations | off
+    days: [1, 2, 3, 4, 5, 6], // 0 = domingo … 6 = sábado
+    from: '07:00',
+    to: '22:00',
+    zones: '', // «Cancún, Playa del Carmen, Tulum»
+    services: { airport: true, urban: true, foraneo: true, hourly: true },
+    hourlyRate: 300, // $ por hora de disposición
+    minHours: 2,
+    amenities: { chargers: true, ac: true, music: true, trunk: true, water: false },
+    payments: { efectivo: true, spei: true, tarjeta: false },
+    validityHours: 24, // validez de la cotización
+    waitMin: 10, // tolerancia de espera
+    bookingNote: 'Reserva con al menos 2 h de anticipación. Cancela sin costo hasta 1 h antes.',
+    social: { tiktok: '', facebook: '', instagram: '' },
+  },
 };
 
 const num = (v, d = 0) => (Number.isFinite(+v) ? +v : d);
@@ -52,7 +71,17 @@ export const costPerKm = (costs) => fuelPerKm(costs) + num(costs.wearPerKm);
 export function withDefaults(cfg = {}) {
   const out = {};
   for (const k of Object.keys(DEFAULT_CONFIG)) out[k] = { ...DEFAULT_CONFIG[k], ...(cfg[k] || {}) };
+  // Sub-objetos de la página (servicios, amenidades, pagos, redes) también se completan.
+  for (const k of ['services', 'amenities', 'payments', 'social']) out.page[k] = { ...DEFAULT_CONFIG.page[k], ...(cfg.page?.[k] || {}) };
   return out;
+}
+
+/** Disposición por horas: tarifa por hora × horas (con mínimo de horas), redondeada. */
+export function hourlyQuote(hours, config) {
+  const { page, rates } = withDefaults(config);
+  const h = Math.max(num(page.minHours, 1), num(hours, 1));
+  const amount = h * num(page.hourlyRate);
+  return { hours: h, price: roundUp(amount, num(rates.rounding)), lines: [{ key: 'hourly', label: `Disposición (${h} h × $${num(page.hourlyRate)})`, amount }] };
 }
 
 /**

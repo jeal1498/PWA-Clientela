@@ -10,16 +10,18 @@ export function waLink(phone, text, lada = '52') {
 const place = (p) => (p ? p.label || p : '—');
 
 /** Lo que el CLIENTE manda al conductor desde el cotizador público. */
-export function clientRequestMessage({ from, to, date, time, passengers, bags, name, notes, q }) {
+export function clientRequestMessage({ service, from, to, now, date, time, passengers, bags, name, notes, q, hours }) {
+  const hourly = service?.key === 'hourly';
   return [
-    '¡Hola! Quiero solicitar un viaje 🚗',
+    `¡Hola! Quiero solicitar ${hourly ? 'un servicio por horas' : 'un viaje'} 🚗`,
+    service && !hourly ? `🏷️ *Servicio:* ${service.label}` : null,
     '',
-    `📍 *Origen:* ${place(from)}`,
-    `🏁 *Destino:* ${place(to)}`,
-    `📅 *Fecha:* ${dateText(date, time) || 'Lo antes posible'}`,
+    `📍 *${hourly ? 'Recogida' : 'Origen'}:* ${place(from)}`,
+    hourly ? (to ? `🏁 *Destino final:* ${place(to)}` : null) : `🏁 *Destino:* ${place(to)}`,
+    `📅 *Cuándo:* ${now ? 'Ahora (lo antes posible)' : dateText(date, time) || 'Lo antes posible'}`,
     `👥 *Pasajeros:* ${passengers || 1}  ·  🧳 *Maletas:* ${bags || 0}`,
     '',
-    `📏 ${kmText(q.km)} · ⏱️ ${minText(q.min)}${q.tolls ? ' · 🛣️ con caseta' : ''}`,
+    hourly ? `⏱️ ${hours} h de disposición` : `📏 ${kmText(q.km)} · ⏱️ ${minText(q.min)}${q.tolls ? ' · 🛣️ con caseta' : ''}`,
     `💰 *Tarifa estimada:* ${money(q.price)}`,
     notes ? `📝 ${notes}` : null,
     name ? `Soy *${name}*.` : null,

@@ -11,6 +11,7 @@ import Gastos from './pages/Gastos.jsx';
 import Clientes from './pages/Clientes.jsx';
 import Mas from './pages/Mas.jsx';
 import WifiPage from './pages/WifiPage.jsx';
+import PageSettings from './pages/PageSettings.jsx';
 
 // HashRouter: GitHub Pages no reescribe rutas, así #/app/manual funciona sin 404.
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="clientes" element={<Clientes />} />
             <Route path="mas" element={<Mas />} />
             <Route path="wifi" element={<WifiPage />} />
+            <Route path="pagina" element={<PageSettings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
