@@ -1,7 +1,7 @@
 // Módulo A · Configuración de costos del conductor (/app/settings).
 // Todo se guarda al instante en localStorage. Lo público (datos, vehículo, Wi-Fi) está en «Mi página».
 import { Link } from 'react-router-dom';
-import { Fuel, Wrench, Receipt, Sparkles, Target, User, RotateCcw, ShieldAlert, ChevronRight } from 'lucide-react';
+import { Fuel, Wrench, Receipt, Sparkles, User, RotateCcw, ShieldAlert, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { Card, CardTitle, Field, NumberInput, TextInput, Stat, Button, Segmented } from '../components/ui.jsx';
 import { fuelPerKm, costPerKm } from '../lib/pricing.js';
@@ -9,19 +9,19 @@ import { money2 } from '../lib/format.js';
 
 export default function Settings() {
   const { config, setSection, resetConfig } = useStore();
-  const { costs, rates, extras, goals, sos } = config;
+  const { costs, rates, extras, sos } = config;
   const text = (section, key) => ({ value: config[section][key], onChange: (e) => setSection(section, { [key]: e.target.value }) });
   // Atajo para enlazar un campo numérico a su sección.
   const bind = (section, key) => ({ value: config[section][key], onChange: (v) => setSection(section, { [key]: v }) });
 
   return (
     <>
-      <h1 className="font-titulo text-2xl">Costos y tarifas</h1>
+      <h1 className="font-titulo text-2xl">Ajustes</h1>
 
       {/* Nombre, foto, WhatsApp, ciudad y Wi-Fi viven en «Mi página» (todo lo que ve el pasajero en un solo lugar). */}
       <Link to="/app/pagina" className="flex items-center gap-3 rounded-3xl border border-white/5 bg-tablero p-4">
         <User className="size-5 text-gris" />
-        <span className="flex-1"><span className="block">Tus datos, vehículo y Wi-Fi</span><span className="text-xs text-gris">Se editan en Más → Mi página</span></span>
+        <span className="flex-1"><span className="block">Tus datos, vehículo, Wi-Fi y QR</span><span className="text-xs text-gris">Se editan en Yo → Mi página</span></span>
         <ChevronRight className="size-4 text-gris" />
       </Link>
 
@@ -61,15 +61,6 @@ export default function Settings() {
           <Field label="Caseta habitual" hint="Opcional. 0 = no se ofrece."><NumberInput prefix="$" {...bind('extras', 'tollDefault')} /></Field>
         </div>
         <p className="mt-3 text-xs text-gris">La caseta habitual se agrega con un toque; en cada viaje puedes poner otro monto.</p>
-      </Card>
-
-      <Card>
-        <CardTitle icon={Target}>Metas de rentabilidad</CardTitle>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Neto mínimo por km" hint="Sobre los km que manejas."><NumberInput prefix="$" suffix="/ km" {...bind('goals', 'minPerKm')} /></Field>
-          <Field label="Neto mínimo por hora"><NumberInput prefix="$" suffix="/ h" {...bind('goals', 'minPerHour')} /></Field>
-        </div>
-        <p className="mt-3 text-xs text-gris"><span className="text-cobrado">Verde</span> cumple ambas · <span className="text-tedebe">amarillo</span> solo una · <span className="text-atrasado">rojo</span> ninguna.</p>
       </Card>
 
       <Card id="sos" className="scroll-mt-20">

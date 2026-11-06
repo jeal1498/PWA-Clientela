@@ -30,7 +30,7 @@ function dayLabel(iso) {
   return iso === t ? 'Hoy' : iso === m ? 'Mañana' : iso < t ? `${dayLong(iso)} · sin cerrar` : dayLong(iso);
 }
 
-export default function Agenda() {
+export default function Agenda({ embedded = false }) {
   const { trips, clients, config, update } = useStore();
   const [newOpen, setNewOpen] = useState(false);
   const [paying, setPaying] = useState(null);
@@ -78,8 +78,8 @@ export default function Agenda() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="font-titulo text-2xl">Agenda</h1>
-        <Button icon={Plus} className="h-11" onClick={() => setNewOpen(true)}>Agendar</Button>
+        <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Por hacer</h1>
+        <Button icon={Plus} className="ml-auto h-11" onClick={() => setNewOpen(true)}>Agendar</Button>
       </div>
 
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-tablero px-3.5 py-3">

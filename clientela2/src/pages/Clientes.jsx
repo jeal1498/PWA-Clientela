@@ -1,13 +1,16 @@
 // Clientes frecuentes (CRM básico): datos, notas, tarifa preferencial y rutas habituales.
 // «Re-cotizar» abre WhatsApp con la propuesta de la ruta habitual en un toque.
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Plus, Search, Phone, MessageCircle, Pencil, Trash2, Repeat, Route as RouteIcon, Users, Star } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { quote, roundUp } from '../lib/pricing.js';
 import { money, kmText, minText, waNumber } from '../lib/format.js';
 import { driverProposalMessage, waLink } from '../lib/whatsapp.js';
 import { useRoute } from '../hooks/useRoute.js';
-import { Card, Field, TextInput, NumberInput, Button, Avatar, cx } from '../components/ui.jsx';
+import { Card, Field, TextInput, NumberInput, Button, Avatar, Segmented, cx } from '../components/ui.jsx';
+import Cobros from './Cobros.jsx';
+import { debtTotals } from '../lib/debts.js';
 import { debtsByClient } from '../lib/debts.js';
 import { isDone } from '../lib/agenda.js';
 import { today } from '../lib/dates.js';
@@ -35,6 +38,8 @@ export function recotizarLink(route, client, config) {
 export default function Clientes() {
   const { clients, trips, config, add, update, remove } = useStore();
   const [q, setQ] = useState('');
+  const [params, setParams] = useSearchParams();
+  const filtro = params.get('f') === 'debe' ? 'debe' : 'todos';
   const [editing, setEditing] = useState(null); // cliente o {} para nuevo
   const [toast, showToast] = useToast();
 
@@ -62,12 +67,34 @@ export default function Clientes() {
     showToast('Cliente guardado');
   }
 
+  const filtros = (
+    <Segmented value={filtro} onChange={(f) => setParams(f === 'debe' ? { f } : {}, { replace: true })} options={[{ value: 'todos', label: 'Todos' }, { value: 'debe', label: debts.length ? `Te deben (${debts.length})` : 'Te deben' }]} />
+  );
+  const deuda = debtTotals(debts);
+
+  if (filtro === 'debe') {
+    return (
+      <>
+        <h1 className="font-titulo text-2xl">Clientes</h1>
+        {filtros}
+        <Cobros embedded />
+      </>
+    );
+  }
+
   return (
     <>
       <div className="flex items-center justify-between">
         <h1 className="font-titulo text-2xl">Clientes</h1>
         <Button icon={Plus} className="h-11" onClick={() => setEditing({})}>Nuevo</Button>
       </div>
+      {debts.length > 0 && (
+        <button type="button" onClick={() => setParams({ f: 'debe' }, { replace: true })} className={cx('flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left', debts.some((d) => d.late) ? 'bg-atrasado text-white' : 'bg-tedebe text-[#231c00]')}>
+          <b className="font-titulo text-[15px]">Te deben {money(deuda.total)}</b>
+          <span className="text-sm font-bold">{debts.length} cliente{debts.length > 1 ? 's' : ''} · Cobrar →</span>
+        </button>
+      )}
+      {filtros}
       {clients.length > 3 && (
         <div className="relative">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gris" />

@@ -33,7 +33,7 @@ function NextTrip({ trip, onAdvance }) {
       <section className="rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Siguiente viaje">
         <div className={cx(label, 'text-[#55555e]')}>Siguiente viaje</div>
         <div className="mt-1 font-titulo text-xl">Sin viajes agendados</div>
-        <Link to="/app/agenda" className="mt-3 flex h-[52px] items-center justify-center gap-2 rounded-2xl bg-cobrado text-base font-bold text-[#04210f]"><CalendarPlus className="size-5" aria-hidden /> Agendar un viaje</Link>
+        <Link to="/app/viajes?s=porhacer" className="mt-3 flex h-[52px] items-center justify-center gap-2 rounded-2xl bg-cobrado text-base font-bold text-[#04210f]"><CalendarPlus className="size-5" aria-hidden /> Agendar un viaje</Link>
       </section>
     );
   }
@@ -47,7 +47,7 @@ function NextTrip({ trip, onAdvance }) {
       </div>
       <div className="min-w-0"><b className="block truncate font-titulo text-lg">{trip.clientName || 'Sin nombre'}</b><span className="block truncate text-sm text-[#3a3a45]">{[trip.from, trip.to].filter(Boolean).join(' → ') || '—'}</span></div>
       <Button className="h-[52px] w-full rounded-2xl bg-cobrado text-base font-bold text-[#04210f]" onClick={() => onAdvance(trip)}>{STEP_LABELS[s]}</Button>
-      <Link to="/app/agenda" className="flex min-h-11 items-center justify-center rounded-xl border border-[#c9c9c2] text-sm font-medium">Ver agenda · recordar o cancelar</Link>
+      <Link to="/app/viajes?s=porhacer" className="flex min-h-11 items-center justify-center rounded-xl border border-[#c9c9c2] text-sm font-medium">Ver agenda · recordar o cancelar</Link>
     </section>
   );
 }
@@ -56,12 +56,12 @@ function Debts() {
   const { trips } = useStore();
   const groups = debtsByClient(trips, today());
   if (!groups.length) {
-    return <Link to="/app/cobros" className="flex min-h-16 items-center justify-between rounded-2xl border border-cobrado/30 bg-cobrado/10 px-4 text-cobrado"><b className="font-titulo text-[15px]">Nadie te debe</b><ChevronRight className="size-5" aria-hidden /></Link>;
+    return <Link to="/app/clientes?f=debe" className="flex min-h-16 items-center justify-between rounded-2xl border border-cobrado/30 bg-cobrado/10 px-4 text-cobrado"><b className="font-titulo text-[15px]">Nadie te debe</b><ChevronRight className="size-5" aria-hidden /></Link>;
   }
   const { total, late } = debtTotals(groups);
   const lateN = groups.filter((g) => g.late).length;
   return (
-    <Link to="/app/cobros" className={cx('flex min-h-16 items-center justify-between gap-3 rounded-2xl px-4 py-3', late ? 'bg-atrasado text-white' : 'bg-tedebe text-[#231c00]')} aria-label={`Te deben ${money(total)}`}>
+    <Link to="/app/clientes?f=debe" className={cx('flex min-h-16 items-center justify-between gap-3 rounded-2xl px-4 py-3', late ? 'bg-atrasado text-white' : 'bg-tedebe text-[#231c00]')} aria-label={`Te deben ${money(total)}`}>
       <span><b className="block font-titulo text-[15px]">Te deben</b><small className="block text-xs opacity-90">{groups.length} {groups.length === 1 ? 'cliente' : 'clientes'}{lateN ? ` · ${lateN} atrasado${lateN === 1 ? '' : 's'}` : ''}</small></span>
       <span className="flex items-center gap-1 font-mono text-2xl font-bold tabular-nums">{money(total)}<ChevronRight className="size-5" aria-hidden /></span>
     </Link>
@@ -108,7 +108,7 @@ export default function Dashboard() {
 
   function advance(t) {
     if (stepOf(t) < 2) return update('trips', t.id, advancePatch(t, new Date().toISOString()));
-    location.hash = '#/app/agenda'; // Terminar pide el pago en la Agenda
+    location.hash = '#/app/viajes?s=porhacer'; // Terminar pide el pago en la Agenda
   }
 
   return (
