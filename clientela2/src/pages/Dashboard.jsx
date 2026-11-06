@@ -8,6 +8,7 @@ import { money, money2 } from '../lib/format.js';
 import { copyText } from '../lib/whatsapp.js';
 import { Card, CardTitle, Button, Stat } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
+import EstadoAhora from '../components/EstadoAhora.jsx';
 import DayBalance from '../components/DayBalance.jsx';
 import ExpenseQuick from '../components/ExpenseQuick.jsx';
 import TripSheet from '../components/TripSheet.jsx';
@@ -31,6 +32,8 @@ export default function Dashboard() {
   return (
     <>
       <h1 className="font-titulo text-2xl">Hola{config.driver.name ? `, ${config.driver.name}` : ''} 👋</h1>
+
+      <EstadoAhora />
 
       {!config.driver.phone && (
         <Link to="/app/pagina" className="flex items-center gap-2 rounded-2xl border border-tedebe/30 bg-tedebe/10 p-3 text-sm text-tedebe">
