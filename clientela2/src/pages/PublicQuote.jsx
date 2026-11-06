@@ -2,7 +2,7 @@
 //   1 Perfil y contacto · 2 Cotizador · 3 Servicios y cobertura · 4 A bordo · 5 Pagos y políticas · 6 Pie
 // Lee los datos del enlace (#/?c=…); sin enlace muestra la vista previa con los datos del propio conductor.
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, Navigate } from 'react-router-dom';
 import { MessageCircle, Calculator, Settings, Copy, ExternalLink, AlertTriangle, X } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { decodeConfig, publicLink } from '../lib/share.js';
@@ -31,7 +31,7 @@ export default function PublicQuote() {
   const broken = !!code && !shared;
   const config = shared || store.config;
   const { driver, vehicle, page, wifi } = config;
-  const isPreview = !code;
+  const isPreview = !code && params.has('vista'); // «?vista=1»: tu propia página, desde Mi página
 
   const [toast, showToast] = useToast();
   const [service, setService] = useState(() => SERVICES.find((s) => page.services[s.key])?.key || 'urban');
@@ -65,6 +65,9 @@ export default function PublicQuote() {
   }
 
   const pickService = (key) => { setService(key); scrollToId('cotizar'); };
+
+  // El link principal (sin enlace de un conductor) abre «Hoy»; los pasajeros siempre llegan con `?c=`.
+  if (!code && !isPreview) return <Navigate to="/app" replace />;
 
   if (broken) {
     return (

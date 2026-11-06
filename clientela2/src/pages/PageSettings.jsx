@@ -91,7 +91,7 @@ export default function PageSettings() {
     <>
       <div className="flex items-center justify-between">
         <h1 className="font-titulo text-2xl">Mi página</h1>
-        <Button variant="ghost" icon={ExternalLink} className="h-11 text-sm" onClick={() => window.open('#/', '_blank')}>Vista previa</Button>
+        <Button variant="ghost" icon={ExternalLink} className="h-11 text-sm" onClick={() => window.open('#/?vista=1', '_blank')}>Vista previa</Button>
       </div>
 
       <EstadoAhora />
