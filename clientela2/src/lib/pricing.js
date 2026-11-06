@@ -53,6 +53,7 @@ export const DEFAULT_CONFIG = {
     waitMin: 10, // tolerancia de espera
     bookingNote: 'Reserva con al menos 2 h de anticipación. Cancela sin costo hasta 1 h antes.',
     social: { tiktok: '', facebook: '', instagram: '' },
+    trust: { years: '', trips: '', insured: false, quote: '', quoteBy: '' }, // señales de confianza, todas opcionales
   },
 };
 
@@ -72,8 +73,8 @@ export const costPerKm = (costs) => fuelPerKm(costs) + num(costs.wearPerKm);
 export function withDefaults(cfg = {}) {
   const out = {};
   for (const k of Object.keys(DEFAULT_CONFIG)) out[k] = { ...DEFAULT_CONFIG[k], ...(cfg[k] || {}) };
-  // Sub-objetos de la página (servicios, amenidades, pagos, redes) también se completan.
-  for (const k of ['services', 'amenities', 'payments', 'social']) out.page[k] = { ...DEFAULT_CONFIG.page[k], ...(cfg.page?.[k] || {}) };
+  // Sub-objetos de la página (servicios, amenidades, pagos, redes, confianza) también se completan.
+  for (const k of ['services', 'amenities', 'payments', 'social', 'trust']) out.page[k] = { ...DEFAULT_CONFIG.page[k], ...(cfg.page?.[k] || {}) };
   return out;
 }
 
