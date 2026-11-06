@@ -1,6 +1,6 @@
 // Registrar (o editar) un viaje realizado en la bitácora. Se abre vacío o precargado desde una cotización.
 import { useEffect, useState } from 'react';
-import { Banknote, Landmark, CreditCard, Check } from 'lucide-react';
+import { Banknote, Landmark, CreditCard, Clock, Check } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { today, hm } from '../lib/dates.js';
 import Sheet from './Sheet.jsx';
@@ -10,6 +10,7 @@ const PAY_OPTIONS = [
   { value: 'efectivo', label: 'Efectivo', icon: Banknote },
   { value: 'spei', label: 'SPEI', icon: Landmark },
   { value: 'tarjeta', label: 'Tarjeta', icon: CreditCard },
+  { value: '', label: 'Me debe', icon: Clock },
 ];
 
 const blank = () => ({ date: today(), time: hm(), clientId: '', clientName: '', from: '', to: '', km: '', amount: '', pay: 'efectivo' });
@@ -23,7 +24,7 @@ export default function TripSheet({ open, onClose, prefill, editing, onSaved }) 
   const set = (p) => setF((s) => ({ ...s, ...p }));
 
   function save() {
-    const data = { ...f, km: +f.km || 0, amount: +f.amount || 0 };
+    const data = { ...f, km: +f.km || 0, amount: +f.amount || 0, paidAt: f.pay ? f.paidAt || f.date : null };
     const trip = editing ? (update('trips', editing.id, data), { ...editing, ...data }) : add('trips', data);
     onSaved?.(trip);
     onClose();
@@ -32,7 +33,7 @@ export default function TripSheet({ open, onClose, prefill, editing, onSaved }) 
   return (
     <Sheet open={open} onClose={onClose} title={editing ? 'Editar viaje' : 'Viaje realizado'}>
       <div className="space-y-3">
-        <Field label="Cobrado">
+        <Field label={f.pay ? 'Cobrado' : 'Monto'}>
           <NumberInput prefix="$" value={f.amount} onChange={(amount) => set({ amount })} placeholder="0" autoFocus aria-label="Monto cobrado" />
         </Field>
         <Segmented value={f.pay} onChange={(pay) => set({ pay })} options={PAY_OPTIONS} />

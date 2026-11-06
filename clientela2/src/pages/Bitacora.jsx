@@ -74,7 +74,7 @@ export default function Bitacora() {
           {weekTrips.map((x) => (
             <li key={x.id} className="flex items-center gap-2 py-2.5">
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm">{x.clientName || 'Sin nombre'} <span className="text-gris">· {PAY_METHODS[x.pay]?.replace('Transferencia ', '')}</span></div>
+                <div className="truncate text-sm">{x.clientName || 'Sin nombre'} <span className="text-gris">· {x.pay ? PAY_METHODS[x.pay]?.replace('Transferencia ', '') : 'Me debe'}</span></div>
                 <div className="truncate text-xs text-gris">{dayShort(x.date)} {x.time} · {[x.from, x.to].filter(Boolean).join(' → ') || '—'}{x.km ? ` · ${x.km} km` : ''}</div>
               </div>
               <span className="font-mono">{money(x.amount)}</span>
