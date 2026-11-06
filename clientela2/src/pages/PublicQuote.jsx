@@ -88,8 +88,8 @@ export default function PublicQuote() {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asfalto/95 p-3 backdrop-blur" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + .75rem)' }}>
         <div className="mx-auto max-w-lg">
           {cta.ready && cta.href ? (
-            <Button variant="whatsapp" icon={MessageCircle} className="w-full text-base" as="a" href={cta.href} target="_blank" rel="noopener">
-              Solicitar este viaje · {money(cta.price)}
+            <Button icon={MessageCircle} className="w-full text-base" as="a" href={cta.href} target="_blank" rel="noopener">
+              Pedir con {driver.name || 'el conductor'} · {money(cta.price)}
             </Button>
           ) : (
             <Button icon={Calculator} className="w-full text-base" onClick={() => scrollToId('cotizar')}>Cotizar mi viaje</Button>
