@@ -15,7 +15,7 @@ import EstadoAhora from '../components/EstadoAhora.jsx';
 import ExpenseQuick from '../components/ExpenseQuick.jsx';
 import TripSheet from '../components/TripSheet.jsx';
 
-const label = 'text-[11px] font-bold tracking-widest uppercase';
+const label = 'text-xs font-bold tracking-widest uppercase';
 
 /** «en 42 min», «en 2 h», «hoy», «mañana» o la fecha corta. */
 function cuando(t, now = new Date()) {

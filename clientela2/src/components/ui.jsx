@@ -18,14 +18,14 @@ export function CardTitle({ icon: Icon, children, right }) {
   );
 }
 
-const fieldCls = 'h-12 w-full rounded-2xl border border-white/10 bg-asfalto px-3 text-hueso placeholder:text-gris/60 outline-none transition focus:border-cobrado/70 focus:ring-2 focus:ring-cobrado/20';
+const fieldCls = 'h-12 w-full rounded-2xl border border-white/10 bg-asfalto px-3 text-hueso placeholder:text-gris outline-none transition focus:border-cobrado/70 focus:ring-2 focus:ring-cobrado/20';
 
 export function Field({ label, hint, children }) {
   return (
     <label className="block">
       {label && <span className="mb-1 block text-sm text-gris">{label}</span>}
       {children}
-      {hint && <span className="mt-1 block text-xs text-gris/70">{hint}</span>}
+      {hint && <span className="mt-1 block text-xs text-gris">{hint}</span>}
     </label>
   );
 }
@@ -103,7 +103,7 @@ export function Segmented({ options, value, onChange }) {
           key={v}
           type="button"
           onClick={() => onChange(v)}
-          className={cx('flex h-10 items-center justify-center gap-1.5 rounded-xl text-sm transition', value === v ? 'bg-tablero text-hueso shadow' : 'text-gris')}
+          className={cx('flex h-11 items-center justify-center gap-1.5 rounded-xl text-sm transition', value === v ? 'bg-tablero text-hueso shadow' : 'text-gris')}
         >
           {Icon && <Icon className="size-4" aria-hidden />}
           {label}

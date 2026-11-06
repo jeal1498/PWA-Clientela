@@ -91,7 +91,7 @@ export default function PageSettings() {
     <>
       <div className="flex items-center justify-between">
         <h1 className="font-titulo text-2xl">Mi página</h1>
-        <Button variant="ghost" icon={ExternalLink} className="h-10 text-sm" onClick={() => window.open('#/', '_blank')}>Vista previa</Button>
+        <Button variant="ghost" icon={ExternalLink} className="h-11 text-sm" onClick={() => window.open('#/', '_blank')}>Vista previa</Button>
       </div>
 
       <EstadoAhora />
@@ -170,7 +170,7 @@ export default function PageSettings() {
               {DAYS.map((d, i) => (
                 <button key={i} type="button" aria-pressed={page.days.includes(i)} aria-label={DAY_NAMES[i]}
                   onClick={() => setPage({ days: page.days.includes(i) ? page.days.filter((x) => x !== i) : [...page.days, i] })}
-                  className={cx('h-10 rounded-xl text-sm', page.days.includes(i) ? 'bg-cobrado/15 text-cobrado' : 'bg-asfalto text-gris')}>{d}</button>
+                  className={cx('h-11 rounded-xl text-sm', page.days.includes(i) ? 'bg-cobrado/15 text-cobrado' : 'bg-asfalto text-gris')}>{d}</button>
               ))}
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">

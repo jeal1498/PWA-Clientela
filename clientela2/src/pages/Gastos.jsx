@@ -24,7 +24,7 @@ export default function Gastos() {
       </Card>
       <Card>
         <CardTitle icon={Receipt} right={<span className="font-mono text-sm">{money(w.total.spent)}</span>}>Esta semana</CardTitle>
-        <div className="mb-3 grid grid-cols-4 gap-1.5 text-center text-[11px]">
+        <div className="mb-3 grid grid-cols-4 gap-1.5 text-center text-xs">
           {Object.entries(EXPENSE_CATS).map(([k, v]) => (
             <div key={k} className="rounded-xl bg-asfalto/60 p-2"><div aria-hidden>{v.emoji}</div><div className="font-mono text-xs">{money(w.total.byCat[k])}</div></div>
           ))}
@@ -39,7 +39,7 @@ export default function Gastos() {
                 <div className="text-xs capitalize text-gris">{dayShort(e.date)} {e.time}</div>
               </div>
               <span className="font-mono text-tedebe">{money(e.amount)}</span>
-              <button type="button" aria-label="Borrar gasto" onClick={() => confirm('¿Borrar este gasto?') && remove('expenses', e.id)} className="grid size-9 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-atrasado" /></button>
+              <button type="button" aria-label="Borrar gasto" onClick={() => confirm('¿Borrar este gasto?') && remove('expenses', e.id)} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-atrasado" /></button>
             </li>
           ))}
         </ul>

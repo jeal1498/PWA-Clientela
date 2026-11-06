@@ -50,7 +50,7 @@ export default function Cobros() {
 
       {groups.length > 0 ? (
         <section className="space-y-1.5 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Por cobrar">
-          <div className="text-[11px] font-bold tracking-widest text-[#55555e] uppercase">Por cobrar</div>
+          <div className="text-xs font-bold tracking-widest text-[#55555e] uppercase">Por cobrar</div>
           <div className="font-mono text-4xl leading-none font-bold tracking-tight tabular-nums">{money(total)}</div>
           <div className="flex items-center justify-between gap-2 text-[13px] text-[#3a3a45]">
             <span>{groups.length} cliente{groups.length > 1 ? 's' : ''}</span>
@@ -88,7 +88,7 @@ export default function Cobros() {
 
       {paid.length > 0 && (
         <section aria-label="Cobrado esta semana">
-          <h2 className="mb-1 text-[11px] font-bold uppercase tracking-wider text-gris">Cobrado esta semana</h2>
+          <h2 className="mb-1 text-xs font-bold uppercase tracking-wider text-gris">Cobrado esta semana</h2>
           {paid.slice(0, 8).map((t) => (
             <div key={t.id} className="flex justify-between py-1.5 text-[13px] text-gris">
               <span className="truncate">{t.clientName || 'Sin nombre'} · {PAYS.find((p) => p.key === t.pay)?.label}</span>

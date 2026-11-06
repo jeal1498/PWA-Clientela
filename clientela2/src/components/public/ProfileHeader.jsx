@@ -40,7 +40,7 @@ export default function ProfileHeader({ driver, vehicle, page, hasWifi, onSaveCo
         <div className="mx-auto mt-4 flex max-w-sm items-center gap-3 rounded-2xl border border-white/5 bg-tablero p-3 text-left">
           <div className="grid size-10 place-items-center rounded-xl bg-asfalto text-gris"><Car className="size-5" /></div>
           <div className="min-w-0 flex-1">
-            <div className="text-[11px] tracking-wide text-gris uppercase">Tu vehículo</div>
+            <div className="text-xs tracking-wide text-gris uppercase">Tu vehículo</div>
             <div className="font-semibold leading-tight">{car || 'Vehículo'}</div>
           </div>
           {vehicle.plates && (

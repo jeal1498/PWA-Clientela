@@ -7,7 +7,7 @@ export default function WhenPicker({ date, time, onChange }) {
   const chip = 'h-10 flex-1 rounded-xl border text-sm font-bold';
   return (
     <div className="space-y-2">
-      <div className="text-[10.5px] font-bold tracking-widest text-gris uppercase">¿Cuándo?</div>
+      <div className="text-xs font-bold tracking-widest text-gris uppercase">¿Cuándo?</div>
       <div className="flex gap-2">
         {[['hoy', 'Hoy', today()], ['man', 'Mañana', tomorrow()]].map(([k, l, d]) => (
           <button key={k} type="button" aria-pressed={day === k} onClick={() => onChange({ date: d, time })} className={cx(chip, day === k ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>{l}</button>

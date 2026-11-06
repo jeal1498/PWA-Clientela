@@ -18,7 +18,7 @@ export default function EstadoAhora() {
       <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#1C1C23] px-3.5 py-3" role="status">
         <span className={cx('size-3.5 shrink-0 rounded-full', e.ocupado ? 'bg-atrasado' : 'bg-cobrado')} aria-hidden />
         <div className="min-w-0 flex-1"><b className={cx('block text-lg', e.ocupado ? 'text-atrasado' : 'text-cobrado')}>{e.texto}</b><small className="block truncate text-xs text-gris">{e.detalle}</small></div>
-        <Button variant="outline" className="h-10" onClick={() => setOpen(true)}>Cambiar</Button>
+        <Button variant="outline" className="h-11" onClick={() => setOpen(true)}>Cambiar</Button>
       </div>
       <Sheet open={open} onClose={() => setOpen(false)} title="Mi estado">
         <div className="space-y-2">

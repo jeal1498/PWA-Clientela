@@ -32,14 +32,14 @@ export default function Bitacora() {
     <>
       <div className="flex items-center justify-between">
         <h1 className="font-titulo text-2xl">Bitácora</h1>
-        <Button icon={Plus} className="h-10" onClick={() => setSheet({})}>Viaje</Button>
+        <Button icon={Plus} className="h-11" onClick={() => setSheet({})}>Viaje</Button>
       </div>
 
       <Card>
         <div className="mb-3 flex items-center">
-          <button type="button" aria-label="Semana anterior" onClick={() => setOffset((o) => o - 1)} className="grid size-10 place-items-center rounded-xl bg-asfalto"><ChevronLeft className="size-5" /></button>
+          <button type="button" aria-label="Semana anterior" onClick={() => setOffset((o) => o - 1)} className="grid size-11 place-items-center rounded-xl bg-asfalto"><ChevronLeft className="size-5" /></button>
           <div className="flex-1 text-center text-sm font-semibold">{label}</div>
-          <button type="button" aria-label="Semana siguiente" disabled={offset >= 0} onClick={() => setOffset((o) => o + 1)} className="grid size-10 place-items-center rounded-xl bg-asfalto disabled:opacity-30"><ChevronRight className="size-5" /></button>
+          <button type="button" aria-label="Semana siguiente" disabled={offset >= 0} onClick={() => setOffset((o) => o + 1)} className="grid size-11 place-items-center rounded-xl bg-asfalto disabled:opacity-30"><ChevronRight className="size-5" /></button>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <Stat label="Ganancia bruta" value={money(t.gross)} />
@@ -56,11 +56,11 @@ export default function Bitacora() {
                 <div className="w-2.5 rounded-t bg-cobrado" style={{ height: `${(d.gross / maxGross) * 100}%` }} title={`${money(d.gross)}`} />
                 <div className="w-2.5 rounded-t bg-gris/50" style={{ height: `${(d.km / maxKm) * 100}%` }} title={`${d.km} km`} />
               </div>
-              <span className={cx('text-[10px] capitalize', d.date === today() ? 'font-semibold text-cobrado' : 'text-gris')}>{dayShort(d.date)}</span>
+              <span className={cx('text-xs capitalize', d.date === today() ? 'font-semibold text-cobrado' : 'text-gris')}>{dayShort(d.date)}</span>
             </div>
           ))}
         </div>
-        <p className="mt-2 flex justify-center gap-3 text-[11px] text-gris">
+        <p className="mt-2 flex justify-center gap-3 text-xs text-gris">
           <span className="flex items-center gap-1"><i className="size-2 rounded-sm bg-cobrado" />Bruto</span>
           <span className="flex items-center gap-1"><i className="size-2 rounded-sm bg-gris/50" />Km</span>
         </p>
@@ -82,9 +82,9 @@ export default function Bitacora() {
                 <div className="truncate text-xs text-gris">{dayShort(x.date)} {x.time} · {[x.from, x.to].filter(Boolean).join(' → ') || '—'}{x.km ? ` · ${x.km} km` : ''}</div>
               </div>
               <span className="font-mono">{money(x.amount)}</span>
-              <button type="button" aria-label="Repetir viaje" onClick={() => setSheet({ prefill: repeatOf(x) })} className="grid size-9 place-items-center rounded-xl bg-asfalto"><Repeat className="size-4 text-gris" /></button>
-              <button type="button" aria-label="Editar" onClick={() => setSheet({ editing: x })} className="grid size-9 place-items-center rounded-xl bg-asfalto"><Pencil className="size-4 text-gris" /></button>
-              <button type="button" aria-label="Borrar" onClick={() => confirm('¿Borrar este viaje?') && remove('trips', x.id)} className="grid size-9 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-atrasado" /></button>
+              <button type="button" aria-label="Repetir viaje" onClick={() => setSheet({ prefill: repeatOf(x) })} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Repeat className="size-4 text-gris" /></button>
+              <button type="button" aria-label="Editar" onClick={() => setSheet({ editing: x })} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Pencil className="size-4 text-gris" /></button>
+              <button type="button" aria-label="Borrar" onClick={() => confirm('¿Borrar este viaje?') && remove('trips', x.id)} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-atrasado" /></button>
             </li>
           ))}
         </ul>

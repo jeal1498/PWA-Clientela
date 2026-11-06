@@ -49,7 +49,7 @@ export default function PlaceInput({ label, value, onChange, city, placeholder, 
         <span className={cx('size-2.5 shrink-0 rounded-full', dot)} aria-hidden />
         <input
           aria-label={label}
-          className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-gris/60"
+          className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-gris"
           placeholder={placeholder}
           value={text}
           onChange={(e) => onType(e.target.value)}
@@ -58,8 +58,8 @@ export default function PlaceInput({ label, value, onChange, city, placeholder, 
           autoComplete="off"
         />
         {busy && <Loader2 className="size-4 animate-spin text-gris" />}
-        {!busy && text && <button type="button" aria-label="Borrar" onClick={() => { setText(''); onChange(null); setItems([]); }}><X className="size-4 text-gris" /></button>}
-        {!busy && !text && allowGps && <button type="button" aria-label="Usar mi ubicación" onClick={gps}><Crosshair className="size-4 text-gris" /></button>}
+        {!busy && text && <button type="button" aria-label="Borrar" onClick={() => { setText(''); onChange(null); setItems([]); }} className="grid size-11 place-items-center"><X className="size-4 text-gris" /></button>}
+        {!busy && !text && allowGps && <button type="button" aria-label="Usar mi ubicación" onClick={gps} className="grid size-11 place-items-center"><Crosshair className="size-4 text-gris" /></button>}
       </div>
       {open && items.length > 0 && (
         <ul className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-2xl border border-white/10 bg-tablero p-1 shadow-2xl">

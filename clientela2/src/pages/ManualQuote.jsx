@@ -102,7 +102,7 @@ export default function ManualQuote() {
     <>
       <div className="flex items-center justify-between">
         <h1 className="font-titulo text-2xl">Cotizar</h1>
-        <button className="text-sm text-gris underline-offset-4 active:underline" onClick={() => { setF(fresh()); setOverride(null); setEditing(false); }}>Limpiar</button>
+        <button className="min-h-11 px-2 text-sm text-gris underline-offset-4 active:underline" onClick={() => { setF(fresh()); setOverride(null); setEditing(false); }}>Limpiar</button>
       </div>
 
       <Card className="overflow-hidden p-0">
@@ -140,7 +140,7 @@ export default function ManualQuote() {
                 <ChevronRight className="size-4 text-gris" aria-hidden />
               </button>
 
-              <div className="text-[10.5px] font-bold tracking-widest text-gris uppercase">Servicio</div>
+              <div className="text-xs font-bold tracking-widest text-gris uppercase">Servicio</div>
               <div className="space-y-2" aria-live="polite">
                 <ServiceCard icon={Car} title={tripLabel} selected={!hourly} onSelect={() => set({ kind: 'trip' })}
                   detail={`${kmText(km)} · ${minText(min)}`} price={money(tripQ.price)} net={money(tripNet.net)} tone={toneOf(tripNet.status)} />
@@ -152,7 +152,7 @@ export default function ManualQuote() {
 
               <WhenPicker date={f.date} time={f.time} onChange={(w) => setF((s) => ({ ...s, ...w }))} />
 
-              <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex h-9 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
+              <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex h-11 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
                 <Luggage className="size-4 text-gris" aria-hidden /> Maletas {f.bags} · Casetas {money(+f.tolls || 0)}{client ? ` · ${client.name}` : ''}
               </button>
               {more && (
@@ -164,7 +164,7 @@ export default function ManualQuote() {
                     <Field label="Casetas">
                       <NumberInput prefix="$" value={f.tolls} onChange={(tolls) => set({ tolls })} placeholder="0" />
                       {config.extras.tollDefault > 0 && (
-                        <button type="button" onClick={() => set({ tolls: +f.tolls === config.extras.tollDefault ? '' : config.extras.tollDefault })} className={cx('mt-1.5 h-8 rounded-lg px-2 text-xs', +f.tolls === config.extras.tollDefault ? 'bg-cobrado/15 text-cobrado' : 'bg-asfalto text-gris')}>
+                        <button type="button" onClick={() => set({ tolls: +f.tolls === config.extras.tollDefault ? '' : config.extras.tollDefault })} className={cx('mt-1.5 h-11 rounded-lg px-2 text-xs', +f.tolls === config.extras.tollDefault ? 'bg-cobrado/15 text-cobrado' : 'bg-asfalto text-gris')}>
                           Caseta habitual {money(config.extras.tollDefault)}
                         </button>
                       )}
@@ -196,28 +196,28 @@ export default function ManualQuote() {
             </div>
 
             {search && !hourly && f.from && f.to && (
-              <Button variant="outline" icon={Map} className="mt-3 h-10 w-full" as="a" href={directionsLink(f.from, f.to, via)} target="_blank" rel="noopener">Ver ruta en Maps</Button>
+              <Button variant="outline" icon={Map} className="mt-3 h-11 w-full" as="a" href={directionsLink(f.from, f.to, via)} target="_blank" rel="noopener">Ver ruta en Maps</Button>
             )}
 
             <div className="mt-3 grid grid-cols-4 gap-1.5">
               {adjust.map((a) => (
-                <button key={a.label} type="button" disabled={!ready} onClick={() => setOverride(Math.max(0, a.fn(price)))} className="h-10 rounded-xl bg-asfalto font-mono text-sm active:scale-95 disabled:opacity-40">{a.label}</button>
+                <button key={a.label} type="button" disabled={!ready} onClick={() => setOverride(Math.max(0, a.fn(price)))} className="h-11 rounded-xl bg-asfalto font-mono text-sm active:scale-95 disabled:opacity-40">{a.label}</button>
               ))}
             </div>
             <div className="mt-1.5 grid grid-cols-4 gap-1.5">
               <span className="grid place-items-center text-xs text-gris">Redondear</span>
               {[10, 50, 100].map((step) => (
-                <button key={step} type="button" disabled={!ready} onClick={() => setOverride(roundUp(price, step))} className="h-10 rounded-xl bg-asfalto font-mono text-sm active:scale-95 disabled:opacity-40">↑ {step}</button>
+                <button key={step} type="button" disabled={!ready} onClick={() => setOverride(roundUp(price, step))} className="h-11 rounded-xl bg-asfalto font-mono text-sm active:scale-95 disabled:opacity-40">↑ {step}</button>
               ))}
             </div>
             <div className="mt-1.5 grid grid-cols-2 gap-1.5">
               {prefPrice > 0 && (
-                <button type="button" onClick={() => setOverride(prefPrice)} className="col-span-2 flex h-10 items-center justify-center gap-1 rounded-xl bg-tedebe/10 text-sm text-tedebe active:scale-95">
+                <button type="button" onClick={() => setOverride(prefPrice)} className="col-span-2 flex h-11 items-center justify-center gap-1 rounded-xl bg-tedebe/10 text-sm text-tedebe active:scale-95">
                   <Star className="size-4" /> Tarifa preferencial de {client.name} (−{client.discount} %): {money(prefPrice)}
                 </button>
               )}
-              <button type="button" disabled={!ready} onClick={() => setOverride(ev.minPriceForGoals)} className="flex h-10 items-center justify-center gap-1 rounded-xl bg-asfalto text-sm text-tedebe active:scale-95 disabled:opacity-40"><Wand2 className="size-4" /> Mínimo de mi meta</button>
-              <button type="button" disabled={override == null} onClick={() => setOverride(null)} className="h-10 rounded-xl bg-asfalto text-sm text-gris active:scale-95 disabled:opacity-40">Volver al sugerido</button>
+              <button type="button" disabled={!ready} onClick={() => setOverride(ev.minPriceForGoals)} className="flex h-11 items-center justify-center gap-1 rounded-xl bg-asfalto text-sm text-tedebe active:scale-95 disabled:opacity-40"><Wand2 className="size-4" /> Mínimo de mi meta</button>
+              <button type="button" disabled={override == null} onClick={() => setOverride(null)} className="h-11 rounded-xl bg-asfalto text-sm text-gris active:scale-95 disabled:opacity-40">Volver al sugerido</button>
             </div>
 
             {/* Bloque PRIVADO: solo para el conductor. Se puede ocultar si enseña la pantalla. */}
