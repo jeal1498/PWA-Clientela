@@ -8,6 +8,7 @@
 //  · «Restablecer» vuelve la página a valores predeterminados (conserva nombre, foto, WhatsApp y Wi-Fi).
 import { useMemo, useRef, useState } from 'react';
 import EstadoAhora from '../components/EstadoAhora.jsx';
+import { PublicLinkCard } from '../components/PanelBlocks.jsx';
 import { Link } from 'react-router-dom';
 import {
   IdCard, Car, Activity, Wifi, Sofa, AtSign, Wallet, ScrollText, Briefcase, QrCode as QrIcon,
@@ -94,6 +95,8 @@ export default function PageSettings() {
       </div>
 
       <EstadoAhora />
+
+      <PublicLinkCard />
 
       {/* Estado del enlace: los pasajeros ven lo que trae el enlace, no lo que hay en tu teléfono. */}
       <div className={cx('flex items-start gap-2 rounded-2xl border p-3 text-sm', upToDate ? 'border-cobrado/30 bg-cobrado/10 text-cobrado' : 'border-tedebe/30 bg-tedebe/10 text-tedebe')} role="status">
