@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Trash2, Pencil, BookOpen, Repeat } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
+import { isDone } from '../lib/agenda.js';
 import { weekSummary, PAY_METHODS } from '../lib/ledger.js';
 import { dayShort, dayLong, today } from '../lib/dates.js';
 import { money, money2 } from '../lib/format.js';
@@ -25,7 +26,7 @@ export default function Bitacora() {
   const maxGross = Math.max(1, ...w.days.map((d) => d.gross));
   const maxKm = Math.max(1, ...w.days.map((d) => d.km));
   const label = offset === 0 ? 'Esta semana' : offset === -1 ? 'Semana pasada' : `Semana del ${dayLong(w.days[0].date)}`;
-  const weekTrips = trips.filter((x) => x.date >= w.days[0].date && x.date <= w.days[6].date).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+  const weekTrips = trips.filter((x) => isDone(x) && x.date >= w.days[0].date && x.date <= w.days[6].date).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
 
   return (
     <>

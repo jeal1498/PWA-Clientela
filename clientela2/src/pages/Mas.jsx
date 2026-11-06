@@ -1,7 +1,8 @@
 // «Más»: lo que se usa menos seguido, para no saturar la barra inferior.
 import { Link } from 'react-router-dom';
-import { History, Receipt, Wallet, Wifi, Settings, Globe, ChevronRight, ShieldAlert } from 'lucide-react';
+import { History, Receipt, Wallet, CalendarClock, Wifi, Settings, Globe, ChevronRight, ShieldAlert } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
+import { upcoming } from '../lib/agenda.js';
 import { debtsByClient, debtTotals } from '../lib/debts.js';
 import { today } from '../lib/dates.js';
 import { money } from '../lib/format.js';
@@ -11,9 +12,12 @@ export default function Mas() {
   const { history, config, trips } = useStore();
   const owed = debtsByClient(trips, today());
   const owedTotal = debtTotals(owed).total;
+  const plan = upcoming(trips);
+  const planHoy = plan.filter((t) => t.date === today()).length;
   const pending = history.filter((h) => h.status === 'pendiente').length;
   const items = [
     { to: '/app/pagina', icon: Globe, label: 'Mi página', hint: 'Datos, foto, vehículo, estado, Wi-Fi, pagos, políticas y QR' },
+    { to: '/app/agenda', icon: CalendarClock, label: 'Agenda', hint: plan.length ? `${planHoy} hoy · ${plan.length} por hacer` : 'Viajes por hacer' },
     { to: '/app/cobros', icon: Wallet, label: 'Te deben', hint: owed.length ? `${money(owedTotal)} · ${owed.length} cliente${owed.length > 1 ? 's' : ''}` : 'Nadie te debe' },
     { to: '/app/gastos', icon: Receipt, label: 'Gastos', hint: 'Combustible, casetas, lavado, hormiga' },
     { to: '/app/historial', icon: History, label: 'Cotizaciones', hint: pending ? `${pending} pendientes` : 'Guardadas' },

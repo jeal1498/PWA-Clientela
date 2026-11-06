@@ -1,7 +1,8 @@
 // Cobros: viajes hechos sin pago (pay === ''). Funciones puras (probadas en debts.test.js).
+import { isDone } from './agenda.js';
 export const LATE_DAYS = 15; // rojo desde 15 días sin cobrar
 
-export const isDebt = (t) => !t.pay;
+export const isDebt = (t) => isDone(t) && !t.pay; // un viaje agendado aún no es deuda
 
 const norm = (s) => String(s || '').trim().toLowerCase();
 const dayMs = 86400000;
