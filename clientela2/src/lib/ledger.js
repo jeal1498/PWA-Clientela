@@ -1,5 +1,6 @@
 // Bitácora y gastos: resúmenes del día y de la semana. Funciones puras (probadas en ledger.test.js).
 import { weekDays } from './dates.js';
+import { isDone } from './agenda.js';
 
 export const PAY_METHODS = {
   efectivo: 'Efectivo',
@@ -19,7 +20,7 @@ const sum = (xs, f) => xs.reduce((s, x) => s + (+f(x) || 0), 0);
 /** Resumen de un conjunto de días: bruto, km, gastos, neto real y desglose. */
 export function summarize(trips, expenses, days) {
   const set = new Set(days);
-  const t = trips.filter((x) => set.has(x.date));
+  const t = trips.filter((x) => isDone(x) && set.has(x.date)); // los agendados y cancelados no cuentan
   const e = expenses.filter((x) => set.has(x.date));
   const gross = sum(t, (x) => x.amount);
   const km = sum(t, (x) => x.km);

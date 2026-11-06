@@ -1,7 +1,7 @@
 // Módulo C · Cotizador Exprés para el conductor (/app/manual).
 // Para cuando el cliente llama o escribe: cotiza en segundos, ve su ganancia real y negocia con datos.
 import { useMemo, useState } from 'react';
-import { Search, Keyboard, Luggage, Milestone, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, ArrowDownUp, Loader2, Info, CheckCheck, BookmarkPlus, Star, Map } from 'lucide-react';
+import { Search, Keyboard, Luggage, Milestone, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, ArrowDownUp, Loader2, Info, CheckCheck, BookmarkPlus, Star, Map, CalendarPlus } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { quote, evaluate, roundUp } from '../lib/pricing.js';
 import { money, money2, kmText, minText } from '../lib/format.js';
@@ -14,12 +14,14 @@ import ProfitBadge, { toneOf } from '../components/ProfitBadge.jsx';
 import Breakdown from '../components/Breakdown.jsx';
 import { useToast } from '../components/Toast.jsx';
 import TripSheet from '../components/TripSheet.jsx';
+import AgendaSheet from '../components/AgendaSheet.jsx';
 
 const EMPTY = { mode: 'search', from: null, to: null, via: [], km: '', min: '', bags: 0, stops: 0, tolls: '', date: '', time: '', clientId: '', clientName: '', clientPhone: '' };
 
 export default function ManualQuote() {
   const { config, addQuote, clients, update } = useStore();
   const [tripOpen, setTripOpen] = useState(false);
+  const [agendaOpen, setAgendaOpen] = useState(false);
   const [f, setF] = useState(EMPTY);
   const [override, setOverride] = useState(null); // precio negociado; null = sugerido
   const [showPrivate, setShowPrivate] = useState(true);
@@ -209,6 +211,7 @@ export default function ManualQuote() {
         <div className="grid grid-cols-2 gap-2">
           <Button variant="ghost" icon={Copy} disabled={!ready} onClick={async () => showToast((await copyText(message())) ? 'Texto copiado' : 'No se pudo copiar')}>Copiar</Button>
           <Button variant="outline" icon={Save} disabled={!ready} onClick={save}>Guardar</Button>
+          <Button variant="outline" icon={CalendarPlus} disabled={!ready} onClick={() => setAgendaOpen(true)}>Agendar</Button>
           <Button variant="ghost" icon={CheckCheck} disabled={!ready} onClick={() => setTripOpen(true)}>Ya se hizo</Button>
           <Button variant="ghost" icon={BookmarkPlus} disabled={!client || !(km > 0)} onClick={saveRoute} title={client ? `Guardar esta ruta en ${client.name}` : 'Elige un cliente guardado'}>Guardar ruta</Button>
         </div>
@@ -218,6 +221,12 @@ export default function ManualQuote() {
         onClose={() => setTripOpen(false)}
         prefill={{ clientId: f.clientId, clientName: f.clientName, from: f.from?.label || '', to: f.to?.label || '', km, amount: price, ...(f.date ? { date: f.date } : {}) }}
         onSaved={() => showToast('Viaje guardado en bitácora')}
+      />
+      <AgendaSheet
+        open={agendaOpen}
+        onClose={() => setAgendaOpen(false)}
+        prefill={{ clientId: f.clientId, clientName: f.clientName, from: f.from?.label || '', to: f.to?.label || '', km, amount: price, dur: Math.round(min) || 30, ...(f.date ? { date: f.date } : {}), ...(f.time ? { time: f.time } : {}) }}
+        onSaved={() => showToast('Agendado: míralo en Más → Agenda')}
       />
       {toast}
     </>
