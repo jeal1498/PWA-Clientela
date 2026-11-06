@@ -1,7 +1,7 @@
 // 2 · Cotizador estilo app de viaje. Paso 1: ¿A dónde vas? Paso 2: elige servicio, cuándo (siempre programado) y pide por WhatsApp.
 // El precio sale de las tarifas del conductor (banderazo, km, minuto, recargos, caseta) o de su tarifa por hora.
 import { useEffect, useMemo, useState } from 'react';
-import { Users, Luggage, Loader2, Info, Car, Plane, Route, Clock, MessageCircle, Hourglass, ChevronRight } from 'lucide-react';
+import { Users, Luggage, Info, Car, Plane, Route, Clock, Hourglass } from 'lucide-react';
 import { quote, hourlyQuote } from '../../lib/pricing.js';
 import { money, kmText, minText } from '../../lib/format.js';
 import { clientRequestMessage, waLink } from '../../lib/whatsapp.js';
@@ -25,7 +25,6 @@ export default function QuoteSection({ config, service, onService, onState }) {
 
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
-  const [editing, setEditing] = useState(false);
   const [slot, setSlot] = useState(nextSlot);
   const [passengers, setPassengers] = useState(1);
   const [bags, setBags] = useState(svc.key === 'airport' ? 1 : 0);
@@ -49,34 +48,41 @@ export default function QuoteSection({ config, service, onService, onState }) {
   // La barra fija de abajo refleja si ya hay un viaje listo para pedir.
   useEffect(() => onState?.({ ready, href, price: q.price }), [ready, href, q.price, onState]);
 
-  const showOptions = places && !editing;
   const tripLabel = tripQ.foraneo && enabled.some((s) => s.key === 'foraneo') ? 'Foráneo' : tripKey === 'airport' ? 'Aeropuerto' : tripKey === 'foraneo' ? 'Foráneo' : 'Punto a punto';
   const TripIcon = tripKey === 'airport' ? Plane : tripKey === 'foraneo' ? Route : Car;
 
+  const noAparece = driver.phone ? waLink(driver.phone, `Hola${driver.name ? ` ${driver.name}` : ''}, quiero pedir un viaje y no encuentro mi dirección.`, driver.lada) : null;
+
   return (
-    <Card className="overflow-hidden p-0">
-      <RideMap from={from} to={hourly ? null : to} />
+    <Card className="p-0">
+      <div className="overflow-hidden rounded-t-3xl"><RideMap from={from} to={hourly ? null : to} /></div>
       <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4 pt-2.5">
         <div className="mx-auto h-1 w-10 rounded-full bg-white/15" aria-hidden />
-        {!showOptions ? (
-          <>
-            <h3 className="font-titulo text-xl">{hourly ? '¿Dónde te recojo?' : '¿A dónde vas?'}</h3>
-            <PlaceInput label="Origen" placeholder={svc.key === 'airport' ? 'Aeropuerto, hotel o domicilio' : '¿Dónde te recojo?'} value={from} onChange={(p) => { setFrom(p); if (p) setEditing(false); }} city={driver.city} allowGps />
-            {!hourly && <PlaceInput label="Destino" placeholder={svc.key === 'foraneo' ? '¿A qué ciudad vas?' : '¿A dónde vas?'} value={to} onChange={(p) => { setTo(p); if (p) setEditing(false); }} city={driver.city} dot="bg-atrasado" />}
-            {places && <Button className="w-full" onClick={() => setEditing(false)}>Ver servicios</Button>}
-            {hasHourly && !hourly && <button type="button" onClick={() => onService('hourly')} className="text-sm text-gris underline underline-offset-4">¿Necesitas el auto por horas?</button>}
-            {hourly && hasTrip && <button type="button" onClick={() => onService(tripKey)} className="text-sm text-gris underline underline-offset-4">Prefiero un viaje de A a B</button>}
-          </>
-        ) : (
-          <>
-            <button type="button" onClick={() => setEditing(true)} aria-label="Cambiar ruta" className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-[#1C1C23] px-3 py-2.5 text-left">
-              <span className="size-2.5 shrink-0 rounded-full bg-atrasado" aria-hidden />
-              <span className="min-w-0 flex-1"><b className="block truncate text-sm">{hourly ? from.label : to.label}</b><small className="text-xs text-gris">{hourly ? 'Recogida' : `Desde ${from.label}`} · toca para cambiar</small></span>
-              <ChevronRight className="size-4 text-gris" aria-hidden />
-            </button>
+        <h3 className="font-titulo text-xl">{hourly ? '¿Dónde te recojo?' : '¿A dónde vas?'}</h3>
 
-            <div className="text-xs font-bold tracking-widest text-gris uppercase">Elige tu servicio</div>
-            <div className="space-y-2" aria-live="polite">
+        <div className="grid grid-cols-[28px_1fr] rounded-2xl border border-white/10 bg-asfalto">
+          <div className="flex flex-col items-center py-[18px]" aria-hidden>
+            <span className="size-2.5 rounded-full border-2 border-hueso" />
+            {!hourly && <><span className="my-0.5 w-0.5 flex-1 bg-humo" /><span className="size-2.5 bg-hueso" /></>}
+          </div>
+          <div className="min-w-0 divide-y divide-white/10 py-0.5">
+            <PlaceInput bare label="Origen" placeholder={svc.key === 'airport' ? 'Aeropuerto, hotel o domicilio' : '¿Dónde te recojo?'} value={from} onChange={setFrom} city={driver.city} allowGps />
+            {!hourly && <PlaceInput bare label="Destino" placeholder={svc.key === 'foraneo' ? '¿A qué ciudad vas?' : '¿A dónde vas?'} value={to} onChange={setTo} city={driver.city} />}
+          </div>
+        </div>
+
+        {!places && (
+          <>
+            <p className="text-sm text-gris">Escribe tu {hourly ? 'punto de recogida' : 'destino'} y ves el precio al momento.</p>
+            {noAparece && <a href={noAparece} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center text-sm text-gris underline underline-offset-4">¿No aparece tu dirección? Escríbeme por WhatsApp</a>}
+            {hasHourly && !hourly && <button type="button" onClick={() => onService('hourly')} className="flex min-h-11 items-center text-sm text-gris underline underline-offset-4">¿Necesitas el auto por horas?</button>}
+            {hourly && hasTrip && <button type="button" onClick={() => onService(tripKey)} className="flex min-h-11 items-center text-sm text-gris underline underline-offset-4">Prefiero un viaje de A a B</button>}
+          </>
+        )}
+
+        {places && (
+          <>
+            <div className="space-y-1" aria-live="polite" role="group" aria-label="Elige tu servicio">
               {hasTrip && (
                 <ServiceCard icon={TripIcon} title={tripLabel} selected={!hourly} onSelect={() => !hourly || onService(tripKey)}
                   detail={r.loading ? 'Calculando tu ruta…' : `${kmText(tripQ.km)} · ${minText(tripQ.min)}`} price={r.loading ? '…' : money(tripQ.price)} />
@@ -86,11 +92,11 @@ export default function QuoteSection({ config, service, onService, onState }) {
                   detail={`${Math.max(hours, +page.minHours || 1)} h a tu disposición`} price={money(hourQ.price)} />
               )}
             </div>
-            {r.estimated && !hourly && !r.loading && <p className="flex items-center gap-1 text-xs text-tedebe"><Info className="size-3.5" /> Distancia aproximada; se confirma por WhatsApp.</p>}
+            {r.estimated && !hourly && !r.loading && <p className="flex items-center gap-1 text-[13px] text-gris"><Info className="size-3.5" /> Distancia aproximada; se confirma por WhatsApp.</p>}
 
             <WhenPicker date={slot.date} time={slot.time} onChange={setSlot} />
 
-            <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex h-11 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
+            <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex min-h-11 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
               <Users className="size-4 text-gris" aria-hidden /> Pasajeros {passengers} · <Luggage className="size-4 text-gris" aria-hidden /> Maletas {bags}
             </button>
             {more && (
@@ -99,7 +105,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
                 <Stepper label="Pasajeros" icon={Users} value={passengers} onChange={setPassengers} min={1} max={8} />
                 <Stepper label="Maletas" icon={Luggage} value={bags} onChange={setBags} max={10} />
                 {!hourly && tollFee > 0 && (
-                  <label className="flex items-center gap-2 rounded-2xl border border-white/10 bg-asfalto/40 p-3 text-sm text-gris">
+                  <label className="flex min-h-11 items-center gap-2 rounded-2xl border border-white/10 bg-asfalto/40 p-3 text-sm text-gris">
                     <input type="checkbox" className="size-4 accent-[#22C55E]" checked={toll} onChange={(e) => setToll(e.target.checked)} />
                     Ir por autopista de cuota (+{money(tollFee)})
                   </label>
@@ -108,15 +114,15 @@ export default function QuoteSection({ config, service, onService, onState }) {
             )}
 
             <details>
-              <summary className="cursor-pointer text-sm text-gris">Ver desglose · válido por {page.validityHours} h</summary>
+              <summary className="flex min-h-11 cursor-pointer items-center text-sm text-gris">Ver desglose · válido por {page.validityHours} h</summary>
               <div className="mt-2"><Breakdown lines={q.lines} total={q.price} /></div>
             </details>
 
             <div className="space-y-2">
               <TextInput placeholder="Tu nombre (opcional)" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
               <TextInput placeholder={svc.key === 'airport' ? 'Número de vuelo / terminal' : 'Nota: referencia, silla para bebé…'} value={notes} onChange={(e) => setNotes(e.target.value)} />
-              <Button variant="whatsapp" icon={MessageCircle} className="w-full text-base" as="a" disabled={!href} href={href || undefined} target="_blank" rel="noopener">
-                {driver.phone ? `Solicitar por WhatsApp · ${money(q.price)}` : 'Falta el WhatsApp del conductor'}
+              <Button className="h-[54px] w-full text-base font-bold" as="a" disabled={!href} href={href || undefined} target="_blank" rel="noopener">
+                {driver.phone ? `Pedir con ${driver.name || 'el conductor'} · ${money(q.price)}` : 'Falta el WhatsApp del conductor'}
               </Button>
             </div>
           </>

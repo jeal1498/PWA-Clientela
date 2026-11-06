@@ -4,7 +4,7 @@ import { Crosshair, Loader2, MapPin, X } from 'lucide-react';
 import { searchPlaces, myLocation } from '../lib/maps.js';
 import { cx } from './ui.jsx';
 
-export default function PlaceInput({ label, value, onChange, city, placeholder, dot = 'bg-cobrado', allowGps }) {
+export default function PlaceInput({ label, value, onChange, city, placeholder, dot = 'bg-cobrado', allowGps, bare }) {
   const [text, setText] = useState(value?.label || '');
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
@@ -45,8 +45,8 @@ export default function PlaceInput({ label, value, onChange, city, placeholder, 
 
   return (
     <div className="relative">
-      <div className="flex h-12 items-center gap-2 rounded-2xl border border-white/10 bg-asfalto px-3 focus-within:border-cobrado/70">
-        <span className={cx('size-2.5 shrink-0 rounded-full', dot)} aria-hidden />
+      <div className={cx('flex items-center gap-2 px-3', bare ? 'min-h-12 rounded-xl focus-within:bg-white/5' : 'h-12 rounded-2xl border border-white/10 bg-asfalto focus-within:border-cobrado/70')}>
+        {!bare && <span className={cx('size-2.5 shrink-0 rounded-full', dot)} aria-hidden />}
         <input
           aria-label={label}
           className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-gris"
