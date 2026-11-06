@@ -7,6 +7,8 @@ import { today } from '../lib/dates.js';
 import { money } from '../lib/format.js';
 import { Card, CardTitle, Button, Field, NumberInput, cx } from '../components/ui.jsx';
 import Sheet from '../components/Sheet.jsx';
+import Vacio from '../components/Vacio.jsx';
+import { isDone } from '../lib/agenda.js';
 import { QuoteStats, MyNumbers } from '../components/PanelBlocks.jsx';
 
 const pct = (a, b) => (b > 0 ? Math.min(100, Math.round((a / b) * 100)) : 0);
@@ -42,6 +44,19 @@ export default function Resumen() {
   const quedan = daysLeft(kind, hoy);
   const hoyNet = resumen(trips, expenses, 'sem', hoy).bars.find((b) => b.date === hoy)?.net ?? 0;
   const maxBar = Math.max(1, ...r.bars.map((b) => b.net));
+
+  if (!trips.some(isDone)) {
+    return (
+      <>
+        <h1 className="font-titulo text-2xl">Resumen</h1>
+        <Vacio titulo="Aún no hay viajes" texto="Cuando cobres tu primer viaje, aquí verás cuánto ganas neto y contra tu meta." accion="Agendar un viaje" to="/app/agenda" />
+        <div className="grid grid-cols-2 gap-2 opacity-55" aria-hidden="true">
+          <div className="rounded-xl bg-tablero p-3 text-xs text-gris">Ganancia neta<b className="block font-mono text-base">—</b></div>
+          <div className="rounded-xl bg-tablero p-3 text-xs text-gris">Meta de la semana<b className="block font-mono text-base">—</b></div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
