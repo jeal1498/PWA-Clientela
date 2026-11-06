@@ -4,7 +4,8 @@ import { Minus, Plus } from 'lucide-react';
 export const cx = (...c) => c.filter(Boolean).join(' ');
 
 export function Card({ className, children, ...p }) {
-  return <section className={cx('rounded-3xl border border-white/5 bg-tablero p-4', className)} {...p}>{children}</section>;
+  const ownPad = /(^|\s)p-\d/.test(className || ''); // si la tarjeta trae su propio padding, no se suma p-4 (los dos chocaban)
+  return <section className={cx('rounded-3xl border border-white/5 bg-tablero', !ownPad && 'p-4', className)} {...p}>{children}</section>;
 }
 
 export function CardTitle({ icon: Icon, children, right }) {

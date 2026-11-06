@@ -56,7 +56,8 @@ export default function QuoteSection({ config, service, onService, onState }) {
   return (
     <Card className="overflow-hidden p-0">
       <RideMap from={from} to={hourly ? null : to} />
-      <div className="space-y-3 p-4">
+      <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4 pt-2.5">
+        <div className="mx-auto h-1 w-10 rounded-full bg-white/15" aria-hidden />
         {!showOptions ? (
           <>
             <h3 className="font-titulo text-xl">{hourly ? '¿Dónde te recojo?' : '¿A dónde vas?'}</h3>

@@ -107,7 +107,8 @@ export default function ManualQuote() {
 
       <Card className="overflow-hidden p-0">
         {search && <RideMap from={f.from} to={f.to} via={via} />}
-        <div className="space-y-3 p-4">
+        <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4 pt-2.5">
+        <div className="mx-auto h-1 w-10 rounded-full bg-white/15" aria-hidden />
           {!showOptions ? (
             <>
               <Segmented value={f.mode} onChange={(mode) => set({ mode })} options={[{ value: 'search', label: 'Buscar ruta', icon: Search }, { value: 'express', label: 'Km y min', icon: Keyboard }]} />

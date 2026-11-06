@@ -18,6 +18,7 @@ export default function RideMap({ from, to, via = [], className = '' }) {
     <div className={`bg-[#1C1C23] ${className}`}>
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" className="block h-36 w-full" role="img" aria-label={label}>
         {Array.from({ length: 7 }, (_, i) => <path key={i} d={`M0 ${i * 25}H${W}M${i * 67} 0V${H}`} stroke="#F4F4EF" strokeOpacity=".05" />)}
+        {!pts.length && <text x={W / 2} y={H / 2 + 4} textAnchor="middle" fill="#A3A3AD" fontSize="13" fontFamily="DM Sans, Arial, sans-serif">Elige origen y destino para ver la ruta</text>}
         {xy.length > 1 && <polyline points={line} fill="none" stroke="#F4F4EF" strokeOpacity=".85" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />}
         {xy.map(([x, y], i) => (
           <circle key={i} cx={x} cy={y} r="9" stroke="#0C0C10" strokeWidth="3" fill={i === 0 ? '#22C55E' : i === xy.length - 1 ? '#EF4444' : '#A3A3AD'} />

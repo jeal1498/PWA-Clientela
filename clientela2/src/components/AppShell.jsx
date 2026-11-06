@@ -29,7 +29,7 @@ export default function AppShell() {
         <img src="./icon.svg" alt="" className="size-8" />
         <div className="flex-1 leading-tight">
           <div className="font-titulo text-lg">Clientela</div>
-          <div className="text-xs text-gris">Cotizador 2.0</div>
+          <div className="text-xs text-gris">Tus clientes, en orden</div>
         </div>
         <SosButton />
       </header>
