@@ -27,7 +27,7 @@ export default function Yo() {
           </Link>
         ))}
       </Card>
-      <Link to="/" className="flex min-h-11 items-center justify-center text-sm text-cobrado">Ver mi página pública</Link>
+      <Link to="/?vista=1" className="flex min-h-11 items-center justify-center text-sm text-cobrado">Ver mi página pública</Link>
     </>
   );
 }
