@@ -1,6 +1,6 @@
 // Agenda: viajes por hacer, agrupados por día. Un solo botón avanza el viaje: Confirmar → Ya llegué → Terminar.
 import { useState } from 'react';
-import { Plus, AlertTriangle, Banknote, Landmark, CreditCard, Clock, Repeat } from 'lucide-react';
+import { Plus, AlertTriangle, Banknote, Landmark, CreditCard, Clock, Repeat, MoreHorizontal } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { upcoming, clashes, stepOf, STEP_LABELS, advancePatch, finishPatch, reopenPatch, cancelPatch, endTime } from '../lib/agenda.js';
 import { today, dayLong } from '../lib/dates.js';
@@ -35,11 +35,13 @@ export default function Agenda() {
   const [paying, setPaying] = useState(null);
   const [queue, setQueue] = useState([]); // recordatorios por mandar, uno por uno
   const [msg, setMsg] = useState('');
+  const [menu, setMenu] = useState(null); // id del viaje con el menú «⋯» abierto
   const [toast, showToast] = useToast('bottom-28');
 
   const list = upcoming(trips);
   const hoy = list.filter((t) => t.date === today());
   const sig = list.find((t) => t.date >= today());
+  const activo = (list.find((t) => stepOf(t) > 0) || sig)?.id; // el único viaje con botón verde grande
   const groups = [...new Set(list.map((t) => t.date))].map((d) => [d, list.filter((t) => t.date === d)]);
 
   const sinAvisar = sinAvisarManana(trips, today());
@@ -99,32 +101,41 @@ export default function Agenda() {
           {items.map((t) => {
             const c = clashes(trips, t);
             const s = stepOf(t);
+            const main = t.id === activo;
+            const open = menu === t.id;
             return (
-              <article key={t.id} aria-label={`${t.clientName || 'Sin nombre'}, ${t.time}`} className={cx('space-y-2.5 rounded-2xl border bg-[#1C1C23] p-3.5', c.length ? 'border-tedebe/55' : 'border-white/10')}>
+              <article key={t.id} aria-label={`${t.clientName || 'Sin nombre'}, ${t.time}`} className={cx('space-y-2.5 rounded-2xl border bg-[#1C1C23] p-3.5', c.length ? 'border-tedebe/55' : main ? 'border-cobrado/45' : 'border-white/10')}>
                 <div className="flex items-start gap-3">
-                  <div className="min-w-[58px] text-[22px] leading-tight font-extrabold tabular-nums">{t.time}<small className="mt-0.5 block font-mono text-[11px] font-medium text-gris">→ {endTime(t)}</small></div>
-                  <div className="min-w-0 flex-1"><b className="block truncate">{t.clientName || 'Sin nombre'}</b><small className="block truncate text-[12.5px] text-gris">{[t.from, t.to].filter(Boolean).join(' → ') || '—'}</small></div>
+                  <div className="min-w-[62px] text-[22px] leading-tight font-extrabold tabular-nums">{t.time}<small className="mt-0.5 block font-mono text-[11px] font-medium text-gris">→ {endTime(t)}</small></div>
+                  <div className="min-w-0 flex-1"><b className="block font-titulo text-base">{t.clientName || 'Sin nombre'}</b><small className="block text-[13px] break-words text-gris">{[t.from, t.to].filter(Boolean).join(' → ') || '—'}</small></div>
                   <span className="font-mono font-bold tabular-nums">{money(t.amount)}</span>
                 </div>
-                {t.serie && <div className="flex items-center gap-1.5 text-xs text-gris"><Repeat className="size-3.5" aria-hidden />Cada {diasTexto(t.dias)}{t.fin ? ` · hasta ${dayLong(t.fin)}` : ''}<button type="button" onClick={() => stopSerie(t)} className="ml-auto font-bold underline underline-offset-4">Detener serie</button></div>}
-                <div className="flex items-center gap-1.5 text-[10.5px] font-bold tracking-wider uppercase" aria-label={`Avance: ${STEPS[s]}`}>
-                  {STEPS.map((l, i) => (
-                    <span key={l} className="contents">
-                      {i > 0 && <i className={cx('h-[3px] flex-1 rounded', s >= i ? 'bg-cobrado' : 'bg-white/15')} />}
-                      <span className={s >= i ? 'text-cobrado' : 'text-gris'}>{l}</span>
-                    </span>
-                  ))}
-                </div>
-                {c.length > 0 && <div className="flex items-start gap-2 text-[12.5px] font-bold text-tedebe"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />Se empalma con {c[0].time} · {c[0].clientName || 'Sin nombre'}</div>}
+                {t.serie && <div className="flex items-center gap-1.5 text-xs text-gris"><Repeat className="size-3.5" aria-hidden />Cada {diasTexto(t.dias)}{t.fin ? ` · hasta ${dayLong(t.fin)}` : ''}</div>}
+                {main && (
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase" aria-label={`Avance: ${STEPS[s]}`}>
+                    {STEPS.map((l, i) => (
+                      <span key={l} className="contents">
+                        {i > 0 && <i className={cx('h-[3px] flex-1 rounded', s >= i ? 'bg-cobrado' : 'bg-white/15')} />}
+                        <span className={s >= i ? 'text-cobrado' : 'text-gris'}>{l}</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {c.length > 0 && <div className="flex items-start gap-2 text-[13px] font-bold text-tedebe"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />Se empalma con {c[0].time} · {c[0].clientName || 'Sin nombre'}</div>}
+                {cuandoDe(t.date, today()) && <div><span className={cx('inline-block rounded-full border px-2.5 py-1 text-xs font-bold whitespace-nowrap', t.recordadoAt ? 'border-cobrado/55 text-cobrado' : 'border-tedebe/55 text-tedebe')}>{t.recordadoAt ? avisadoTexto(t.recordadoAt) : 'Sin avisar'}</span></div>}
                 <div className="flex items-center gap-2">
-                  {cuandoDe(t.date, today()) && <span className={cx('rounded-full border px-2.5 py-1 text-[10.5px] font-bold tracking-wider whitespace-nowrap uppercase', t.recordadoAt ? 'border-cobrado/55 text-cobrado' : 'border-tedebe/55 text-tedebe')}>{t.recordadoAt ? avisadoTexto(t.recordadoAt) : 'Sin avisar'}</span>}
-                  <button type="button" onClick={() => startRemind([t])} className="text-[13px] font-bold underline underline-offset-4">{t.recordadoAt ? 'Recordar otra vez' : 'Recordar'}</button>
-                  <span className="flex-1" />
+                  {main
+                    ? <Button className="h-[52px] flex-1 text-base font-bold" onClick={() => advance(t)}>{STEP_LABELS[s]}</Button>
+                    : <Button variant="outline" className="h-11 flex-1" onClick={() => advance(t)}>{STEP_LABELS[s]}</Button>}
+                  <button type="button" aria-label="Más opciones" aria-expanded={open} aria-haspopup="menu" onClick={() => setMenu(open ? null : t.id)} onKeyDown={(e) => e.key === 'Escape' && setMenu(null)} className="grid size-11 shrink-0 place-items-center rounded-xl border border-humo text-hueso active:scale-95"><MoreHorizontal className="size-5" aria-hidden /></button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button className="h-11 flex-1" onClick={() => advance(t)}>{STEP_LABELS[s]}</Button>
-                  <button type="button" onClick={() => cancel(t)} className="px-2 text-[13px] font-bold text-gris underline underline-offset-4">Cancelar</button>
-                </div>
+                {open && (
+                  <div role="menu" aria-label="Opciones del viaje" onKeyDown={(e) => e.key === 'Escape' && setMenu(null)} className="flex flex-col rounded-2xl border border-humo bg-tablero p-1.5">
+                    <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm active:bg-white/5" onClick={() => { setMenu(null); startRemind([t]); }}>{t.recordadoAt ? 'Recordar otra vez por WhatsApp' : 'Recordar por WhatsApp'}</button>
+                    {t.serie && <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm active:bg-white/5" onClick={() => { setMenu(null); stopSerie(t); }}>Detener serie</button>}
+                    <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm font-bold text-atrasado active:bg-white/5" onClick={() => { setMenu(null); cancel(t); }}>Cancelar viaje</button>
+                  </div>
+                )}
               </article>
             );
           })}
