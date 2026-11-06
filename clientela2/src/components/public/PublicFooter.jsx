@@ -1,8 +1,5 @@
-// 6 · Pie: redes del conductor y acceso discreto al panel.
-// El panel no tiene datos del conductor en otros teléfonos (todo vive en el suyo), así que el acceso
-// directo es seguro: un pasajero que entre solo verá un panel vacío.
-import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Lock } from 'lucide-react';
+// 6 · Pie: redes del conductor. Sin acceso al panel: el conductor entra desde su app.
+import { Facebook, Instagram } from 'lucide-react';
 
 // lucide no trae el logo de TikTok: nota musical simple con el mismo grosor.
 const TikTok = (p) => (
@@ -35,9 +32,6 @@ export default function PublicFooter({ driver, social }) {
       )}
       <p className="text-sm text-gris">Precios estimados; pueden variar por tráfico, casetas o cambios de ruta.</p>
       <p className="mt-1 text-[13px] text-gris">Hecho con Clientela · de la familia Checa</p>
-      <Link to="/app" className="mt-3 inline-flex min-h-11 items-center gap-1 px-3 text-sm text-gris" aria-label="Acceso para el conductor">
-        <Lock className="size-3" /> Soy el conductor
-      </Link>
     </footer>
   );
 }
