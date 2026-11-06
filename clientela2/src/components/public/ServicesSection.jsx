@@ -1,31 +1,47 @@
-// 3 · Servicios y zonas de cobertura. Tocar un servicio lo elige en el cotizador y sube hasta él.
-import { MapPin, ChevronRight } from 'lucide-react';
+// 3 · Servicios y zonas de cobertura. Lista con ícono, una línea y precio «desde»; tocar una fila la elige en el cotizador y sube hasta él.
+import { MapPin, Car, Plane, MapPinned, Clock, ChevronRight } from 'lucide-react';
 import { money } from '../../lib/format.js';
+import { quote } from '../../lib/pricing.js';
 import { SERVICES } from './services.js';
 import Section from './Section.jsx';
 
-export default function ServicesSection({ page, onPick }) {
+const ICON = { urban: Car, airport: Plane, foraneo: MapPinned, hourly: Clock };
+
+/** Precio base de cada servicio, sacado de las tarifas del conductor (null si no hay tarifa). */
+function desde(s, page, config) {
+  if (s.key === 'hourly') return +page.hourlyRate > 0 ? { v: money(page.hourlyRate), u: 'por hora' } : null;
+  const km = s.key === 'foraneo' ? +config.extras.foraneoKm || 40 : 1;
+  const p = quote({ km, min: Math.round(km * 1.2) }, config).price;
+  return p > 0 ? { v: money(p), u: 'desde' } : null;
+}
+
+export default function ServicesSection({ page, config, onPick }) {
   const list = SERVICES.filter((s) => page.services[s.key]);
   const zones = String(page.zones || '').split(/[,\n]/).map((z) => z.trim()).filter(Boolean);
   if (!list.length && !zones.length) return null;
   return (
-    <Section id="servicios" title="Servicios" subtitle="Elige uno y cotiza al instante.">
-      <div className="grid grid-cols-2 gap-2">
-        {list.map((s) => (
-          <button key={s.key} type="button" onClick={() => onPick(s.key)} className="group flex flex-col rounded-3xl border border-white/5 bg-tablero p-4 text-left transition active:scale-[.98]">
-            <span className="text-3xl" aria-hidden>{s.emoji}</span>
-            <span className="mt-2 font-semibold leading-tight">{s.short}</span>
-            <span className="mt-1 flex-1 text-xs leading-snug text-gris">{s.desc}</span>
-            {s.key === 'hourly' && +page.hourlyRate > 0 && <span className="mt-2 font-mono text-xs text-hueso">{money(page.hourlyRate)} / hora</span>}
-            <span className="mt-2 flex items-center gap-0.5 text-sm text-hueso">Elegir <ChevronRight className="size-3.5" /></span>
-          </button>
-        ))}
+    <Section id="servicios" title="Servicios" subtitle="Toca uno y cotiza al instante.">
+      <div className="divide-y divide-white/5 overflow-hidden rounded-2xl border border-white/5 bg-tablero" role="list">
+        {list.map((s) => {
+          const Icon = ICON[s.key] || Car;
+          const d = desde(s, page, config);
+          return (
+            <button key={s.key} type="button" role="listitem" onClick={() => onPick(s.key)} className="grid min-h-[68px] w-full grid-cols-[44px_1fr_auto] items-center gap-3 px-3 py-2.5 text-left active:bg-white/5">
+              <span className="grid size-11 place-items-center rounded-xl bg-asfalto"><Icon className="size-6" strokeWidth={1.8} aria-hidden /></span>
+              <span className="min-w-0"><b className="block font-titulo text-base">{s.short}</b><small className="block truncate text-[13.5px] text-gris">{s.line}</small></span>
+              <span className="flex items-center gap-1 text-right">
+                {d && <span><small className="block text-xs text-gris">{d.u}</small><b className="font-mono text-sm">{d.v}</b></span>}
+                <ChevronRight className="size-4 text-gris" aria-hidden />
+              </span>
+            </button>
+          );
+        })}
       </div>
       {zones.length > 0 && (
         <div className="mt-4">
-          <div className="mb-2 flex items-center gap-1.5 text-sm text-gris"><MapPin className="size-4" /> Zonas de cobertura</div>
+          <div className="mb-2 flex items-center gap-1.5 text-sm text-gris"><MapPin className="size-4" aria-hidden /> Zonas donde atiendo</div>
           <div className="flex flex-wrap gap-1.5">
-            {zones.map((z) => <span key={z} className="rounded-full border border-white/10 bg-tablero px-3 py-1 text-sm">{z}</span>)}
+            {zones.map((z) => <span key={z} className="rounded-full border border-humo px-3 py-1.5 text-sm">{z}</span>)}
           </div>
         </div>
       )}

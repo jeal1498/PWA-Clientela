@@ -10,13 +10,14 @@ export function waLink(phone, text, lada = '52') {
 const place = (p) => (p ? p.label || p : '—');
 
 /** Lo que el CLIENTE manda al conductor desde el cotizador público. */
-export function clientRequestMessage({ service, from, to, now, date, time, passengers, bags, name, notes, q, hours }) {
+export function clientRequestMessage({ service, from, to, via = [], now, date, time, passengers, bags, name, notes, q, hours }) {
   const hourly = service?.key === 'hourly';
   return [
     `¡Hola! Quiero solicitar ${hourly ? 'un servicio por horas' : 'un viaje'} 🚗`,
     service && !hourly ? `🏷️ *Servicio:* ${service.label}` : null,
     '',
     `📍 *${hourly ? 'Recogida' : 'Origen'}:* ${place(from)}`,
+    ...via.map((v, i) => `➕ *Parada ${i + 1}:* ${place(v)}`),
     hourly ? (to ? `🏁 *Destino final:* ${place(to)}` : null) : `🏁 *Destino:* ${place(to)}`,
     `📅 *Cuándo:* ${now ? 'Ahora (lo antes posible)' : dateText(date, time) || 'Lo antes posible'}`,
     `👥 *Pasajeros:* ${passengers || 1}  ·  🧳 *Maletas:* ${bags || 0}`,

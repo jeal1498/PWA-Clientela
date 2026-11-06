@@ -98,7 +98,7 @@ export default function PublicQuote() {
           <QuoteSection config={config} service={service} onService={setService} onState={onState} />
         </Section>
 
-        <ServicesSection page={page} onPick={pickService} />
+        <ServicesSection page={page} config={config} onPick={pickService} />
         <AmenitiesSection wifi={wifi} amenities={page.amenities} onToast={showToast} />
         <PaymentsPolicies page={page} />
         </div>
