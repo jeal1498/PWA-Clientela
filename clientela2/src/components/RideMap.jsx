@@ -16,7 +16,7 @@ export default function RideMap({ from, to, via = [], className = '' }) {
   }
   const line = xy.map((p) => p.map((n) => n.toFixed(1)).join(',')).join(' ');
   return (
-    <div className={`bg-[#1C1C23] ${className}`}>
+    <div className={`bg-tablero ${className}`}>
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" className={`block w-full ${pts.length > 1 ? 'h-52' : 'h-36'}`} role="img" aria-label={label}>
         {Array.from({ length: 7 }, (_, i) => <path key={i} d={`M0 ${i * 25}H${W}M${i * 67} 0V${H}`} stroke="#F4F4EF" strokeOpacity=".05" />)}
         {!pts.length && <text x={W / 2} y={H / 2 + 4} textAnchor="middle" fill="#A3A3AD" fontSize="13" fontFamily="DM Sans, Arial, sans-serif">Elige origen y destino para ver la ruta</text>}
@@ -27,7 +27,7 @@ export default function RideMap({ from, to, via = [], className = '' }) {
           return (
             <g key={i}>
               {last ? <rect x={x - 8} y={y - 8} width="16" height="16" fill="#F4F4EF" stroke="#0C0C10" strokeWidth="3" /> : <circle cx={x} cy={y} r={i === 0 ? 9 : 6} fill={i === 0 ? '#0C0C10' : '#A3A3AD'} stroke="#F4F4EF" strokeWidth={i === 0 ? 4 : 2} />}
-              {xy.length > 1 && p.label && (i === 0 || last) && <text x={x > W / 2 ? Math.min(x + 6, W - 12) : Math.max(x - 6, 12)} y={y + (y > H / 2 ? -16 : 28)} textAnchor={x > W / 2 ? 'end' : 'start'} fill="#F4F4EF" fontSize="12" fontWeight="700" fontFamily="DM Sans, Arial, sans-serif" stroke="#1C1C23" strokeWidth="4" paintOrder="stroke">{short(p.label.split(',')[0])}</text>}
+              {xy.length > 1 && p.label && (i === 0 || last) && <text x={x > W / 2 ? Math.min(x + 6, W - 12) : Math.max(x - 6, 12)} y={y + (y > H / 2 ? -16 : 28)} textAnchor={x > W / 2 ? 'end' : 'start'} fill="#F4F4EF" fontSize="12" fontWeight="700" fontFamily="DM Sans, Arial, sans-serif" style={{ stroke: 'var(--color-tablero)' }} strokeWidth="4" paintOrder="stroke">{short(p.label.split(',')[0])}</text>}
             </g>
           );
         })}

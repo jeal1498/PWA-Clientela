@@ -16,8 +16,8 @@ export default function ServicesSection({ page, onPick }) {
             <span className="text-3xl" aria-hidden>{s.emoji}</span>
             <span className="mt-2 font-semibold leading-tight">{s.short}</span>
             <span className="mt-1 flex-1 text-xs leading-snug text-gris">{s.desc}</span>
-            {s.key === 'hourly' && +page.hourlyRate > 0 && <span className="mt-2 font-mono text-xs text-cobrado">{money(page.hourlyRate)} / hora</span>}
-            <span className="mt-2 flex items-center gap-0.5 text-xs text-cobrado">Cotizar <ChevronRight className="size-3.5" /></span>
+            {s.key === 'hourly' && +page.hourlyRate > 0 && <span className="mt-2 font-mono text-xs text-hueso">{money(page.hourlyRate)} / hora</span>}
+            <span className="mt-2 flex items-center gap-0.5 text-sm text-hueso">Elegir <ChevronRight className="size-3.5" /></span>
           </button>
         ))}
       </div>

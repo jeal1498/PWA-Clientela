@@ -21,7 +21,7 @@ import PublicFooter from '../components/public/PublicFooter.jsx';
 import Section from '../components/public/Section.jsx';
 import { SERVICES } from '../components/public/services.js';
 
-const scrollToId = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+const scrollToId = (id) => document.getElementById(id)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 
 export default function PublicQuote() {
   const [params] = useSearchParams();
@@ -78,7 +78,7 @@ export default function PublicQuote() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh max-w-lg px-4 pt-8 pb-28">
+    <div className="mx-auto min-h-dvh max-w-lg px-4 pt-8 pb-28 md:max-w-5xl md:pb-12">
       {isPreview && !bannerOff && (
         <div className="mb-5 flex items-center gap-1 rounded-2xl border border-humo bg-tablero pl-3 text-sm">
           <Settings className="size-4 shrink-0 text-gris" aria-hidden />
@@ -87,9 +87,13 @@ export default function PublicQuote() {
         </div>
       )}
 
-      <div className="space-y-10">
-        <ProfileHeader driver={driver} vehicle={vehicle} page={page} hasWifi={!!wifi?.ssid} onSaveContact={saveContact} onRequest={() => scrollToId('cotizar')} />
+      {/* En escritorio: perfil y confianza fijos a la izquierda, cotizador y detalle a la derecha. */}
+      <div className="space-y-10 md:grid md:grid-cols-[22rem_1fr] md:items-start md:gap-12 md:space-y-0">
+        <div className="md:sticky md:top-6">
+          <ProfileHeader driver={driver} vehicle={vehicle} page={page} hasWifi={!!wifi?.ssid} onSaveContact={saveContact} onRequest={() => scrollToId('cotizar')} />
+        </div>
 
+        <div className="space-y-10">
         <Section id="cotizar" title="Cotiza tu viaje" subtitle="Precio al instante, sin descargar nada.">
           <QuoteSection config={config} service={service} onService={setService} onState={onState} />
         </Section>
@@ -97,13 +101,14 @@ export default function PublicQuote() {
         <ServicesSection page={page} onPick={pickService} />
         <AmenitiesSection wifi={wifi} amenities={page.amenities} onToast={showToast} />
         <PaymentsPolicies page={page} />
+        </div>
       </div>
 
       <PublicFooter driver={driver} social={page.social} />
 
       {/* Barra fija al pulgar: solo cuando el cotizador no está a la vista. Con precio, pide el viaje; si no, lleva al cotizador. */}
       {!cotizarVisible && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asfalto/95 p-3 backdrop-blur" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + .75rem)' }}>
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asfalto/95 p-3 backdrop-blur md:hidden" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + .75rem)' }}>
           <div className="mx-auto max-w-lg">
             {cta.ready && cta.href ? (
               <Button icon={MessageCircle} className="h-[52px] w-full text-base font-bold" as="a" href={cta.href} target="_blank" rel="noopener">

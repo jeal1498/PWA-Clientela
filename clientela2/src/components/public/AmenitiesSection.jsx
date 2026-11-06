@@ -22,7 +22,7 @@ export default function AmenitiesSection({ wifi, amenities, onToast }) {
           <ul className="grid grid-cols-2 gap-2">
             {list.map(({ key, icon: Icon, label, sub }) => (
               <li key={key} className="flex items-center gap-3 rounded-2xl border border-white/5 bg-tablero p-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-asfalto text-cobrado"><Icon className="size-5" aria-hidden /></span>
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-asfalto text-hueso"><Icon className="size-5" aria-hidden /></span>
                 <span className="min-w-0 text-sm leading-tight">{label}{sub && <span className="block text-xs text-gris">{sub}</span>}</span>
               </li>
             ))}
