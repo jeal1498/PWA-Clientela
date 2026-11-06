@@ -12,7 +12,7 @@ Publicado en **https://jeal1498.github.io/PWA-Clientela/cotiza/** (el build vive
 | `#/app/manual` | Conductor | Cotizador exprés: lugares guardados (Casa, Trabajo, Escuela…), paradas entre origen y destino, ⇄, enlace de Maps, ruta o km/min, **ganancia neta privada**, semáforo, ajustes, tarifa preferencial del cliente, WhatsApp / copiar / guardar / «Ya se hizo» → bitácora. |
 | `#/app/bitacora` | Conductor | Viajes realizados (monto, Efectivo / SPEI / Tarjeta, origen/destino, km); semana con barras bruto vs. km. |
 | `#/app/clientes` | Conductor | Clientes frecuentes: teléfono, notas, % de tarifa preferencial, rutas habituales y **Re-cotizar** por WhatsApp. |
-| `#/app/agenda` | Conductor | **Agenda**: viajes por hacer por día; Confirmar → Ya llegué → Terminar (con pago y Deshacer), aviso de empalmes de horario y Cancelar. |
+| `#/app/agenda` | Conductor | **Agenda**: viajes por hacer por día; Confirmar → Ya llegué → Terminar (con pago y Deshacer), aviso de empalmes de horario, Cancelar y **viajes frecuentes** (Se repite: días, fin, se rellenan solos, Detener serie). |
 | `#/app/cobros` | Conductor | **Te deben**: viajes «Me debe» por cliente (rojo desde 15 días), Recordar por WhatsApp y Ya me pagó con Deshacer. |
 | `#/app/mas` | Conductor | Gastos, cotizaciones, Wi-Fi a bordo, seguridad, ajustes. |
 | `#/app/gastos` · `#/app/historial` · `#/app/wifi` · `#/app/settings` | Conductor | Gastos de la semana · cotizaciones · QR del Wi-Fi · costos, perfil (foto), Wi-Fi y contacto SOS. |

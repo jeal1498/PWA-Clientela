@@ -8,6 +8,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { DEFAULT_CONFIG, withDefaults } from '../lib/pricing.js';
 import { load, save, importFromCartera, KEY } from '../lib/storage.js';
+import { missingCopies } from '../lib/series.js';
+import { today } from '../lib/dates.js';
 
 const Store = createContext(null);
 export const COLLECTIONS = ['history', 'clients', 'trips', 'expenses', 'places'];
@@ -29,6 +31,18 @@ export function AppStoreProvider({ children }) {
   const [state, setState] = useState(initial);
   const written = useRef('');
   useEffect(() => { written.current = JSON.stringify(state); save(state); }, [state]);
+
+  // Viajes frecuentes: agenda solos los que falten (al abrir, al cambiar los viajes y al volver a la app).
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const on = () => document.visibilityState === 'visible' && setTick((n) => n + 1);
+    document.addEventListener('visibilitychange', on);
+    return () => document.removeEventListener('visibilitychange', on);
+  }, []);
+  useEffect(() => {
+    const extra = missingCopies(state.trips, today());
+    if (extra.length) setState((s) => ({ ...s, trips: [...extra, ...s.trips].slice(0, LIMIT) }));
+  }, [state.trips, tick]);
 
   // Tiempo real entre pestañas: si el panel cambia algo, la vista pública abierta en otra pestaña se actualiza.
   // (Se ignora el eco de lo que esta misma pestaña acaba de escribir para no entrar en bucle.)

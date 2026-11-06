@@ -1,9 +1,10 @@
 // Agenda: viajes por hacer, agrupados por día. Un solo botón avanza el viaje: Confirmar → Ya llegué → Terminar.
 import { useState } from 'react';
-import { Plus, AlertTriangle, Banknote, Landmark, CreditCard, Clock } from 'lucide-react';
+import { Plus, AlertTriangle, Banknote, Landmark, CreditCard, Clock, Repeat } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { upcoming, clashes, stepOf, STEP_LABELS, advancePatch, finishPatch, reopenPatch, cancelPatch, endTime } from '../lib/agenda.js';
 import { today, dayLong } from '../lib/dates.js';
+import { diasTexto, stopPatches } from '../lib/series.js';
 import { money } from '../lib/format.js';
 import { Button, cx } from '../components/ui.jsx';
 import Sheet from '../components/Sheet.jsx';
@@ -46,6 +47,11 @@ export default function Agenda() {
     setPaying(null);
     showToast(`Terminado · ${PAYS.find((p) => p.key === pay).label} ${money(t.amount)} → bitácora`, () => update('trips', t.id, reopenPatch()));
   }
+  function stopSerie(t) {
+    const ps = stopPatches(trips, t.serie, today());
+    ps.forEach(({ id, patch }) => update('trips', id, patch));
+    showToast('Serie detenida', () => ps.forEach(({ id, undo }) => update('trips', id, undo)));
+  }
   function cancel(t) {
     update('trips', t.id, cancelPatch());
     showToast('Viaje cancelado', () => update('trips', t.id, reopenPatch()));
@@ -78,6 +84,7 @@ export default function Agenda() {
                   <div className="min-w-0 flex-1"><b className="block truncate">{t.clientName || 'Sin nombre'}</b><small className="block truncate text-[12.5px] text-gris">{[t.from, t.to].filter(Boolean).join(' → ') || '—'}</small></div>
                   <span className="font-mono font-bold tabular-nums">{money(t.amount)}</span>
                 </div>
+                {t.serie && <div className="flex items-center gap-1.5 text-xs text-gris"><Repeat className="size-3.5" aria-hidden />Cada {diasTexto(t.dias)}{t.fin ? ` · hasta ${dayLong(t.fin)}` : ''}<button type="button" onClick={() => stopSerie(t)} className="ml-auto font-bold underline underline-offset-4">Detener serie</button></div>}
                 <div className="flex items-center gap-1.5 text-[10.5px] font-bold tracking-wider uppercase" aria-label={`Avance: ${STEPS[s]}`}>
                   {STEPS.map((l, i) => (
                     <span key={l} className="contents">
