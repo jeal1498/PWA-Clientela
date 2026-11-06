@@ -31,12 +31,16 @@ export function clientRequestMessage({ service, from, to, now, date, time, passe
 }
 
 /** Propuesta que el CONDUCTOR manda al cliente desde el cotizador manual. */
-export function driverProposalMessage({ clientName, from, to, date, time, q, price, driverName, includeBreakdown = false }) {
+export function driverProposalMessage({ clientName, from, to, via = [], date, time, q, price, driverName, includeBreakdown = false }) {
   const lines = [
     `Hola${clientName ? ` ${clientName}` : ''} 👋, te comparto la cotización de tu viaje:`,
     '',
   ];
-  if (from || to) lines.push(`📍 ${place(from)}`, `🏁 ${place(to)}`);
+  if (from || to) {
+    lines.push(`📍 ${place(from)}`);
+    if (via.length) lines.push(`📌 Paradas: ${via.map(place).join(' → ')}`);
+    lines.push(`🏁 ${place(to)}`);
+  }
   if (date || time) lines.push(`📅 ${dateText(date, time)}`);
   if (q.km) lines.push(`📏 ${kmText(q.km)} · ⏱️ aprox. ${minText(q.min)}`);
   if (includeBreakdown) {
