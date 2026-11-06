@@ -48,6 +48,15 @@ export function driverProposalMessage({ clientName, from, to, date, time, q, pri
   return lines.filter((l, i, a) => !(l === '' && a[i - 1] === '')).join('\n');
 }
 
+/** Recordatorio de cobro que el CONDUCTOR manda al cliente que le debe. */
+export function debtReminderMessage({ clientName, trips, total, driverName }) {
+  const lines = [`Hola${clientName ? ` ${clientName}` : ''} 👋, te recuerdo el pago pendiente de tus viajes:`, ''];
+  for (const t of trips) lines.push(`• ${dateText(t.date)}${t.from || t.to ? ` · ${[t.from, t.to].filter(Boolean).join(' → ')}` : ''}: ${money(t.amount)}`);
+  lines.push('', `💰 *Total pendiente: ${money(total)}*`, '', '¿Me confirmas cuándo puedes pagarlo? Gracias 🙏');
+  if (driverName) lines.push(`— ${driverName}`);
+  return lines.join('\n');
+}
+
 /** Copia al portapapeles con respaldo para navegadores viejos. */
 export async function copyText(text) {
   try {
