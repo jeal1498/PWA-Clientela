@@ -11,6 +11,7 @@ import { waLink, tripReminderMessage } from '../lib/whatsapp.js';
 import { cuandoDe, sinAvisarManana, avisadoTexto } from '../lib/recordar.js';
 import Sheet from '../components/Sheet.jsx';
 import AgendaSheet from '../components/AgendaSheet.jsx';
+import { lastPay, rememberPay } from '../components/TripSheet.jsx';
 import { useToast } from '../components/Toast.jsx';
 import Vacio from '../components/Vacio.jsx';
 
@@ -62,6 +63,7 @@ export default function Agenda({ embedded = false }) {
   }
   function finish(t, pay) {
     update('trips', t.id, finishPatch(pay, today()));
+    rememberPay(pay);
     setPaying(null);
     showToast(`Terminado · ${PAYS.find((p) => p.key === pay).label} ${money(t.amount)} → bitácora`, () => update('trips', t.id, reopenPatch()));
   }
@@ -124,9 +126,17 @@ export default function Agenda({ embedded = false }) {
                 )}
                 {c.length > 0 && <div className="flex items-start gap-2 text-[13px] font-bold text-tedebe"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />Se empalma con {c[0].time} · {c[0].clientName || 'Sin nombre'}</div>}
                 {cuandoDe(t.date, today()) && <div><span className={cx('inline-block rounded-full border px-2.5 py-1 text-xs font-bold whitespace-nowrap', t.recordadoAt ? 'border-cobrado/55 text-cobrado' : 'border-tedebe/55 text-tedebe')}>{t.recordadoAt ? avisadoTexto(t.recordadoAt) : 'Sin avisar'}</span></div>}
+                {main && (
+                  <Button className="h-[52px] w-full text-base font-bold" onClick={() => finish(t, lastPay())}>Terminar · {PAYS.find((p) => p.key === lastPay())?.label || 'Efectivo'} {money(t.amount)}</Button>
+                )}
                 <div className="flex items-center gap-2">
                   {main
-                    ? <Button className="h-[52px] flex-1 text-base font-bold" onClick={() => advance(t)}>{STEP_LABELS[s]}</Button>
+                    ? (
+                      <>
+                        {s < 2 && <Button variant="outline" className="h-11 flex-1" onClick={() => advance(t)}>{STEP_LABELS[s]}</Button>}
+                        <Button variant="outline" className="h-11 flex-1" onClick={() => setPaying(t)}>Otro pago</Button>
+                      </>
+                    )
                     : <Button variant="outline" className="h-11 flex-1" onClick={() => advance(t)}>{STEP_LABELS[s]}</Button>}
                   <button type="button" aria-label="Más opciones" aria-expanded={open} aria-haspopup="menu" onClick={() => setMenu(open ? null : t.id)} onKeyDown={(e) => e.key === 'Escape' && setMenu(null)} className="grid size-11 shrink-0 place-items-center rounded-xl border border-humo text-hueso active:scale-95"><MoreHorizontal className="size-5" aria-hidden /></button>
                 </div>

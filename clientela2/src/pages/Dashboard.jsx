@@ -3,13 +3,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, CalendarPlus, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
-import { upcoming, stepOf, STEP_LABELS, advancePatch, endTime } from '../lib/agenda.js';
+import { upcoming, stepOf, STEP_LABELS, advancePatch, endTime, finishPatch, reopenPatch } from '../lib/agenda.js';
 import { debtsByClient, debtTotals } from '../lib/debts.js';
 import { cuandoDe } from '../lib/recordar.js';
 import { daySummary } from '../lib/ledger.js';
 import { today, hm } from '../lib/dates.js';
 import { money } from '../lib/format.js';
 import { Button, cx } from '../components/ui.jsx';
+import { lastPay, rememberPay } from '../components/TripSheet.jsx';
 import { useToast } from '../components/Toast.jsx';
 import EstadoAhora from '../components/EstadoAhora.jsx';
 import ExpenseQuick from '../components/ExpenseQuick.jsx';
@@ -27,7 +28,7 @@ function cuando(t, now = new Date()) {
   return cuandoDe(t.date, today()) || d.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
 }
 
-function NextTrip({ trip, onAdvance }) {
+function NextTrip({ trip, onAdvance, onFinish }) {
   if (!trip) {
     return (
       <section className="rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Siguiente viaje">
@@ -46,7 +47,8 @@ function NextTrip({ trip, onAdvance }) {
         <span className="font-mono text-[15px] font-bold tabular-nums">{money(trip.amount)}</span>
       </div>
       <div className="min-w-0"><b className="block truncate font-titulo text-lg">{trip.clientName || 'Sin nombre'}</b><span className="block truncate text-sm text-[#3a3a45]">{[trip.from, trip.to].filter(Boolean).join(' → ') || '—'}</span></div>
-      <Button className="h-[52px] w-full rounded-2xl bg-cobrado text-base font-bold text-[#04210f]" onClick={() => onAdvance(trip)}>{STEP_LABELS[s]}</Button>
+      <Button className="h-[52px] w-full rounded-2xl bg-cobrado text-base font-bold text-[#04210f]" onClick={() => onFinish(trip)}>Terminar · {{ efectivo: 'Efectivo', spei: 'SPEI', tarjeta: 'Tarjeta', '': 'Me debe' }[lastPay()] ?? 'Efectivo'}</Button>
+      {s < 2 && <Button variant="outline" className="h-11 w-full rounded-2xl border-[#c9c9c2] text-sm font-bold text-asfalto" onClick={() => onAdvance(trip)}>{STEP_LABELS[s]}</Button>}
       <Link to="/app/viajes?s=porhacer" className="flex min-h-11 items-center justify-center rounded-xl border border-[#c9c9c2] text-sm font-medium">Ver agenda · recordar o cancelar</Link>
     </section>
   );
@@ -108,7 +110,13 @@ export default function Dashboard() {
 
   function advance(t) {
     if (stepOf(t) < 2) return update('trips', t.id, advancePatch(t, new Date().toISOString()));
-    location.hash = '#/app/viajes?s=porhacer'; // Terminar pide el pago en la Agenda
+    location.hash = '#/app/viajes?s=porhacer';
+  }
+  function finish(t) { // Terminar en 1 toque con el último pago usado; Deshacer lo regresa a agendado
+    const pay = lastPay();
+    update('trips', t.id, finishPatch(pay, today()));
+    rememberPay(pay);
+    showToast('Viaje terminado', () => update('trips', t.id, reopenPatch()));
   }
 
   return (
@@ -119,7 +127,7 @@ export default function Dashboard() {
 
       <EstadoAhora />
 
-      <NextTrip trip={next} onAdvance={advance} />
+      <NextTrip trip={next} onAdvance={advance} onFinish={finish} />
 
       <Debts />
 

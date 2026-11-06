@@ -85,7 +85,7 @@ export default function AppShell() {
       </Sheet>
       <TripSheet open={trip} onClose={() => setTrip(false)} onSaved={() => { showToast('Viaje guardado en Viajes → Hechos'); navigate('/app/viajes?s=hechos'); }} />
       <AgendaSheet open={agenda} onClose={() => setAgenda(false)} onSaved={(t) => { showToast(`Agendado ${t.time} · ${t.clientName || 'Sin nombre'}`); navigate('/app/viajes?s=porhacer'); }} />
-      <ExpenseSheet cat={gasto} onClose={() => setGasto(null)} onSaved={showToast} />
+      <ExpenseSheet sugeridos cat={gasto} onClose={() => setGasto(null)} onSaved={showToast} />
       {toast}
     </div>
   );

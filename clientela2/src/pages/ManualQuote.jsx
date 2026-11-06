@@ -4,6 +4,9 @@
 import { useMemo, useState } from 'react';
 import { Luggage, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, Loader2, Info, CheckCheck, BookmarkPlus, Star, Map, CalendarPlus, Car, Clock, Users, Hourglass, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
+import { clashes } from '../lib/agenda.js';
+import { ensureClient } from '../lib/clientes.js';
+import { avisarPorWhatsApp } from '../lib/avisar.js';
 import { quote, hourlyQuote, evaluate, roundUp } from '../lib/pricing.js';
 import { money, money2, kmText, minText } from '../lib/format.js';
 import { driverProposalMessage, waLink, copyText } from '../lib/whatsapp.js';
@@ -25,7 +28,7 @@ const KM_PER_HOUR = 20; // «Por horas»: km que se estiman por hora para calcul
 const fresh = () => ({ mode: 'search', kind: 'trip', hours: 2, from: null, to: null, via: [], km: '', min: '', bags: 0, stops: 0, tolls: '', ...nextSlot(), clientId: '', clientName: '', clientPhone: '' });
 
 export default function ManualQuote() {
-  const { config, addQuote, clients, update } = useStore();
+  const { config, addQuote, clients, trips, add, remove, update } = useStore();
   const [tripOpen, setTripOpen] = useState(false);
   const [agendaOpen, setAgendaOpen] = useState(false);
   const [f, setF] = useState(fresh);
@@ -97,6 +100,15 @@ export default function ManualQuote() {
   const tripLabel = tripQ.foraneo ? 'Foráneo' : 'Punto a punto';
   const hasHourly = config.page.services.hourly;
   const prefill = { clientId: f.clientId, clientName: f.clientName, from: f.from?.label || '', to: f.to?.label || '', km: shownKm, amount: price, dur: Math.round(shownMin) || 30, date: f.date, time: f.time };
+
+  // Agendar sin segunda hoja: guarda directo con Deshacer. Si se empalma con otro viaje, abre la hoja para avisarlo.
+  function agendar(avisar) {
+    if (clashes(trips, { ...prefill, id: 'nuevo' }).length) return setAgendaOpen(true);
+    const id = crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const trip = add('trips', { id, status: 'agendado', pay: '', date: prefill.date, time: prefill.time, dur: prefill.dur, ...ensureClient(clients, add, f), clientPhone: f.clientPhone, from: prefill.from, to: prefill.to, km: +prefill.km || 0, amount: +prefill.amount || 0, ...(avisar ? { recordadoAt: new Date().toISOString() } : {}) });
+    if (avisar) avisarPorWhatsApp(trip, config);
+    showToast(`Agendado ${trip.time} · ${trip.clientName || 'Sin nombre'}`, () => remove('trips', trip.id));
+  }
 
   return (
     <>
@@ -259,8 +271,11 @@ export default function ManualQuote() {
               Incluir desglose en el mensaje
             </label>
             <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" icon={CalendarPlus} disabled={!ready} onClick={() => setAgendaOpen(true)}>Agendar</Button>
-              <Button variant="whatsapp" icon={MessageCircle} disabled={!ready} as="a" href={ready ? waLink(f.clientPhone, message(), config.driver.lada) : undefined} target="_blank" rel="noopener">Enviar propuesta</Button>
+              <Button variant="whatsapp" icon={MessageCircle} disabled={!ready} onClick={() => agendar(true)}>Agendar y avisar</Button>
+              <Button variant="outline" icon={CalendarPlus} disabled={!ready} onClick={() => agendar(false)}>Solo agendar</Button>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Button variant="outline" icon={MessageCircle} disabled={!ready} as="a" href={ready ? waLink(f.clientPhone, message(), config.driver.lada) : undefined} target="_blank" rel="noopener">Enviar propuesta</Button>
             </div>
             <details className="rounded-2xl border border-dashed border-white/15 px-3 py-2">
               <summary className="flex min-h-11 cursor-pointer items-center text-sm font-bold">Más opciones</summary>
