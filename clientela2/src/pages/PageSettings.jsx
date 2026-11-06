@@ -96,11 +96,15 @@ export default function PageSettings() {
 
       <EstadoAhora />
 
+      {!config.driver.phone && (
+        <div className="flex min-h-12 items-center gap-2.5 rounded-2xl border border-humo bg-tablero p-3 text-sm" role="status"><CircleAlert className="size-4 shrink-0" aria-hidden />Agrega tu WhatsApp para que los clientes te escriban.</div>
+      )}
+
       <PublicLinkCard />
 
       {/* Estado del enlace: los pasajeros ven lo que trae el enlace, no lo que hay en tu teléfono. */}
-      <div className={cx('flex items-start gap-2 rounded-2xl border p-3 text-sm', upToDate ? 'border-cobrado/30 bg-cobrado/10 text-cobrado' : 'border-tedebe/30 bg-tedebe/10 text-tedebe')} role="status">
-        {upToDate ? <CircleCheck className="mt-0.5 size-4 shrink-0" /> : <CircleAlert className="mt-0.5 size-4 shrink-0" />}
+      <div className={cx('flex items-start gap-2 rounded-2xl border p-3 text-sm', 'border-humo bg-tablero text-hueso')} role="status">
+        {upToDate ? <CircleCheck className="mt-0.5 size-4 shrink-0 text-cobrado" /> : <CircleAlert className="mt-0.5 size-4 shrink-0" />}
         <div className="flex-1">
           {upToDate ? 'Tu enlace y tu QR están al día.' : published ? 'Hay cambios: toca «Guardar cambios» y vuelve a compartir tu enlace (y a imprimir el QR).' : 'Cada cambio ya se ve en tu vista previa. Al terminar, toca «Guardar cambios» y comparte tu enlace.'}
           {upToDate && <button type="button" onClick={async () => showToast((await copyText(link)) ? 'Enlace copiado' : 'No se pudo copiar')} className="mt-1 flex items-center gap-1 text-xs underline"><Copy className="size-3.5" /> Copiar enlace</button>}
@@ -176,7 +180,7 @@ export default function PageSettings() {
             <p className="mt-1 text-xs text-gris">{scheduleText(page) || 'Elige al menos un día.'}</p>
           </>
         ) : (
-          <p className="mt-1 text-xs text-tedebe">Estado fijo: viaja dentro del enlace. Para cambiarlo después, guarda y comparte el enlace nuevo; un QR ya impreso conserva el estado con el que se imprimió. Para el QR del auto conviene «Automático».</p>
+          <p className="mt-1 text-xs text-gris">Estado fijo: viaja dentro del enlace. Para cambiarlo después, guarda y comparte el enlace nuevo; un QR ya impreso conserva el estado con el que se imprimió. Para el QR del auto conviene «Automático».</p>
         )}
       </Card>
 

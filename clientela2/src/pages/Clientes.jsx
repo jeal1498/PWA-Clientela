@@ -7,7 +7,10 @@ import { quote, roundUp } from '../lib/pricing.js';
 import { money, kmText, minText, waNumber } from '../lib/format.js';
 import { driverProposalMessage, waLink } from '../lib/whatsapp.js';
 import { useRoute } from '../hooks/useRoute.js';
-import { Card, Field, TextInput, NumberInput, Button, cx } from '../components/ui.jsx';
+import { Card, Field, TextInput, NumberInput, Button, Avatar, cx } from '../components/ui.jsx';
+import { debtsByClient } from '../lib/debts.js';
+import { isDone } from '../lib/agenda.js';
+import { today } from '../lib/dates.js';
 import Sheet from '../components/Sheet.jsx';
 import PlaceInput from '../components/PlaceInput.jsx';
 import { useToast } from '../components/Toast.jsx';
@@ -30,7 +33,7 @@ export function recotizarLink(route, client, config) {
 }
 
 export default function Clientes() {
-  const { clients, config, add, update, remove } = useStore();
+  const { clients, trips, config, add, update, remove } = useStore();
   const [q, setQ] = useState('');
   const [editing, setEditing] = useState(null); // cliente o {} para nuevo
   const [toast, showToast] = useToast();
@@ -39,6 +42,19 @@ export default function Clientes() {
     const t = q.trim().toLowerCase();
     return [...clients].filter((c) => !t || c.name.toLowerCase().includes(t) || (c.phone || '').includes(t)).sort((a, b) => a.name.localeCompare(b.name, 'es'));
   }, [clients, q]);
+
+  // Luz de cada cliente: rojo atrasado, amarillo te debe, verde al corriente.
+  const debts = useMemo(() => debtsByClient(trips, today()), [trips]);
+  const lightOf = (c) => { const g = debts.find((d) => (c.id && d.clientId === c.id) || d.name.toLowerCase() === c.name.trim().toLowerCase()); return g ? (g.late ? 'red' : 'yellow') : 'green'; };
+  // Cliente del mes: el que más cobró este mes.
+  const best = useMemo(() => {
+    const m = today().slice(0, 7); const by = new Map();
+    for (const t of trips.filter((x) => isDone(x) && String(x.date).startsWith(m))) {
+      const k = t.clientName || ''; if (!k) continue;
+      const r = by.get(k) || { name: k, n: 0, total: 0 }; r.n += 1; r.total += +t.amount || 0; by.set(k, r);
+    }
+    return [...by.values()].sort((a, b) => b.total - a.total)[0];
+  }, [trips]);
 
   function save(c) {
     if (c.id) update('clients', c.id, c);
@@ -58,6 +74,13 @@ export default function Clientes() {
           <TextInput className="pl-9" placeholder="Buscar por nombre o teléfono" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
       )}
+      {best && (
+        <section className="space-y-1 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Cliente del mes">
+          <div className="text-[11px] font-bold tracking-widest text-[#55555e] uppercase">Cliente del mes</div>
+          <b className="block truncate font-titulo text-xl">{best.name}</b>
+          <div className="flex items-baseline justify-between text-[13px] text-[#3a3a45]"><span>{best.n} viaje{best.n > 1 ? 's' : ''}</span><span className="font-mono text-xl font-bold text-asfalto">{money(best.total)}</span></div>
+        </section>
+      )}
       {!clients.length && (
         <Card className="py-10 text-center text-gris">
           <Users className="mx-auto mb-2 size-8" />
@@ -69,7 +92,8 @@ export default function Clientes() {
         const icon = 'grid size-9 place-items-center rounded-xl bg-asfalto active:scale-95';
         return (
           <Card key={c.id} className="space-y-2">
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-3">
+              <Avatar name={c.name} light={lightOf(c)} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 truncate font-semibold">
                   {c.name}

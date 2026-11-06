@@ -122,3 +122,15 @@ export function Stat({ label, value, tone, small }) {
     </div>
   );
 }
+
+/** Mini tarjeta de contacto: inicial del cliente en hueso, con luz de estado (verde al corriente, amarillo te debe, rojo atrasado). */
+export function Avatar({ name, light, className }) {
+  const dot = { green: 'bg-cobrado', yellow: 'bg-tedebe', red: 'bg-atrasado' }[light];
+  const initial = (String(name || '').trim()[0] || '?').toUpperCase();
+  return (
+    <span className={cx('relative grid size-10 shrink-0 place-items-center rounded-xl bg-hueso font-titulo text-[17px] font-bold text-asfalto', className)} aria-hidden>
+      {initial}
+      {dot && <i className={cx('absolute -right-[3px] -bottom-[3px] size-3 rounded-full border-2 border-tablero', dot)} />}
+    </span>
+  );
+}
