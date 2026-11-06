@@ -1,12 +1,12 @@
 // «Te deben»: viajes hechos sin cobrar, por cliente. Amarillo reciente, rojo desde 15 días.
 import { useRef, useState } from 'react';
-import { AlertTriangle, Clock, MessageCircle, Check, Banknote, Landmark, CreditCard } from 'lucide-react';
+import { MessageCircle, Check, Banknote, Landmark, CreditCard } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { debtsByClient, debtTotals, paidPatch, unpaidPatch, LATE_DAYS } from '../lib/debts.js';
 import { today, dayLong } from '../lib/dates.js';
 import { money } from '../lib/format.js';
 import { waLink, debtReminderMessage } from '../lib/whatsapp.js';
-import { Button, cx } from '../components/ui.jsx';
+import { Button, Avatar, cx } from '../components/ui.jsx';
 import Sheet from '../components/Sheet.jsx';
 
 const PAYS = [
@@ -49,10 +49,14 @@ export default function Cobros() {
       <h1 className="font-titulo text-2xl">Te deben</h1>
 
       {groups.length > 0 ? (
-        <div className={cx('flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5', late ? 'bg-atrasado text-asfalto' : 'bg-tedebe text-asfalto')}>
-          <div><div className="text-[11px] font-bold uppercase tracking-wider">Total pendiente</div><div className="font-mono text-3xl font-bold">{money(total)}</div></div>
-          <div className="text-right text-sm font-bold">{late ? <>{money(late)}<br />atrasados</> : 'Nada atrasado'}</div>
-        </div>
+        <section className="space-y-1.5 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Por cobrar">
+          <div className="text-[11px] font-bold tracking-widest text-[#55555e] uppercase">Por cobrar</div>
+          <div className="font-mono text-4xl leading-none font-bold tracking-tight tabular-nums">{money(total)}</div>
+          <div className="flex items-center justify-between gap-2 text-[13px] text-[#3a3a45]">
+            <span>{groups.length} cliente{groups.length > 1 ? 's' : ''}</span>
+            {late ? <span className="rounded-full bg-atrasado px-2.5 py-0.5 text-xs font-bold text-white">{money(late)} atrasados</span> : <span>Nada atrasado</span>}
+          </div>
+        </section>
       ) : (
         <div className="rounded-2xl border border-white/10 py-8 text-center text-gris"><b className="text-hueso">Nadie te debe</b><br />Los viajes marcados «Me debe» aparecen aquí.</div>
       )}
@@ -60,9 +64,7 @@ export default function Cobros() {
       {groups.map((g, i) => (
         <details key={g.key} open={i === 0} className={cx('overflow-hidden rounded-2xl border bg-tablero', g.late ? 'border-atrasado bg-atrasado/10' : 'border-tedebe/40')}>
           <summary className="flex cursor-pointer list-none items-center gap-3 px-3.5 py-3 [&::-webkit-details-marker]:hidden">
-            <span className={cx('grid size-9 shrink-0 place-items-center rounded-full text-asfalto', g.late ? 'bg-atrasado' : 'bg-tedebe')}>
-              {g.late ? <AlertTriangle className="size-[18px]" aria-hidden /> : <Clock className="size-[18px]" aria-hidden />}
-            </span>
+            <Avatar name={g.name} light={g.late ? 'red' : 'yellow'} />
             <span className="min-w-0 flex-1">
               <b className="block truncate font-titulo text-base font-semibold">{g.name}</b>
               <small className="text-xs text-gris">{g.late ? `Atrasado · ${g.days} días` : `Hace ${g.days} ${g.days === 1 ? 'día' : 'días'}`} · {g.trips.length} viaje{g.trips.length > 1 ? 's' : ''}</small>
