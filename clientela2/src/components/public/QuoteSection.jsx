@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Users, Luggage, Info, Car, Plane, Route, Clock, Hourglass } from 'lucide-react';
 import { quote, hourlyQuote } from '../../lib/pricing.js';
+import { currentStatus, scheduleText } from '../../lib/status.js';
 import { money, kmText, minText } from '../../lib/format.js';
 import { clientRequestMessage, waLink } from '../../lib/whatsapp.js';
 import { useRoute } from '../../hooks/useRoute.js';
@@ -52,6 +53,8 @@ export default function QuoteSection({ config, service, onService, onState }) {
   const tripLabel = tripQ.foraneo && enabled.some((s) => s.key === 'foraneo') ? 'Foráneo' : tripKey === 'airport' ? 'Aeropuerto' : tripKey === 'foraneo' ? 'Foráneo' : 'Punto a punto';
   const TripIcon = tripKey === 'airport' ? Plane : tripKey === 'foraneo' ? Route : Car;
 
+  const status = currentStatus(page);
+  const fueraDeHorario = status.tone !== 'green';
   const noAparece = driver.phone ? waLink(driver.phone, `Hola${driver.name ? ` ${driver.name}` : ''}, quiero pedir un viaje y no encuentro mi dirección.`, driver.lada) : null;
 
   return (
@@ -97,6 +100,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
             </div>
             {r.estimated && !hourly && !r.loading && <p className="flex items-center gap-1 text-[13px] text-gris"><Info className="size-3.5" /> Distancia aproximada; se confirma por WhatsApp.</p>}
             <p className="text-[13px] text-gris">Precio estimado; te confirmo el final por WhatsApp. Válido por {page.validityHours} h.</p>
+            {fueraDeHorario && <p role="status" className="rounded-xl bg-asfalto p-3 text-sm">Ahora no estoy disponible; te respondo en cuanto pueda.{scheduleText(page) ? ` Atiendo ${scheduleText(page)}.` : ''}</p>}
 
             <WhenPicker date={slot.date} time={slot.time} onChange={setSlot} />
 
@@ -110,7 +114,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
                 <Stepper label="Maletas" icon={Luggage} value={bags} onChange={setBags} max={10} />
                 {!hourly && tollFee > 0 && (
                   <label className="flex min-h-11 items-center gap-2 rounded-2xl border border-white/10 bg-asfalto/40 p-3 text-sm text-gris">
-                    <input type="checkbox" className="size-4 accent-[#22C55E]" checked={toll} onChange={(e) => setToll(e.target.checked)} />
+                    <input type="checkbox" className="size-4 accent-cobrado" checked={toll} onChange={(e) => setToll(e.target.checked)} />
                     Ir por autopista de cuota (+{money(tollFee)})
                   </label>
                 )}

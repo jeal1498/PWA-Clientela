@@ -22,7 +22,7 @@ export default function PaymentsPolicies({ page }) {
           const on = page.payments[key];
           return (
             <div key={key} className={cx('flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-center text-xs', on ? 'border-white/5 bg-tablero' : 'border-dashed border-white/10 text-gris')}>
-              <Icon className={cx('size-6', on ? 'text-cobrado' : '')} aria-hidden />
+              <Icon className={cx('size-6', on ? 'text-hueso' : '')} aria-hidden />
               <span>{label}</span>
               <span className="sr-only">{on ? 'aceptado' : 'no aceptado'}</span>
               {!on && <span className="text-xs">No disponible</span>}
