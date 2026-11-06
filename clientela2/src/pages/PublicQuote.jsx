@@ -3,7 +3,7 @@
 // Lee los datos del enlace (#/?c=…); sin enlace muestra la vista previa con los datos del propio conductor.
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { MessageCircle, Calculator, Settings, Copy, ExternalLink, AlertTriangle } from 'lucide-react';
+import { MessageCircle, Calculator, Settings, Copy, ExternalLink, AlertTriangle, X } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { decodeConfig, publicLink } from '../lib/share.js';
 import { saveVCard } from '../lib/vcard.js';
@@ -37,7 +37,22 @@ export default function PublicQuote() {
   const [service, setService] = useState(() => SERVICES.find((s) => page.services[s.key])?.key || 'urban');
   const [cta, setCta] = useState({ ready: false, href: null, price: 0 });
   const [inAppHelp, setInAppHelp] = useState(false);
+  const [bannerOff, setBannerOff] = useState(false);
+  const [cotizarVisible, setCotizarVisible] = useState(false);
   const onState = useCallback((s) => setCta(s), []);
+
+  // La barra fija solo aparece cuando ni el botón de arriba ni el cotizador están a la vista (no tapa ni repite).
+  useEffect(() => {
+    const els = ['pedir-cta', 'cotizar'].map((id) => document.getElementById(id));
+    if (els.some((e) => !e) || !('IntersectionObserver' in window)) return undefined;
+    const seen = new Set();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id)));
+      setCotizarVisible(seen.size > 0);
+    }, { threshold: 0.2 });
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, [broken]);
 
   useEffect(() => { document.title = driver.name ? `${driver.name} · Transporte privado` : 'Cotiza tu viaje'; }, [driver.name]);
 
@@ -64,14 +79,16 @@ export default function PublicQuote() {
 
   return (
     <div className="mx-auto min-h-dvh max-w-lg px-4 pt-8 pb-28">
-      {isPreview && (
-        <Link to="/app" className="mb-5 flex items-center gap-2 rounded-2xl border border-tedebe/30 bg-tedebe/10 p-3 text-sm text-tedebe">
-          <Settings className="size-4 shrink-0" /> Vista previa con tus datos. Edítala en Más → Mi página.
-        </Link>
+      {isPreview && !bannerOff && (
+        <div className="mb-5 flex items-center gap-1 rounded-2xl border border-humo bg-tablero pl-3 text-sm">
+          <Settings className="size-4 shrink-0 text-gris" aria-hidden />
+          <span className="flex-1 py-2.5">Vista previa con tus datos; solo la ves tú. <Link to="/app/pagina" className="underline underline-offset-4">Editar</Link></span>
+          <button type="button" aria-label="Cerrar aviso" onClick={() => setBannerOff(true)} className="grid size-11 place-items-center"><X className="size-4" /></button>
+        </div>
       )}
 
       <div className="space-y-10">
-        <ProfileHeader driver={driver} vehicle={vehicle} page={page} hasWifi={!!wifi?.ssid} onSaveContact={saveContact} />
+        <ProfileHeader driver={driver} vehicle={vehicle} page={page} hasWifi={!!wifi?.ssid} onSaveContact={saveContact} onRequest={() => scrollToId('cotizar')} />
 
         <Section id="cotizar" title="Cotiza tu viaje" subtitle="Precio al instante, sin descargar nada.">
           <QuoteSection config={config} service={service} onService={setService} onState={onState} />
@@ -84,18 +101,20 @@ export default function PublicQuote() {
 
       <PublicFooter driver={driver} social={page.social} />
 
-      {/* Barra fija al pulgar: si ya hay precio, pide el viaje; si no, lleva al cotizador. */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asfalto/95 p-3 backdrop-blur" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + .75rem)' }}>
-        <div className="mx-auto max-w-lg">
-          {cta.ready && cta.href ? (
-            <Button icon={MessageCircle} className="w-full text-base" as="a" href={cta.href} target="_blank" rel="noopener">
-              Pedir con {driver.name || 'el conductor'} · {money(cta.price)}
-            </Button>
-          ) : (
-            <Button icon={Calculator} className="w-full text-base" onClick={() => scrollToId('cotizar')}>Cotizar mi viaje</Button>
-          )}
+      {/* Barra fija al pulgar: solo cuando el cotizador no está a la vista. Con precio, pide el viaje; si no, lleva al cotizador. */}
+      {!cotizarVisible && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asfalto/95 p-3 backdrop-blur" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + .75rem)' }}>
+          <div className="mx-auto max-w-lg">
+            {cta.ready && cta.href ? (
+              <Button icon={MessageCircle} className="h-[52px] w-full text-base font-bold" as="a" href={cta.href} target="_blank" rel="noopener">
+                Pedir con {driver.name || 'el conductor'} · {money(cta.price)}
+              </Button>
+            ) : (
+              <Button icon={Calculator} className="h-[52px] w-full text-base font-bold" onClick={() => scrollToId('cotizar')}>Pedir mi viaje</Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Instagram/TikTok/Facebook abren la página en su navegador interno y suelen bloquear el .vcf. */}
       <Sheet open={inAppHelp} onClose={() => setInAppHelp(false)} title="Guardar el contacto">

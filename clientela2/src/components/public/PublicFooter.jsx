@@ -33,9 +33,9 @@ export default function PublicFooter({ driver, social }) {
           ))}
         </div>
       )}
-      <p className="text-xs text-gris">Precios estimados; pueden variar por tráfico, casetas o cambios de ruta.</p>
-      <p className="mt-1 text-xs text-gris/80">Hecho con Clientela · de la familia Checa</p>
-      <Link to="/app" className="mt-4 inline-flex items-center gap-1 px-2 py-2 text-xs text-gris/40" aria-label="Acceso para el conductor">
+      <p className="text-sm text-gris">Precios estimados; pueden variar por tráfico, casetas o cambios de ruta.</p>
+      <p className="mt-1 text-[13px] text-gris">Hecho con Clientela · de la familia Checa</p>
+      <Link to="/app" className="mt-3 inline-flex min-h-11 items-center gap-1 px-3 text-sm text-gris" aria-label="Acceso para el conductor">
         <Lock className="size-3" /> Soy el conductor
       </Link>
     </footer>

@@ -12,7 +12,7 @@ import { PublicLinkCard } from '../components/PanelBlocks.jsx';
 import { Link } from 'react-router-dom';
 import {
   IdCard, Car, Activity, Wifi, Sofa, AtSign, Wallet, ScrollText, Briefcase, QrCode as QrIcon,
-  Camera, Trash2, Link2, Download, ExternalLink, Copy, Check, RotateCcw, Save, CircleAlert, CircleCheck,
+  Camera, Trash2, Link2, ShieldCheck, Download, ExternalLink, Copy, Check, RotateCcw, Save, CircleAlert, CircleCheck,
 } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { publicLink, encodeConfig } from '../lib/share.js';
@@ -144,6 +144,22 @@ export default function PageSettings() {
           <Field label="Ciudad base" hint="Sale bajo tu nombre y ayuda a encontrar direcciones."><TextInput {...text('driver', 'city')} placeholder="Cancún" /></Field>
         </div>
       </Card>
+
+      {/* ── Confianza: todo opcional; lo que no llenes no se muestra ───────── */}
+      <Card>
+        <CardTitle icon={ShieldCheck}>Confianza</CardTitle>
+        <p className="mb-3 text-sm text-gris">Datos reales que ayudan a un pasajero nuevo a decidir. Todo es opcional.</p>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Años de servicio"><TextInput inputMode="numeric" value={page.trust.years} onChange={(e) => setPage({ trust: { ...page.trust, years: e.target.value.replace(/\D/g, '') } })} placeholder="6" /></Field>
+            <Field label="Viajes hechos"><TextInput inputMode="numeric" value={page.trust.trips} onChange={(e) => setPage({ trust: { ...page.trust, trips: e.target.value.replace(/\D/g, '') } })} placeholder="1240" /></Field>
+          </div>
+          <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" className="size-4 accent-[#22C55E]" checked={!!page.trust.insured} onChange={(e) => setPage({ trust: { ...page.trust, insured: e.target.checked } })} /> Tengo seguro de pasajeros vigente</label>
+          <Field label="Una reseña corta" hint="Solo si el cliente te dio permiso de compartirla."><TextInput value={page.trust.quote} onChange={(e) => setPage({ trust: { ...page.trust, quote: e.target.value } })} placeholder="Puntual y muy amable." maxLength={140} /></Field>
+          <Field label="¿Quién la dijo?"><TextInput value={page.trust.quoteBy} onChange={(e) => setPage({ trust: { ...page.trust, quoteBy: e.target.value } })} placeholder="Sra. Martínez · hace 2 semanas" maxLength={60} /></Field>
+        </div>
+      </Card>
+
 
       <Card>
         <CardTitle icon={Car}>Vehículo</CardTitle>

@@ -45,7 +45,7 @@ export default function PlaceInput({ label, value, onChange, city, placeholder, 
 
   return (
     <div className="relative">
-      <div className={cx('flex items-center gap-2 px-3', bare ? 'min-h-12 rounded-xl focus-within:bg-white/5' : 'h-12 rounded-2xl border border-white/10 bg-asfalto focus-within:border-cobrado/70')}>
+      <div className={cx('flex items-center gap-2 px-3', bare ? 'min-h-12 rounded-xl focus-within:ring-2 focus-within:ring-inset focus-within:ring-hueso/40' : 'h-12 rounded-2xl border border-white/10 bg-asfalto focus-within:border-cobrado/70')}>
         {!bare && <span className={cx('size-2.5 shrink-0 rounded-full', dot)} aria-hidden />}
         <input
           aria-label={label}

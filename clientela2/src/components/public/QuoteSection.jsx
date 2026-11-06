@@ -40,7 +40,8 @@ export default function QuoteSection({ config, service, onService, onState }) {
   const hourQ = useMemo(() => ({ ...hourlyQuote(hours, config), km: 0, min: 0 }), [hours, config]);
   const q = hourly ? hourQ : tripQ;
   const places = hourly ? !!from : !!(from && to);
-  const ready = places && !!slot.time && !(r.loading && !hourly) && q.price > 0;
+  const same = !hourly && !!from && !!to && (from.label === to.label || (Math.abs(from.lat - to.lat) < 0.0005 && Math.abs(from.lon - to.lon) < 0.0005));
+  const ready = places && !same && !!slot.time && !(r.loading && !hourly) && q.price > 0;
   const href = ready && driver.phone
     ? waLink(driver.phone, clientRequestMessage({ service: svc, from, to, now: false, date: slot.date, time: slot.time, passengers, bags, name, notes, q, hours: q.hours }), driver.lada)
     : null;
@@ -56,8 +57,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
   return (
     <Card className="p-0">
       <div className="overflow-hidden rounded-t-3xl"><RideMap from={from} to={hourly ? null : to} /></div>
-      <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4 pt-2.5">
-        <div className="mx-auto h-1 w-10 rounded-full bg-white/15" aria-hidden />
+      <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4">
         <h3 className="font-titulo text-xl">{hourly ? '¿Dónde te recojo?' : '¿A dónde vas?'}</h3>
 
         <div className="grid grid-cols-[28px_1fr] rounded-2xl border border-white/10 bg-asfalto">
@@ -80,10 +80,12 @@ export default function QuoteSection({ config, service, onService, onState }) {
           </>
         )}
 
-        {places && (
+        {same && <p role="alert" className="text-sm text-hueso">Elige un destino distinto al origen.</p>}
+
+        {places && !same && (
           <>
             <div className="space-y-1" aria-live="polite" role="group" aria-label="Elige tu servicio">
-              {hasTrip && (
+              {hasTrip && !hourly && (
                 <ServiceCard icon={TripIcon} title={tripLabel} selected={!hourly} onSelect={() => !hourly || onService(tripKey)}
                   detail={r.loading ? 'Calculando tu ruta…' : `${kmText(tripQ.km)} · ${minText(tripQ.min)}`} price={r.loading ? '…' : money(tripQ.price)} />
               )}
@@ -91,8 +93,10 @@ export default function QuoteSection({ config, service, onService, onState }) {
                 <ServiceCard icon={Clock} title="Por horas" selected={hourly} onSelect={() => hourly || onService('hourly')}
                   detail={`${Math.max(hours, +page.minHours || 1)} h a tu disposición`} price={money(hourQ.price)} />
               )}
+              {hourly && hasTrip && <button type="button" onClick={() => onService(tripKey)} className="flex min-h-11 items-center px-2.5 text-sm text-gris underline underline-offset-4">Prefiero un viaje de A a B</button>}
             </div>
             {r.estimated && !hourly && !r.loading && <p className="flex items-center gap-1 text-[13px] text-gris"><Info className="size-3.5" /> Distancia aproximada; se confirma por WhatsApp.</p>}
+            <p className="text-[13px] text-gris">Precio estimado; te confirmo el final por WhatsApp. Válido por {page.validityHours} h.</p>
 
             <WhenPicker date={slot.date} time={slot.time} onChange={setSlot} />
 
