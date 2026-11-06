@@ -7,6 +7,7 @@ import { today } from '../lib/dates.js';
 import { money } from '../lib/format.js';
 import { Card, CardTitle, Button, Field, NumberInput, cx } from '../components/ui.jsx';
 import Sheet from '../components/Sheet.jsx';
+import { QuoteStats, MyNumbers } from '../components/PanelBlocks.jsx';
 
 const pct = (a, b) => (b > 0 ? Math.min(100, Math.round((a / b) * 100)) : 0);
 
@@ -104,6 +105,9 @@ export default function Resumen() {
           </div>
         )}
       </Sheet>
+
+      <QuoteStats />
+      <MyNumbers />
     </>
   );
 }

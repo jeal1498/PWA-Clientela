@@ -1,90 +1,113 @@
-// Panel del conductor (/app): enlace público, métricas de rentabilidad y accesos rápidos.
+// Hoy (/app): estado, siguiente viaje, lo que te deben y el saldo del día.
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Link2, Copy, ExternalLink, Calculator, TrendingUp, Fuel, Settings, Share2, AlertTriangle, Wallet, Plus, BookOpen } from 'lucide-react';
+import { Plus, CalendarPlus, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
-import { publicLink } from '../lib/share.js';
-import { costPerKm } from '../lib/pricing.js';
-import { money, money2 } from '../lib/format.js';
-import { copyText } from '../lib/whatsapp.js';
-import { Card, CardTitle, Button, Stat } from '../components/ui.jsx';
+import { upcoming, stepOf, STEP_LABELS, advancePatch, endTime } from '../lib/agenda.js';
+import { debtsByClient, debtTotals } from '../lib/debts.js';
+import { cuandoDe } from '../lib/recordar.js';
+import { daySummary } from '../lib/ledger.js';
+import { today, hm } from '../lib/dates.js';
+import { money } from '../lib/format.js';
+import { Button, cx } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
 import EstadoAhora from '../components/EstadoAhora.jsx';
-import DayBalance from '../components/DayBalance.jsx';
 import ExpenseQuick from '../components/ExpenseQuick.jsx';
 import TripSheet from '../components/TripSheet.jsx';
-import { useState } from 'react';
+
+const label = 'text-[11px] font-bold tracking-widest uppercase';
+
+/** «en 42 min», «en 2 h», «hoy», «mañana» o la fecha corta. */
+function cuando(t, now = new Date()) {
+  const d = new Date(`${t.date}T${t.time || '00:00'}`);
+  const min = Math.round((d - now) / 60000);
+  if (t.date === today() && min >= 0 && min < 60) return `en ${min} min`;
+  if (t.date === today() && min >= 60) return `en ${Math.floor(min / 60)} h`;
+  if (t.date === today()) return 'ya es hora';
+  return cuandoDe(t.date, today()) || d.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
+}
+
+function NextTrip({ trip, onAdvance }) {
+  if (!trip) {
+    return (
+      <section className="rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Siguiente viaje">
+        <div className={cx(label, 'text-[#55555e]')}>Siguiente viaje</div>
+        <div className="mt-1 font-titulo text-xl">Sin viajes agendados</div>
+        <Link to="/app/agenda" className="mt-3 flex h-[52px] items-center justify-center gap-2 rounded-2xl bg-cobrado text-base font-bold text-[#04210f]"><CalendarPlus className="size-5" aria-hidden /> Agendar un viaje</Link>
+      </section>
+    );
+  }
+  const s = stepOf(trip);
+  return (
+    <section className="space-y-2 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Siguiente viaje">
+      <div className="flex items-baseline justify-between gap-2"><span className={cx(label, 'text-[#55555e]')}>Siguiente viaje</span><span className="font-mono text-xs font-medium text-[#55555e]">{cuando(trip)}</span></div>
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="font-mono text-[34px] leading-none font-bold tracking-tight tabular-nums">{trip.time}<small className="ml-2 text-xs font-medium text-[#55555e]">→ {endTime(trip)}</small></span>
+        <span className="font-mono text-[15px] font-bold tabular-nums">{money(trip.amount)}</span>
+      </div>
+      <div className="min-w-0"><b className="block truncate font-titulo text-lg">{trip.clientName || 'Sin nombre'}</b><span className="block truncate text-sm text-[#3a3a45]">{[trip.from, trip.to].filter(Boolean).join(' → ') || '—'}</span></div>
+      <Button className="h-[52px] w-full rounded-2xl bg-cobrado text-base font-bold text-[#04210f]" onClick={() => onAdvance(trip)}>{STEP_LABELS[s]}</Button>
+      <Link to="/app/agenda" className="flex min-h-11 items-center justify-center rounded-xl border border-[#c9c9c2] text-sm font-medium">Ver agenda · recordar o cancelar</Link>
+    </section>
+  );
+}
+
+function Debts() {
+  const { trips } = useStore();
+  const groups = debtsByClient(trips, today());
+  if (!groups.length) {
+    return <Link to="/app/cobros" className="flex min-h-16 items-center justify-between rounded-2xl border border-cobrado/30 bg-cobrado/10 px-4 text-cobrado"><b className="font-titulo text-[15px]">Nadie te debe</b><ChevronRight className="size-5" aria-hidden /></Link>;
+  }
+  const { total, late } = debtTotals(groups);
+  const lateN = groups.filter((g) => g.late).length;
+  return (
+    <Link to="/app/cobros" className={cx('flex min-h-16 items-center justify-between gap-3 rounded-2xl px-4 py-3', late ? 'bg-atrasado text-white' : 'bg-tedebe text-[#231c00]')} aria-label={`Te deben ${money(total)}`}>
+      <span><b className="block font-titulo text-[15px]">Te deben</b><small className="block text-xs opacity-90">{groups.length} {groups.length === 1 ? 'cliente' : 'clientes'}{lateN ? ` · ${lateN} atrasado${lateN === 1 ? '' : 's'}` : ''}</small></span>
+      <span className="flex items-center gap-1 font-mono text-2xl font-bold tabular-nums">{money(total)}<ChevronRight className="size-5" aria-hidden /></span>
+    </Link>
+  );
+}
 
 export default function Dashboard() {
-  const { config, history } = useStore();
+  const { config, trips, expenses, update } = useStore();
   const [toast, showToast] = useToast();
   const [tripOpen, setTripOpen] = useState(false);
-  const link = publicLink(config);
+  const [gasto, setGasto] = useState(false);
+  const d = daySummary(trips, expenses, today());
+  const next = upcoming(trips).find((t) => (t.date + t.time) >= (today() + hm(new Date(Date.now() - 30 * 60000))) || t.confirmedAt) || upcoming(trips)[0];
 
-  // Métricas a partir del historial.
-  const accepted = history.filter((h) => h.status === 'aceptada');
-  const decided = history.filter((h) => h.status !== 'pendiente').length;
-  const netSum = accepted.reduce((s, h) => s + (h.net || 0), 0);
-  const kmSum = accepted.reduce((s, h) => s + (h.km || 0), 0);
-  const pending = history.filter((h) => h.status === 'pendiente').length;
-  const conversion = decided ? Math.round((accepted.length / decided) * 100) : 0;
-  const avgNetKm = kmSum ? netSum / kmSum : 0;
+  function advance(t) {
+    if (stepOf(t) < 2) return update('trips', t.id, advancePatch(t, new Date().toISOString()));
+    location.hash = '#/app/agenda'; // Terminar pide el pago en la Agenda
+  }
 
   return (
     <>
-      <h1 className="font-titulo text-2xl">Hola{config.driver.name ? `, ${config.driver.name}` : ''} 👋</h1>
+      <h1 className="font-titulo text-2xl">Hola{config.driver.name ? `, ${config.driver.name}` : ''}</h1>
 
       <EstadoAhora />
 
-      {!config.driver.phone && (
-        <Link to="/app/pagina" className="flex items-center gap-2 rounded-2xl border border-tedebe/30 bg-tedebe/10 p-3 text-sm text-tedebe">
-          <AlertTriangle className="size-4 shrink-0" /> Agrega tu WhatsApp para que los clientes te escriban.
-        </Link>
-      )}
+      <NextTrip trip={next} onAdvance={advance} />
 
-      {/* Balance en vivo del turno + captura rápida */}
-      <Card>
-        <CardTitle icon={Wallet} right={<span className="flex gap-3 text-xs text-cobrado"><Link to="/app/resumen" className="flex items-center gap-1"><TrendingUp className="size-3.5" /> Resumen</Link><Link to="/app/bitacora" className="flex items-center gap-1"><BookOpen className="size-3.5" /> Bitácora</Link></span>}>Hoy</CardTitle>
-        <DayBalance />
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <Button icon={Plus} className="whitespace-nowrap px-3" onClick={() => setTripOpen(true)}>Viaje cobrado</Button>
-          <Link to="/app/manual"><Button variant="ghost" icon={Calculator} className="w-full">Cotizar</Button></Link>
-        </div>
-        <div className="mt-3 text-xs text-gris">Registrar gasto</div>
-        <div className="mt-1.5"><ExpenseQuick onSaved={showToast} /></div>
-      </Card>
+      <Debts />
 
-      <Card>
-        <CardTitle icon={Link2}>Tu cotizador público</CardTitle>
-        <p className="mb-3 text-sm text-gris">Pon este enlace en tu Linktree, Instagram o estado de WhatsApp. Lleva tus tarifas; tus costos y metas no se comparten.</p>
-        <div className="mb-3 truncate rounded-xl bg-asfalto px-3 py-2 font-mono text-xs text-gris">{link}</div>
-        <div className="grid grid-cols-3 gap-2">
-          <Button variant="ghost" icon={Copy} onClick={async () => showToast((await copyText(link)) ? 'Enlace copiado' : 'No se pudo copiar')}>Copiar</Button>
-          <Button variant="ghost" icon={Share2} onClick={() => (navigator.share ? navigator.share({ title: 'Cotiza tu viaje', url: link }).catch(() => {}) : copyText(link).then(() => showToast('Enlace copiado')))}>Compartir</Button>
-          <Button variant="ghost" icon={ExternalLink} as="a" href={link} target="_blank" rel="noopener">Abrir</Button>
+      <section className="rounded-3xl border border-white/5 bg-tablero p-4" aria-label="Saldo de hoy">
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div><div className={cx(label, 'text-gris')}>Ingresos</div><div className="font-mono text-lg font-bold tabular-nums">{money(d.gross)}</div></div>
+          <div><div className={cx(label, 'text-gris')}>Gastos</div><div className="font-mono text-lg font-bold tabular-nums">{money(d.spent)}</div></div>
+          <div><div className={cx(label, 'text-gris')}>Neta</div><div className={cx('font-mono text-lg font-bold tabular-nums', d.net > 0 ? 'text-cobrado' : d.net < 0 ? 'text-atrasado' : '')}>{money(d.net)}</div></div>
         </div>
-        <p className="mt-2 text-xs text-gris/70">Si cambias tus tarifas, vuelve a copiar el enlace.</p>
-      </Card>
+        <p className="mt-2 text-center text-xs text-gris">{d.trips} {d.trips === 1 ? 'viaje' : 'viajes'} hoy · {d.km} km</p>
+        <div className="mt-2">
+          <span className="grid grid-cols-2 gap-2">
+            <Button variant="ghost" className="h-11 px-3 text-sm whitespace-nowrap" onClick={() => setGasto((g) => !g)} aria-expanded={gasto}>+ Gasto</Button>
+            <Button variant="ghost" icon={Plus} className="h-11 px-3 text-sm whitespace-nowrap" onClick={() => setTripOpen(true)}>Viaje cobrado</Button>
+          </span>
+        </div>
+        {gasto && <div className="mt-3"><ExpenseQuick onSaved={(m) => { showToast(m); setGasto(false); }} /></div>}
+        <Link to="/app/resumen" className="mt-1 flex min-h-11 items-center justify-center text-xs text-cobrado">Ver resumen de la semana</Link>
+      </section>
 
-      <Card>
-        <CardTitle icon={TrendingUp} right={<Link to="/app/historial" className="text-xs text-cobrado">Ver historial</Link>}>Cotizaciones</CardTitle>
-        <div className="grid grid-cols-2 gap-2">
-          <Stat label="Neto de viajes aceptados" value={money(netSum)} tone="green" />
-          <Stat label="Neto promedio por km" value={money2(avgNetKm)} tone={!kmSum ? undefined : avgNetKm >= config.goals.minPerKm ? 'green' : 'red'} />
-          <Stat label="Cotizaciones pendientes" value={pending} tone={pending ? 'yellow' : undefined} />
-          <Stat label="Aceptación" value={`${conversion} %`} />
-        </div>
-      </Card>
-
-      <Card>
-        <CardTitle icon={Fuel} right={<Link to="/app/settings" className="flex items-center gap-1 text-xs text-cobrado"><Settings className="size-3.5" /> Editar</Link>}>Tus números</CardTitle>
-        <div className="grid grid-cols-2 gap-2">
-          <Stat small label="Te cuesta cada km" value={money2(costPerKm(config.costs))} tone="yellow" />
-          <Stat small label="Cobras por km" value={money2(config.rates.perKm)} />
-          <Stat small label="Meta neta por km" value={money2(config.goals.minPerKm)} />
-          <Stat small label="Meta neta por hora" value={money(config.goals.minPerHour)} />
-        </div>
-        {config.rates.perKm <= costPerKm(config.costs) && <p className="mt-2 text-xs text-atrasado">Tu tarifa por km no cubre tu costo por km.</p>}
-      </Card>
       <TripSheet open={tripOpen} onClose={() => setTripOpen(false)} onSaved={() => showToast('Viaje guardado en bitácora')} />
       {toast}
     </>
