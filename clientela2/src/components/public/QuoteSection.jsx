@@ -97,11 +97,11 @@ export default function QuoteSection({ config, service, onService, onState }) {
 
         {!places && (
           <>
-            <p className="whitespace-nowrap text-[13px] text-gris">{hourly ? 'Escribe dónde te recojo y ves el precio.' : 'Escribe tu destino y ves el precio al momento.'}</p>
-            <div className="flex flex-col">
-              {noAparece && <a href={noAparece} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center whitespace-nowrap text-[13px] text-gris underline underline-offset-4">¿No aparece tu dirección? Escríbeme</a>}
-              {hasHourly && !hourly && <button type="button" onClick={() => onService('hourly')} className="flex min-h-11 items-center whitespace-nowrap text-[13px] text-gris underline underline-offset-4">¿Lo necesitas por horas?</button>}
-              {hourly && hasTrip && <button type="button" onClick={() => onService(tripKey)} className="flex min-h-11 items-center whitespace-nowrap text-[13px] text-gris underline underline-offset-4">¿Prefieres un viaje de A a B?</button>}
+            <div className="flex flex-col items-center text-center text-[13px] leading-5 whitespace-nowrap text-gris">
+              <p>{hourly ? 'Escribe dónde te recojo y ves el precio.' : 'Escribe tu destino y ves el precio al momento.'}</p>
+              {noAparece && <a href={noAparece} target="_blank" rel="noopener" className="relative underline underline-offset-3 before:absolute before:-inset-3 before:content-['']">¿No aparece tu dirección? Escríbeme</a>}
+              {hasHourly && !hourly && <button type="button" onClick={() => onService('hourly')} className="relative mt-0.5 underline underline-offset-3 before:absolute before:-inset-3 before:content-['']">¿Lo necesitas por horas?</button>}
+              {hourly && hasTrip && <button type="button" onClick={() => onService(tripKey)} className="relative mt-0.5 underline underline-offset-3 before:absolute before:-inset-3 before:content-['']">¿Prefieres un viaje de A a B?</button>}
             </div>
           </>
         )}
