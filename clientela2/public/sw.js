@@ -1,6 +1,6 @@
 // Service worker mínimo: red primero para HTML (siempre la versión nueva),
 // caché primero para los archivos con hash de Vite. Offline sigue abriendo.
-const CACHE = 'cotiza-v7';
+const CACHE = 'cotiza-v8';
 self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html']))); });
 self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));

@@ -13,9 +13,14 @@ const PAY_OPTIONS = [
   { value: '', label: 'Me debe', icon: Clock },
 ];
 
-const blank = () => ({ date: today(), time: hm(), clientId: '', clientName: '', from: '', to: '', km: '', amount: '', pay: 'efectivo' });
+// Último método de pago usado en este teléfono: el viaje nuevo ya sale con él marcado.
+const LAST_PAY = 'clientela2_lastPay';
+export function lastPay() { try { return localStorage.getItem(LAST_PAY) ?? 'efectivo'; } catch { return 'efectivo'; } }
+const rememberPay = (pay) => { try { localStorage.setItem(LAST_PAY, pay); } catch { /* sin almacenamiento: se ignora */ } };
 
-/** prefill: datos iniciales; editing: viaje existente; onSaved(trip) para marcar la cotización. */
+const blank = () => ({ date: today(), time: hm(), clientId: '', clientName: '', from: '', to: '', km: '', amount: '', pay: lastPay() });
+
+/** prefill: datos iniciales; editing: viaje existente; onSaved(trip, esNuevo) para marcar la cotización. */
 export default function TripSheet({ open, onClose, prefill, editing, onSaved }) {
   const { clients, add, update } = useStore();
   const [f, setF] = useState(blank);
@@ -26,7 +31,8 @@ export default function TripSheet({ open, onClose, prefill, editing, onSaved }) 
   function save() {
     const data = { ...f, km: +f.km || 0, amount: +f.amount || 0, paidAt: f.pay ? f.paidAt || f.date : null };
     const trip = editing ? (update('trips', editing.id, data), { ...editing, ...data }) : add('trips', data);
-    onSaved?.(trip);
+    if (!editing) rememberPay(data.pay);
+    onSaved?.(trip, !editing);
     onClose();
   }
 

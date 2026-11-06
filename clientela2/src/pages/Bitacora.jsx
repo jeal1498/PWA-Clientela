@@ -1,13 +1,16 @@
 // Bitácora de viajes realizados: resumen diario y semanal (bruto vs. km) y lista por día.
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Trash2, Pencil, BookOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2, Pencil, BookOpen, Repeat } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { weekSummary, PAY_METHODS } from '../lib/ledger.js';
 import { dayShort, dayLong, today } from '../lib/dates.js';
 import { money, money2 } from '../lib/format.js';
 import { Card, CardTitle, Button, Stat, cx } from '../components/ui.jsx';
-import TripSheet from '../components/TripSheet.jsx';
+import TripSheet, { lastPay } from '../components/TripSheet.jsx';
 import { useToast } from '../components/Toast.jsx';
+
+/** Repetir: mismo cliente, ruta, km y monto; fecha y hora de ahora y el último pago usado. */
+const repeatOf = (x) => ({ clientId: x.clientId || '', clientName: x.clientName || '', from: x.from || '', to: x.to || '', km: x.km || '', amount: x.amount || '', pay: lastPay() });
 
 export default function Bitacora() {
   const { trips, expenses, remove } = useStore();
@@ -78,13 +81,15 @@ export default function Bitacora() {
                 <div className="truncate text-xs text-gris">{dayShort(x.date)} {x.time} · {[x.from, x.to].filter(Boolean).join(' → ') || '—'}{x.km ? ` · ${x.km} km` : ''}</div>
               </div>
               <span className="font-mono">{money(x.amount)}</span>
+              <button type="button" aria-label="Repetir viaje" onClick={() => setSheet({ prefill: repeatOf(x) })} className="grid size-9 place-items-center rounded-xl bg-asfalto"><Repeat className="size-4 text-gris" /></button>
               <button type="button" aria-label="Editar" onClick={() => setSheet({ editing: x })} className="grid size-9 place-items-center rounded-xl bg-asfalto"><Pencil className="size-4 text-gris" /></button>
               <button type="button" aria-label="Borrar" onClick={() => confirm('¿Borrar este viaje?') && remove('trips', x.id)} className="grid size-9 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-atrasado" /></button>
             </li>
           ))}
         </ul>
       </Card>
-      <TripSheet open={!!sheet} editing={sheet?.editing} onClose={() => setSheet(null)} onSaved={() => showToast('Bitácora actualizada')} />
+      <TripSheet open={!!sheet} editing={sheet?.editing} prefill={sheet?.prefill} onClose={() => setSheet(null)}
+        onSaved={(trip, isNew) => (isNew ? showToast('Viaje guardado', () => remove('trips', trip.id)) : showToast('Bitácora actualizada'))} />
       {toast}
     </>
   );
