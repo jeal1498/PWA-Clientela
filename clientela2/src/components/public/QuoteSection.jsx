@@ -133,7 +133,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
             {more && (
               <div className="space-y-2">
                 {hourly && <Stepper label={`Horas (mín. ${page.minHours})`} icon={Hourglass} value={Math.max(hours, +page.minHours || 1)} onChange={setHours} min={+page.minHours || 1} max={12} />}
-                <Stepper label="Pasajeros" icon={Users} value={passengers} onChange={setPassengers} min={1} max={8} />
+                <Stepper label="Pasajeros" icon={Users} value={passengers} onChange={setPassengers} min={1} max={4} />
                 <Stepper label="Maletas" icon={Luggage} value={bags} onChange={setBags} max={10} />
                 {!hourly && tollFee > 0 && (
                   <label className="flex min-h-11 items-center gap-2 rounded-2xl border border-white/10 bg-asfalto/40 p-3 text-sm text-gris">
