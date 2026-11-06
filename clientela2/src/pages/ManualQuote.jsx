@@ -2,14 +2,14 @@
 // Paso 1: ruta (lugares guardados, paradas, ⇄, enlace de Maps) y cliente. Paso 2: servicios con su ganancia neta,
 // cuándo (siempre programado), lo privado («Solo para ti») y las salidas: agendar, enviar propuesta, guardar.
 import { useMemo, useState } from 'react';
-import { Search, Keyboard, Luggage, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, Loader2, Info, CheckCheck, BookmarkPlus, Star, Map, CalendarPlus, Car, Clock, Users, Hourglass, ChevronRight } from 'lucide-react';
+import { Luggage, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, Loader2, Info, CheckCheck, BookmarkPlus, Star, Map, CalendarPlus, Car, Clock, Users, Hourglass, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { quote, hourlyQuote, evaluate, roundUp } from '../lib/pricing.js';
 import { money, money2, kmText, minText } from '../lib/format.js';
 import { driverProposalMessage, waLink, copyText } from '../lib/whatsapp.js';
 import { nextSlot } from '../lib/dates.js';
 import { useRoute } from '../hooks/useRoute.js';
-import { Card, Field, NumberInput, TextInput, Stepper, Segmented, Button, Stat, cx } from '../components/ui.jsx';
+import { Card, Field, NumberInput, TextInput, Stepper, Button, Stat, cx } from '../components/ui.jsx';
 import RoutePlaces from '../components/RoutePlaces.jsx';
 import RideMap from '../components/RideMap.jsx';
 import WhenPicker from '../components/WhenPicker.jsx';
@@ -111,7 +111,6 @@ export default function ManualQuote() {
         <div className="mx-auto h-1 w-10 rounded-full bg-white/15" aria-hidden />
           {!showOptions ? (
             <>
-              <Segmented value={f.mode} onChange={(mode) => set({ mode })} options={[{ value: 'search', label: 'Buscar ruta', icon: Search }, { value: 'express', label: 'Km y min', icon: Keyboard }]} />
               {search ? (
                 <>
                   <RoutePlaces f={f} set={set} city={config.driver.city} onToast={showToast} />
