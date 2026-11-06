@@ -61,6 +61,17 @@ export function debtReminderMessage({ clientName, trips, total, driverName }) {
   return lines.join('\n');
 }
 
+/** Recordatorio del viaje que el CONDUCTOR manda al cliente antes de la hora. `cuando`: «hoy», «mañana» o el día. */
+export function tripReminderMessage({ clientName, cuando, time, from, to, amount, driverName }) {
+  const lines = [`Hola${clientName ? ` ${clientName}` : ''} 👋, te recuerdo tu viaje de ${cuando} a las ${time}:`];
+  if (from) lines.push(`📍 ${from}`);
+  if (to) lines.push(`🏁 ${to}`);
+  if (+amount > 0) lines.push(`💰 ${money(amount)}`);
+  lines.push('', 'Avísame si algo cambia. ¡Nos vemos!');
+  if (driverName) lines.push(`— ${driverName}`);
+  return lines.join('\n');
+}
+
 /** Copia al portapapeles con respaldo para navegadores viejos. */
 export async function copyText(text) {
   try {
