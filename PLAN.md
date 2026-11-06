@@ -1,6 +1,6 @@
 # Plan de Clientela
 
-Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 5 nov 2026.
+Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 6 nov 2026.
 
 ## Resultado final
 Clientela publicada para conductores de Uber, DiDi, taxi y choferes independientes, gratis por ahora para recibir comentarios:
@@ -113,3 +113,7 @@ React + Vite + Tailwind aislado del resto; se publica en `/cotiza/` y no toca la
 - [ ] `cartera/` (versión 1) sigue publicada: ¿la redirigimos a `clientela/`?
 - [x] Respaldo en Google Sheets reemplazado por Supabase (4 nov): se quitó `hoja.js` y `apps-script/`.
 - [ ] Clave de Google Maps (opcional; hoy se usan mapas gratuitos).
+
+## Navegación 2.0 (6 nov 2026)
+- [x] Barra Hoy · Viajes · + · Clientes · Yo; Viajes = Propuestas/Por hacer/Hechos; menú +; Te deben en Clientes; Yo con 3 entradas.
+- [ ] Pasar cuenta Google/nube, moneda y gasolina a Ajustes.

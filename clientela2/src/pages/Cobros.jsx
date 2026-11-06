@@ -15,7 +15,7 @@ const PAYS = [
   { key: 'tarjeta', label: 'Tarjeta', icon: CreditCard },
 ];
 
-export default function Cobros() {
+export default function Cobros({ embedded = false }) {
   const { trips, clients, config, update } = useStore();
   const [paying, setPaying] = useState(null); // grupo que se va a cobrar
   const [undo, setUndo] = useState(null); // { ids, msg }
@@ -46,7 +46,7 @@ export default function Cobros() {
 
   return (
     <>
-      <h1 className="font-titulo text-2xl">Te deben</h1>
+      <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Te deben</h1>
 
       {groups.length > 0 ? (
         <section className="space-y-1.5 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Por cobrar">

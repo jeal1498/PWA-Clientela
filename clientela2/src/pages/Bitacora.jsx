@@ -13,7 +13,7 @@ import { useToast } from '../components/Toast.jsx';
 /** Repetir: mismo cliente, ruta, km y monto; fecha y hora de ahora y el último pago usado. */
 const repeatOf = (x) => ({ clientId: x.clientId || '', clientName: x.clientName || '', from: x.from || '', to: x.to || '', km: x.km || '', amount: x.amount || '', pay: lastPay() });
 
-export default function Bitacora() {
+export default function Bitacora({ embedded = false }) {
   const { trips, expenses, remove } = useStore();
   const [offset, setOffset] = useState(0); // 0 = esta semana, -1 = la pasada…
   const [sheet, setSheet] = useState(null); // { editing } | {}
@@ -31,8 +31,8 @@ export default function Bitacora() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="font-titulo text-2xl">Bitácora</h1>
-        <Button icon={Plus} className="h-11" onClick={() => setSheet({})}>Viaje</Button>
+        <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Viajes hechos</h1>
+        <Button icon={Plus} className="ml-auto h-11" onClick={() => setSheet({})}>Viaje</Button>
       </div>
 
       <Card>

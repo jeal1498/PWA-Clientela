@@ -16,7 +16,7 @@ const STATUS = {
   rechazada: 'bg-white/5 text-gris',
 };
 
-export default function History() {
+export default function History({ embedded = false }) {
   const { history, updateQuote, removeQuote, config } = useStore();
   const [done, setDone] = useState(null); // cotización que se pasa a la bitácora
   const [toast, showToast] = useToast();
@@ -33,7 +33,7 @@ export default function History() {
 
   return (
     <>
-      <h1 className="font-titulo text-2xl">Historial</h1>
+      <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Propuestas</h1>
       {history.map((h) => {
         const msg = driverProposalMessage({ clientName: h.clientName, from: h.from, to: h.to, date: h.date, time: h.time, q: { km: h.km, min: h.min, tolls: h.tolls, lines: [] }, price: h.price, driverName: config.driver.name });
         const icon = 'grid size-9 place-items-center rounded-xl bg-asfalto active:scale-95';

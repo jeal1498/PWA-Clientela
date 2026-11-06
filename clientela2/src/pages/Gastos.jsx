@@ -9,7 +9,7 @@ import DayBalance from '../components/DayBalance.jsx';
 import ExpenseQuick from '../components/ExpenseQuick.jsx';
 import { useToast } from '../components/Toast.jsx';
 
-export default function Gastos() {
+export default function Gastos({ embedded = false }) {
   const { trips, expenses, remove } = useStore();
   const [toast, showToast] = useToast();
   const w = weekSummary(trips, expenses);
@@ -17,7 +17,7 @@ export default function Gastos() {
 
   return (
     <>
-      <h1 className="font-titulo text-2xl">Gastos</h1>
+      <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Gastos</h1>
       <Card>
         <ExpenseQuick onSaved={showToast} />
         <div className="mt-4"><DayBalance /></div>

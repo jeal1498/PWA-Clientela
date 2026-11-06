@@ -40,7 +40,7 @@ export function QuoteStats() {
   const avgNetKm = kmSum ? netSum / kmSum : 0;
   return (
     <Card>
-      <CardTitle icon={TrendingUp} right={<Link to="/app/historial" className="inline-flex min-h-11 items-center text-xs text-cobrado">Ver historial</Link>}>Cotizaciones</CardTitle>
+      <CardTitle icon={TrendingUp} right={<Link to="/app/viajes?s=propuestas" className="inline-flex min-h-11 items-center text-xs text-cobrado">Ver propuestas</Link>}>Cotizaciones</CardTitle>
       <div className="grid grid-cols-2 gap-2">
         <Stat label="Neto de viajes aceptados" value={money(netSum)} tone="green" />
         <Stat label="Neto promedio por km" value={money2(avgNetKm)} tone={!kmSum ? undefined : avgNetKm >= config.goals.minPerKm ? 'green' : 'red'} />

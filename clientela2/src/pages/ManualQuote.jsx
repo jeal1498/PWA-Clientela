@@ -262,18 +262,21 @@ export default function ManualQuote() {
               <Button variant="outline" icon={CalendarPlus} disabled={!ready} onClick={() => setAgendaOpen(true)}>Agendar</Button>
               <Button variant="whatsapp" icon={MessageCircle} disabled={!ready} as="a" href={ready ? waLink(f.clientPhone, message(), config.driver.lada) : undefined} target="_blank" rel="noopener">Enviar propuesta</Button>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <details className="rounded-2xl border border-dashed border-white/15 px-3 py-2">
+              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-bold">Más opciones</summary>
+              <div className="mt-1 grid grid-cols-2 gap-2 pb-1">
               <Button variant="ghost" icon={Copy} disabled={!ready} onClick={async () => showToast((await copyText(message())) ? 'Texto copiado' : 'No se pudo copiar')}>Copiar</Button>
               <Button variant="outline" icon={Save} disabled={!ready} onClick={save}>Guardar</Button>
               <Button variant="ghost" icon={CheckCheck} disabled={!ready} onClick={() => setTripOpen(true)}>Ya se hizo</Button>
               <Button variant="ghost" icon={BookmarkPlus} disabled={!client || !(km > 0)} onClick={saveRoute} title={client ? `Guardar esta ruta en ${client.name}` : 'Elige un cliente guardado'}>Guardar ruta</Button>
-            </div>
+              </div>
+            </details>
           </Card>
         </>
       )}
 
-      <TripSheet open={tripOpen} onClose={() => setTripOpen(false)} prefill={{ clientId: f.clientId, clientName: f.clientName, from: f.from?.label || '', to: f.to?.label || '', km: shownKm, amount: price, date: f.date }} onSaved={() => showToast('Viaje guardado en bitácora')} />
-      <AgendaSheet open={agendaOpen} onClose={() => setAgendaOpen(false)} prefill={prefill} onSaved={() => showToast('Agendado: míralo en Más → Agenda')} />
+      <TripSheet open={tripOpen} onClose={() => setTripOpen(false)} prefill={{ clientId: f.clientId, clientName: f.clientName, from: f.from?.label || '', to: f.to?.label || '', km: shownKm, amount: price, date: f.date }} onSaved={() => showToast('Viaje guardado en Viajes → Hechos')} />
+      <AgendaSheet open={agendaOpen} onClose={() => setAgendaOpen(false)} prefill={prefill} onSaved={() => showToast('Agendado: míralo en Viajes → Por hacer')} />
       {toast}
     </>
   );

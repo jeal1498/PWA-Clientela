@@ -24,6 +24,7 @@ import QrCode from '../components/QrCode.jsx';
 import { SERVICES } from '../components/public/services.js';
 import { AMENITIES } from '../components/public/AmenitiesSection.jsx';
 import { useToast } from '../components/Toast.jsx';
+import WifiCard from '../components/WifiCard.jsx';
 
 const DAYS = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -209,9 +210,10 @@ export default function PageSettings() {
             <Field label="Contraseña"><TextInput {...text('wifi', 'password')} placeholder="Sin contraseña" autoComplete="off" autoCapitalize="none" /></Field>
           </div>
           <Segmented value={wifi.security} onChange={(security) => setSection('wifi', { security })} options={[{ value: 'WPA', label: 'WPA/WPA2' }, { value: 'WEP', label: 'WEP' }]} />
-          <Check2 checked={wifi.showPublic} onChange={(showPublic) => setSection('wifi', { showPublic })} sub="Quien tenga tu enlace verá la contraseña. Apagado, la enseñas desde Más → Wi-Fi a bordo.">
+          <Check2 checked={wifi.showPublic} onChange={(showPublic) => setSection('wifi', { showPublic })} sub="Quien tenga tu enlace verá la contraseña. Apagado, la enseñas desde aquí mismo con el QR.">
             Mostrar el Wi-Fi en mi página
           </Check2>
+          {wifi.ssid && <WifiCard wifi={wifi} onToast={showToast} startWithQr />}
         </div>
       </Card>
 

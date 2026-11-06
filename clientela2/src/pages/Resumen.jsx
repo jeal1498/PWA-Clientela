@@ -31,7 +31,7 @@ function Ranking({ title, rows }) {
   );
 }
 
-export default function Resumen() {
+export default function Resumen({ embedded = false }) {
   const { trips, expenses, config, setSection } = useStore();
   const [kind, setKind] = useState('sem');
   const [edit, setEdit] = useState(null); // { dayNet, weekNet } mientras se editan las metas
@@ -48,8 +48,8 @@ export default function Resumen() {
   if (!trips.some(isDone)) {
     return (
       <>
-        <h1 className="font-titulo text-2xl">Resumen</h1>
-        <Vacio titulo="Aún no hay viajes" texto="Cuando cobres tu primer viaje, aquí verás cuánto ganas neto y contra tu meta." accion="Agendar un viaje" to="/app/agenda" />
+        <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Resumen</h1>
+        <Vacio titulo="Aún no hay viajes" texto="Cuando cobres tu primer viaje, aquí verás cuánto ganas neto y contra tu meta." accion="Agendar un viaje" to="/app/viajes?s=porhacer" />
         <div className="grid grid-cols-2 gap-2 opacity-55" aria-hidden="true">
           <div className="rounded-xl bg-tablero p-3 text-xs text-gris">Ganancia neta<b className="block font-mono text-base">—</b></div>
           <div className="rounded-xl bg-tablero p-3 text-xs text-gris">Meta de la semana<b className="block font-mono text-base">—</b></div>
@@ -60,7 +60,7 @@ export default function Resumen() {
 
   return (
     <>
-      <h1 className="font-titulo text-2xl">Resumen</h1>
+      <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Resumen</h1>
       <div className="grid grid-cols-2 rounded-xl border border-white/10 bg-asfalto p-0.5" role="tablist" aria-label="Periodo">
         {[['sem', 'Semana'], ['mes', 'Mes']].map(([k, l]) => (
           <button key={k} type="button" role="tab" aria-selected={kind === k} onClick={() => setKind(k)} className={cx('h-11 rounded-[10px] text-sm font-bold', kind === k ? 'bg-tablero text-hueso ring-1 ring-white/15' : 'text-gris')}>{l}</button>
