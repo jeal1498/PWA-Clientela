@@ -9,7 +9,7 @@ Publicado en **https://jeal1498.github.io/PWA-Clientela/cotiza/** (el build vive
 |---|---|---|
 | `#/` | Cliente | Cotizador público (Linktree): origen/destino, fecha, pasajeros, maletas → precio y **Solicitar por WhatsApp**. Lee las tarifas del enlace `#/?c=…`. |
 | `#/app` | Conductor | **Hoy**: balance en vivo (ingresos − gastos = neta real), viaje cobrado y gastos en 1 toque, enlace público. |
-| `#/app/manual` | Conductor | Cotizador exprés: ruta o km/min, **ganancia neta privada**, semáforo, ajustes, tarifa preferencial del cliente, WhatsApp / copiar / guardar / «Ya se hizo» → bitácora. |
+| `#/app/manual` | Conductor | Cotizador exprés: lugares guardados (Casa, Trabajo, Escuela…), paradas entre origen y destino, ⇄, enlace de Maps, ruta o km/min, **ganancia neta privada**, semáforo, ajustes, tarifa preferencial del cliente, WhatsApp / copiar / guardar / «Ya se hizo» → bitácora. |
 | `#/app/bitacora` | Conductor | Viajes realizados (monto, Efectivo / SPEI / Tarjeta, origen/destino, km); semana con barras bruto vs. km. |
 | `#/app/clientes` | Conductor | Clientes frecuentes: teléfono, notas, % de tarifa preferencial, rutas habituales y **Re-cotizar** por WhatsApp. |
 | `#/app/cobros` | Conductor | **Te deben**: viajes «Me debe» por cliente (rojo desde 15 días), Recordar por WhatsApp y Ya me pagó con Deshacer. |

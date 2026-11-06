@@ -4,12 +4,13 @@
 //  clients  → clientes frecuentes (CRM)
 //  trips    → bitácora de viajes realizados
 //  expenses → gastos del turno
+//  places   → lugares guardados {name, label, sub, lat, lon} (Casa, Trabajo, Escuela…)
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { DEFAULT_CONFIG, withDefaults } from '../lib/pricing.js';
 import { load, save, importFromCartera, KEY } from '../lib/storage.js';
 
 const Store = createContext(null);
-export const COLLECTIONS = ['history', 'clients', 'trips', 'expenses'];
+export const COLLECTIONS = ['history', 'clients', 'trips', 'expenses', 'places'];
 const LIMIT = 2000; // tope por colección para no llenar el localStorage
 
 const newId = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;

@@ -1,20 +1,21 @@
 // Módulo C · Cotizador Exprés para el conductor (/app/manual).
 // Para cuando el cliente llama o escribe: cotiza en segundos, ve su ganancia real y negocia con datos.
 import { useMemo, useState } from 'react';
-import { Search, Keyboard, Luggage, Milestone, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, ArrowDownUp, Loader2, Info, CheckCheck, BookmarkPlus, Star } from 'lucide-react';
+import { Search, Keyboard, Luggage, Milestone, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, ArrowDownUp, Loader2, Info, CheckCheck, BookmarkPlus, Star, Map } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { quote, evaluate, roundUp } from '../lib/pricing.js';
 import { money, money2, kmText, minText } from '../lib/format.js';
 import { driverProposalMessage, waLink, copyText } from '../lib/whatsapp.js';
 import { useRoute } from '../hooks/useRoute.js';
 import { Card, CardTitle, Field, NumberInput, TextInput, Stepper, Segmented, Button, Stat, cx } from '../components/ui.jsx';
-import PlaceInput from '../components/PlaceInput.jsx';
+import RoutePlaces from '../components/RoutePlaces.jsx';
+import { directionsLink } from '../lib/maplink.js';
 import ProfitBadge, { toneOf } from '../components/ProfitBadge.jsx';
 import Breakdown from '../components/Breakdown.jsx';
 import { useToast } from '../components/Toast.jsx';
 import TripSheet from '../components/TripSheet.jsx';
 
-const EMPTY = { mode: 'search', from: null, to: null, km: '', min: '', bags: 0, stops: 0, tolls: '', date: '', time: '', clientId: '', clientName: '', clientPhone: '' };
+const EMPTY = { mode: 'search', from: null, to: null, via: [], km: '', min: '', bags: 0, stops: 0, tolls: '', date: '', time: '', clientId: '', clientName: '', clientPhone: '' };
 
 export default function ManualQuote() {
   const { config, addQuote, clients, update } = useStore();
@@ -26,11 +27,13 @@ export default function ManualQuote() {
   const [toast, showToast] = useToast();
   const set = (patch) => { setF((s) => ({ ...s, ...patch })); setOverride(null); };
 
-  const r = useRoute(f.mode === 'search' ? f.from : null, f.mode === 'search' ? f.to : null);
+  const via = f.via.filter(Boolean);
+  const r = useRoute(f.mode === 'search' ? f.from : null, f.mode === 'search' ? f.to : null, via);
+  const stopsN = f.mode === 'search' ? via.length : f.stops; // en «Buscar ruta» las paradas son las de la lista
   const km = f.mode === 'search' ? r.km : +f.km || 0;
   const min = f.mode === 'search' ? r.min : +f.min || 0;
 
-  const q = useMemo(() => quote({ km, min, bags: f.bags, stops: f.stops, tolls: +f.tolls || 0 }, config), [km, min, f.bags, f.stops, f.tolls, config]);
+  const q = useMemo(() => quote({ km, min, bags: f.bags, stops: stopsN, tolls: +f.tolls || 0 }, config), [km, min, f.bags, stopsN, f.tolls, config]);
   const price = override ?? q.price;
   const ev = useMemo(() => (override == null ? q : evaluate(price, q, config)), [override, price, q, config]);
   const ready = price > 0;
@@ -43,7 +46,7 @@ export default function ManualQuote() {
     { label: '+ $10', fn: (p) => p + 10 },
   ];
 
-  const message = () => driverProposalMessage({ clientName: f.clientName, from: f.from, to: f.to, date: f.date, time: f.time, q, price, driverName: config.driver.name, includeBreakdown: withBreakdown });
+  const message = () => driverProposalMessage({ clientName: f.clientName, from: f.from, to: f.to, via: f.mode === 'search' ? via : [], date: f.date, time: f.time, q, price, driverName: config.driver.name, includeBreakdown: withBreakdown });
 
   // Cliente frecuente elegido (CRM): llena teléfono y ofrece su tarifa preferencial.
   const client = clients.find((c) => c.id === f.clientId);
@@ -63,7 +66,7 @@ export default function ManualQuote() {
     addQuote({
       source: 'manual', clientName: f.clientName, clientPhone: f.clientPhone,
       from: f.from?.label || '', to: f.to?.label || '', date: f.date, time: f.time,
-      km, min, bags: f.bags, stops: f.stops, tolls: +f.tolls || 0,
+      km, min, bags: f.bags, stops: stopsN, tolls: +f.tolls || 0,
       suggested: q.price, price, net: ev.net, status: 'pendiente', profit: ev.status,
     });
     showToast('Guardada en pendientes');
@@ -81,11 +84,7 @@ export default function ManualQuote() {
         <div className="mt-3 space-y-2">
           {f.mode === 'search' ? (
             <>
-              <PlaceInput label="Origen" placeholder="¿De dónde sale?" value={f.from} onChange={(from) => set({ from })} city={config.driver.city} allowGps />
-              <div className="flex justify-center">
-                <button type="button" aria-label="Invertir origen y destino" onClick={() => set({ from: f.to, to: f.from })} className="grid size-8 place-items-center rounded-full bg-white/5 text-gris active:scale-95"><ArrowDownUp className="size-4" /></button>
-              </div>
-              <PlaceInput label="Destino" placeholder="¿A dónde va?" value={f.to} onChange={(to) => set({ to })} city={config.driver.city} dot="bg-atrasado" />
+              <RoutePlaces f={f} set={set} city={config.driver.city} onToast={showToast} />
               {r.loading && <p className="flex items-center gap-2 text-sm text-gris"><Loader2 className="size-4 animate-spin" /> Calculando ruta…</p>}
               {r.estimated && !r.loading && <p className="flex items-center gap-2 text-xs text-tedebe"><Info className="size-3.5" /> Sin ruta exacta: distancia estimada.</p>}
             </>
@@ -100,7 +99,7 @@ export default function ManualQuote() {
 
       <Card className="space-y-2">
         <Stepper label="Maletas" icon={Luggage} value={f.bags} onChange={(bags) => set({ bags })} />
-        <Stepper label="Paradas" icon={Milestone} value={f.stops} onChange={(stops) => set({ stops })} />
+        {f.mode === 'express' && <Stepper label="Paradas" icon={Milestone} value={f.stops} onChange={(stops) => set({ stops })} />}
         <div className="grid grid-cols-2 gap-2">
           <Field label="Casetas">
             <NumberInput prefix="$" value={f.tolls} onChange={(tolls) => set({ tolls })} placeholder="0" />
@@ -139,6 +138,10 @@ export default function ManualQuote() {
             {q.foraneo && <div className="text-tedebe">Foráneo</div>}
           </div>
         </div>
+
+        {f.mode === 'search' && f.from && f.to && (
+          <Button variant="outline" icon={Map} className="mt-3 h-10 w-full" as="a" href={directionsLink(f.from, f.to, via)} target="_blank" rel="noopener">Ver ruta en Maps</Button>
+        )}
 
         <div className="mt-3 grid grid-cols-4 gap-1.5">
           {adjust.map((a) => (

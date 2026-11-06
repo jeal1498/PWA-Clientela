@@ -62,9 +62,10 @@ export function haversine(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-/** Ruta en auto: { km, min, estimated }. `estimated` = true si no hubo OSRM. */
-export function route(a, b) {
-  const k = `${a.lon.toFixed(5)},${a.lat.toFixed(5)};${b.lon.toFixed(5)},${b.lat.toFixed(5)}`;
+/** Ruta en auto: { km, min, estimated }. `via` = paradas intermedias en orden. `estimated` = true si no hubo OSRM. */
+export function route(a, b, via = []) {
+  const pts = [a, ...via, b];
+  const k = pts.map((p) => `${p.lon.toFixed(5)},${p.lat.toFixed(5)}`).join(';');
   return cached(`r:${k}`, async () => {
     try {
       const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${k}?overview=false`);
@@ -74,7 +75,9 @@ export function route(a, b) {
       // OSRM no conoce el tráfico: +25 % al tiempo para acercarse a lo real en ciudad.
       return { km: Math.round(r.distance / 100) / 10, min: Math.max(1, Math.round((r.duration / 60) * 1.25)), estimated: false };
     } catch {
-      const km = Math.round(haversine(a, b) * 1.35 * 10) / 10;
+      let km = 0;
+      for (let i = 0; i < pts.length - 1; i++) km += haversine(pts[i], pts[i + 1]) * 1.35;
+      km = Math.round(km * 10) / 10;
       const speed = km < 15 ? 30 : 60;
       return { km, min: Math.max(1, Math.round((km / speed) * 60)), estimated: true };
     }
