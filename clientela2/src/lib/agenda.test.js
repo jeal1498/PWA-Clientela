@@ -41,3 +41,10 @@ test('los agendados no entran a bitácora ni a «Te deben»', () => {
 test('upcoming ordena por fecha y hora', () => {
   assert.deepEqual(upcoming([C, { ...A, date: '2026-11-07' }, B]).map((t) => t.id), [2, 3, 1]);
 });
+
+import { nextSlot } from './dates.js';
+test('nextSlot da la próxima media hora con 15 min de margen y cruza de día', () => {
+  assert.deepEqual(nextSlot(new Date(2026, 10, 6, 9, 5)), { date: '2026-11-06', time: '09:30' });
+  assert.deepEqual(nextSlot(new Date(2026, 10, 6, 9, 20)), { date: '2026-11-06', time: '10:00' });
+  assert.deepEqual(nextSlot(new Date(2026, 10, 6, 23, 50)), { date: '2026-11-07', time: '00:30' });
+});

@@ -19,7 +19,7 @@ Publicado en **https://jeal1498.github.io/PWA-Clientela/cotiza/** (el build vive
 
 **Página pública** (Linktree / QR del auto), en orden de conversión — componentes en `src/components/public/`:
 1. `ProfileHeader`: foto, nombre, estado (🟢/🟡 automático por horario), vehículo con placas, **Guardar contacto** (.vcf; iPhone abre la tarjeta, Android descarga, Instagram/TikTok muestran cómo abrir en el navegador) y **WhatsApp directo**.
-2. `QuoteSection`: servicio, origen/destino, Ahora/Programar, pasajeros, maletas, caseta; precio en vivo; por horas usa la tarifa por hora.
+2. `QuoteSection` (estilo app de viaje): ¿A dónde vas? → tarjetas de servicio con precio, ¿Cuándo? (Hoy/Mañana/Otra fecha + hora; siempre programado), pasajeros, maletas, caseta; por horas usa la tarifa por hora.
 3. `ServicesSection`: aeropuerto, punto a punto, foráneo, por horas + zonas de cobertura.
 4. `AmenitiesSection`: Wi-Fi (copiar contraseña con «¡Copiada!» + QR) y amenidades.
 5. `PaymentsPolicies`: Efectivo / SPEI / Tarjeta, validez, espera y reservas.

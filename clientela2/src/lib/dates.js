@@ -19,3 +19,12 @@ export function weekDays(d = new Date()) {
 
 export const dayShort = (iso) => new Date(`${iso}T12:00`).toLocaleDateString('es-MX', { weekday: 'short' }).replace('.', '');
 export const dayLong = (iso) => new Date(`${iso}T12:00`).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' });
+
+/** Fecha y hora por defecto de un viaje programado: la próxima media hora en punto (los viajes siempre se programan). */
+export function nextSlot(now = new Date()) {
+  const d = new Date(now.getTime() + 15 * 60000); // al menos 15 min de margen
+  const m = d.getMinutes();
+  d.setMinutes(m === 0 || m === 30 ? m : m < 30 ? 30 : 60, 0, 0);
+  return { date: ymd(d), time: hm(d) };
+}
+export const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); return ymd(d); };
