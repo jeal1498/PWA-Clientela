@@ -2,7 +2,7 @@
 
 Cotizador inteligente y multicanal para conductores privados. React 18 + Vite + Tailwind 4 + Lucide. Offline (PWA) y datos en `localStorage` (clave `clientela2`).
 
-Publicado en **https://jeal1498.github.io/PWA-Clientela/cotiza/** (el build vive en `/cotiza`, la app Clientela de la raíz no cambia).
+Publicado en **https://jeal1498.github.io/PWA-Clientela/** (el build se escribe en la raíz del repo; la app anterior vive en `/v1/` y `/cotiza/` solo redirige).
 
 ## Rutas (HashRouter)
 | Ruta | Para quién | Qué hace |
