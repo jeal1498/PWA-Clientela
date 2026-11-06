@@ -1,11 +1,13 @@
 // Agendar un viaje (de la agenda o desde una cotización). Avisa si se empalma con otro, pero deja agendarlo igual.
 import { useEffect, useState } from 'react';
-import { CalendarPlus, AlertTriangle } from 'lucide-react';
+import { CalendarPlus, MessageCircle, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { today, ymd, hm } from '../lib/dates.js';
 import { clashes, endTime } from '../lib/agenda.js';
 import { DIAS_CORTO, weekdayIdx, datesOf, finAfterWeeks } from '../lib/series.js';
 import { dayLong } from '../lib/dates.js';
+import { ensureClient } from '../lib/clientes.js';
+import { avisarPorWhatsApp } from '../lib/avisar.js';
 import Sheet from './Sheet.jsx';
 import { Field, NumberInput, TextInput, Button, cx } from './ui.jsx';
 
@@ -13,7 +15,7 @@ const blank = () => ({ date: today(), time: hm(), dur: 30, clientId: '', clientN
 const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); return ymd(d); };
 
 export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
-  const { trips, clients, add } = useStore();
+  const { trips, clients, config, add } = useStore();
   const [f, setF] = useState(blank);
   const [armed, setArmed] = useState(false); // ya vio el aviso de empalme: el siguiente toque agenda igual
   useEffect(() => { if (open) { setF({ ...blank(), ...(prefill || {}) }); setArmed(false); } }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -25,11 +27,12 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
   const proximas = datesOf(f.date, dias, fin, f.finTipo === 'sem' ? 120 : 5);
   const choque = clashes(trips, draft);
 
-  function save() {
+  function save(avisar = false) {
     if (choque.length && !armed) return setArmed(true);
     const id = crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const serie = f.repite ? { repite: true, serie: id, dias, fin } : {};
-    const trip = add('trips', { id, status: 'agendado', pay: '', date: f.date, time: f.time, dur: +f.dur || 30, clientId: f.clientId, clientName: f.clientName, clientPhone: f.clientPhone, from: f.from, to: f.to, km: +f.km || 0, amount: +f.amount || 0, ...serie });
+    const trip = add('trips', { id, status: 'agendado', pay: '', date: f.date, time: f.time, dur: +f.dur || 30, ...ensureClient(clients, add, f), clientPhone: f.clientPhone, from: f.from, to: f.to, km: +f.km || 0, amount: +f.amount || 0, ...(avisar ? { recordadoAt: new Date().toISOString() } : {}), ...serie });
+    if (avisar) avisarPorWhatsApp(trip, config);
     onSaved?.(trip);
     onClose();
   }
@@ -95,7 +98,10 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
             Se empalma con {choque[0].time}–{endTime(choque[0])} · {choque[0].clientName || 'Sin nombre'} ({dayLong(choque[0].date)}). Cambia la hora o agéndalo igual.
           </div>
         )}
-        <Button icon={CalendarPlus} className="w-full" onClick={save}>{armed && choque.length ? 'Agendar igual' : f.repite ? 'Agendar serie' : 'Agendar'}</Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="whatsapp" icon={MessageCircle} onClick={() => save(true)}>{armed && choque.length ? 'Igual y avisar' : 'Agendar y avisar'}</Button>
+          <Button variant="outline" icon={CalendarPlus} onClick={() => save(false)}>{armed && choque.length ? 'Agendar igual' : f.repite ? 'Solo agendar serie' : 'Solo agendar'}</Button>
+        </div>
       </div>
     </Sheet>
   );

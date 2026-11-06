@@ -117,3 +117,4 @@ React + Vite + Tailwind aislado del resto; se publica en `/cotiza/` y no toca la
 ## Navegación 2.0 (6 nov 2026)
 - [x] Barra Hoy · Viajes · + · Clientes · Yo; Viajes = Propuestas/Por hacer/Hechos; menú +; Te deben en Clientes; Yo con 3 entradas.
 - [ ] Pasar cuenta Google/nube, moneda y gasolina a Ajustes.
+- [x] Menos pasos: Terminar en 1 toque, agendar directo y avisar, cliente nuevo automático, repetir último viaje y gastos frecuentes.
