@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 // base './' + HashRouter: el build funciona en cualquier carpeta de GitHub Pages.
-// Se compila a ../cotiza → https://jeal1498.github.io/PWA-Clientela/cotiza/
+// Clientela 2.0 es la app principal: se compila a la RAÍZ del repo → https://jeal1498.github.io/PWA-Clientela/
+// (la app anterior vive en ../v1). emptyOutDir en false para no borrar el resto del repo; `npm run build` limpia ../assets antes.
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
-  build: { outDir: '../cotiza', emptyOutDir: true },
+  build: { outDir: '..', emptyOutDir: false },
 });
