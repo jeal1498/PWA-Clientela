@@ -75,7 +75,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
               <ChevronRight className="size-4 text-gris" aria-hidden />
             </button>
 
-            <div className="text-[10.5px] font-bold tracking-widest text-gris uppercase">Elige tu servicio</div>
+            <div className="text-xs font-bold tracking-widest text-gris uppercase">Elige tu servicio</div>
             <div className="space-y-2" aria-live="polite">
               {hasTrip && (
                 <ServiceCard icon={TripIcon} title={tripLabel} selected={!hourly} onSelect={() => !hourly || onService(tripKey)}
@@ -90,7 +90,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
 
             <WhenPicker date={slot.date} time={slot.time} onChange={setSlot} />
 
-            <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex h-9 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
+            <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex h-11 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
               <Users className="size-4 text-gris" aria-hidden /> Pasajeros {passengers} · <Luggage className="size-4 text-gris" aria-hidden /> Maletas {bags}
             </button>
             {more && (

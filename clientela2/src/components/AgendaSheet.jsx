@@ -42,7 +42,7 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
         </Field>
         <div className="grid grid-cols-3 gap-2">
           {[['Hoy', today()], ['Mañana', tomorrow()]].map(([l, d]) => (
-            <button key={l} type="button" onClick={() => set({ date: d })} className={cx('h-10 rounded-xl border text-sm font-bold', f.date === d ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>{l}</button>
+            <button key={l} type="button" onClick={() => set({ date: d })} className={cx('h-11 rounded-xl border text-sm font-bold', f.date === d ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>{l}</button>
           ))}
           <TextInput type="date" aria-label="Fecha" value={f.date} onChange={(e) => set({ date: e.target.value })} />
         </div>
@@ -69,21 +69,21 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
         </div>
         {f.repite && (
           <div className="space-y-2.5">
-            <div className="text-[10.5px] font-bold tracking-widest text-gris uppercase">Días</div>
+            <div className="text-xs font-bold tracking-widest text-gris uppercase">Días</div>
             <div className="flex gap-1.5">
               {DIAS_CORTO.map((n, i) => (
                 <button key={n} type="button" aria-pressed={dias.includes(i)} aria-label={n} onClick={() => set({ dias: dias.includes(i) ? dias.filter((x) => x !== i) : [...dias, i] })}
                   className={cx('h-10 flex-1 rounded-xl border text-sm font-bold uppercase', dias.includes(i) ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>{n[0]}</button>
               ))}
             </div>
-            <div className="text-[10.5px] font-bold tracking-widest text-gris uppercase">Termina</div>
+            <div className="text-xs font-bold tracking-widest text-gris uppercase">Termina</div>
             <div className="grid grid-cols-2 gap-2">
               <button type="button" aria-pressed={f.finTipo === 'sin'} onClick={() => set({ finTipo: 'sin' })} className={cx('h-11 rounded-xl border text-sm font-bold', f.finTipo === 'sin' ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>Sin fin</button>
               <button type="button" aria-pressed={f.finTipo === 'sem'} onClick={() => set({ finTipo: 'sem' })} className={cx('h-11 rounded-xl border text-sm font-bold', f.finTipo === 'sem' ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>Tras {f.semanas} semanas</button>
             </div>
             {f.finTipo === 'sem' && <NumberInput suffix="semanas" value={f.semanas} onChange={(semanas) => set({ semanas: Math.min(26, Math.max(1, semanas || 1)) })} aria-label="Semanas" />}
             <div className="space-y-1 rounded-2xl border border-white/10 bg-[#1C1C23] p-3" aria-live="polite">
-              <div className="text-[10.5px] font-bold tracking-widest text-gris uppercase">{fin ? `Se crearán ${proximas.length} viajes` : 'Se agendan los próximos 28 días y se rellenan solos'}</div>
+              <div className="text-xs font-bold tracking-widest text-gris uppercase">{fin ? `Se crearán ${proximas.length} viajes` : 'Se agendan los próximos 28 días y se rellenan solos'}</div>
               {proximas.slice(0, 5).map((d) => <div key={d} className="flex justify-between text-sm"><span className="capitalize">{dayLong(d)}</span><span className="font-mono text-gris">{f.time}</span></div>)}
               {proximas.length > 5 && <div className="text-xs text-gris">…y {proximas.length - 5} más</div>}
             </div>

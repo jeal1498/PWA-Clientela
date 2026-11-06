@@ -66,7 +66,7 @@ export default function Clientes() {
     <>
       <div className="flex items-center justify-between">
         <h1 className="font-titulo text-2xl">Clientes</h1>
-        <Button icon={Plus} className="h-10" onClick={() => setEditing({})}>Nuevo</Button>
+        <Button icon={Plus} className="h-11" onClick={() => setEditing({})}>Nuevo</Button>
       </div>
       {clients.length > 3 && (
         <div className="relative">
@@ -76,7 +76,7 @@ export default function Clientes() {
       )}
       {best && (
         <section className="space-y-1 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Cliente del mes">
-          <div className="text-[11px] font-bold tracking-widest text-[#55555e] uppercase">Cliente del mes</div>
+          <div className="text-xs font-bold tracking-widest text-[#55555e] uppercase">Cliente del mes</div>
           <b className="block truncate font-titulo text-xl">{best.name}</b>
           <div className="flex items-baseline justify-between text-[13px] text-[#3a3a45]"><span>{best.n} viaje{best.n > 1 ? 's' : ''}</span><span className="font-mono text-xl font-bold text-asfalto">{money(best.total)}</span></div>
         </section>
@@ -89,7 +89,7 @@ export default function Clientes() {
       )}
       {list.map((c) => {
         const tel = waNumber(c.phone, config.driver.lada);
-        const icon = 'grid size-9 place-items-center rounded-xl bg-asfalto active:scale-95';
+        const icon = 'grid size-11 place-items-center rounded-xl bg-asfalto active:scale-95';
         return (
           <Card key={c.id} className="space-y-2">
             <div className="flex items-start gap-3">
@@ -97,7 +97,7 @@ export default function Clientes() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 truncate font-semibold">
                   {c.name}
-                  {+c.discount > 0 && <span className="flex items-center gap-0.5 rounded-full bg-tedebe/15 px-2 py-0.5 text-[11px] text-tedebe"><Star className="size-3" />−{c.discount} %</span>}
+                  {+c.discount > 0 && <span className="flex items-center gap-0.5 rounded-full bg-tedebe/15 px-2 py-0.5 text-xs text-tedebe"><Star className="size-3" />−{c.discount} %</span>}
                 </div>
                 {c.phone && <div className="text-xs text-gris">{c.phone}</div>}
                 {c.notes && <div className="mt-1 text-xs text-hueso/80">📝 {c.notes}</div>}
@@ -113,7 +113,7 @@ export default function Clientes() {
                   <div className="truncate text-sm">{r.name || `${r.from} → ${r.to}`}</div>
                   <div className="truncate text-xs text-gris">{kmText(r.km)} · {minText(r.min)} · <span className="font-mono text-hueso">{money(routePrice(r, c, config))}</span>{+r.price > 0 && ' fijo'}</div>
                 </div>
-                <Button variant="whatsapp" icon={Repeat} className="h-10 px-3 text-sm" as="a" disabled={!tel} href={tel ? recotizarLink(r, c, config) : undefined} target="_blank" rel="noopener" aria-label={`Re-cotizar ${r.name || 'ruta'} a ${c.name}`}>
+                <Button variant="whatsapp" icon={Repeat} className="h-11 px-3 text-sm" as="a" disabled={!tel} href={tel ? recotizarLink(r, c, config) : undefined} target="_blank" rel="noopener" aria-label={`Re-cotizar ${r.name || 'ruta'} a ${c.name}`}>
                   Re-cotizar
                 </Button>
               </div>
@@ -152,7 +152,7 @@ function ClientEditor({ client, onClose, onSave, onDelete }) {
             {c.routes.map((r) => (
               <div key={r.id} className="flex items-center gap-2 rounded-2xl bg-asfalto p-2 pl-3 text-sm">
                 <span className="min-w-0 flex-1 truncate">{r.name || `${r.from} → ${r.to}`} <span className="text-gris">· {kmText(r.km)}{+r.price > 0 ? ` · ${money(r.price)} fijo` : ''}</span></span>
-                <button type="button" aria-label="Quitar ruta" onClick={() => set({ routes: c.routes.filter((x) => x.id !== r.id) })} className="grid size-8 place-items-center"><Trash2 className="size-4 text-atrasado" /></button>
+                <button type="button" aria-label="Quitar ruta" onClick={() => set({ routes: c.routes.filter((x) => x.id !== r.id) })} className="grid size-11 place-items-center"><Trash2 className="size-4 text-atrasado" /></button>
               </div>
             ))}
           </div>

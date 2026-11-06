@@ -23,7 +23,7 @@ export default function WifiCard({ wifi, onToast, startWithQr = false }) {
       {wifi.password && (
         <div className="mt-3 flex items-center gap-2 rounded-2xl bg-asfalto px-3 py-2">
           <span className="flex-1 truncate font-mono select-all">{showPass ? wifi.password : '•'.repeat(Math.min(12, wifi.password.length))}</span>
-          <button type="button" onClick={() => setShowPass((v) => !v)} aria-label={showPass ? 'Ocultar contraseña' : 'Ver contraseña'} className="grid size-9 place-items-center text-gris">
+          <button type="button" onClick={() => setShowPass((v) => !v)} aria-label={showPass ? 'Ocultar contraseña' : 'Ver contraseña'} className="grid size-11 place-items-center text-gris">
             {showPass ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         </div>

@@ -25,7 +25,7 @@ export default function PaymentsPolicies({ page }) {
               <Icon className={cx('size-6', on ? 'text-cobrado' : '')} aria-hidden />
               <span>{label}</span>
               <span className="sr-only">{on ? 'aceptado' : 'no aceptado'}</span>
-              {!on && <span className="text-[10px]">No disponible</span>}
+              {!on && <span className="text-xs">No disponible</span>}
             </div>
           );
         })}

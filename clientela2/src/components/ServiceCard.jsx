@@ -11,7 +11,7 @@ export default function ServiceCard({ icon: Icon, title, detail, price, net, ton
       <span className="min-w-0 flex-1"><b className="block text-[15px]">{title}</b><small className="block truncate text-xs text-gris">{detail}</small></span>
       <span className="text-right">
         <span className="block font-mono text-lg font-bold tabular-nums">{price}</span>
-        {net && <span className={cx('block text-[11px] font-bold', TONE[tone] || 'text-gris')}>neta {net}</span>}
+        {net && <span className={cx('block text-xs font-bold', TONE[tone] || 'text-gris')}>neta {net}</span>}
       </span>
     </button>
   );

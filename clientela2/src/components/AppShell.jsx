@@ -37,7 +37,7 @@ export default function AppShell() {
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-tablero/95 backdrop-blur" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <div className="mx-auto grid max-w-lg grid-cols-5">
           {TABS.map(({ to, end, label, icon: Icon, also }) => (
-            <NavLink key={to} to={to} end={end} className={({ isActive }) => cx('flex h-16 flex-col items-center justify-center gap-1 text-[11px]', isActive || also?.some((p) => pathname.startsWith(p)) ? 'text-cobrado' : 'text-gris')}>
+            <NavLink key={to} to={to} end={end} className={({ isActive }) => cx('flex h-16 flex-col items-center justify-center gap-1 text-xs', isActive || also?.some((p) => pathname.startsWith(p)) ? 'text-cobrado' : 'text-gris')}>
               <Icon className="size-5" aria-hidden />
               {label}
             </NavLink>

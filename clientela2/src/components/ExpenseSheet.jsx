@@ -25,7 +25,7 @@ export default function ExpenseSheet({ cat, onClose, onSaved }) {
       <div className="space-y-3">
         <div className="grid grid-cols-4 gap-1.5">
           {Object.entries(EXPENSE_CATS).map(([k, v]) => (
-            <button key={k} type="button" onClick={() => setC(k)} className={cx('flex h-16 flex-col items-center justify-center rounded-2xl text-[11px] leading-tight', c === k ? 'bg-cobrado/15 text-cobrado ring-1 ring-cobrado/40' : 'bg-asfalto text-gris')}>
+            <button key={k} type="button" onClick={() => setC(k)} className={cx('flex h-16 flex-col items-center justify-center rounded-2xl text-xs leading-tight', c === k ? 'bg-cobrado/15 text-cobrado ring-1 ring-cobrado/40' : 'bg-asfalto text-gris')}>
               <span className="text-xl" aria-hidden>{v.emoji}</span>{v.label.split(' /')[0]}
             </button>
           ))}

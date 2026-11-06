@@ -78,18 +78,18 @@ export default function Agenda() {
     <>
       <div className="flex items-center justify-between">
         <h1 className="font-titulo text-2xl">Agenda</h1>
-        <Button icon={Plus} className="h-10" onClick={() => setNewOpen(true)}>Agendar</Button>
+        <Button icon={Plus} className="h-11" onClick={() => setNewOpen(true)}>Agendar</Button>
       </div>
 
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-tablero px-3.5 py-3">
-        <div><b className="block text-xl tabular-nums">{hoy.length} viaje{hoy.length === 1 ? '' : 's'}</b><small className="text-[10.5px] font-bold tracking-widest text-gris uppercase">Hoy · {money(hoy.reduce((s, t) => s + (+t.amount || 0), 0))}</small></div>
-        <div className="min-w-0 text-right"><b className="block text-xl tabular-nums">{sig ? sig.time : '—'}</b><small className="block truncate text-[10.5px] font-bold tracking-widest text-gris uppercase">{sig ? `Siguiente · ${sig.clientName || 'Sin nombre'}` : 'Sin viajes por hacer'}</small></div>
+        <div><b className="block text-xl tabular-nums">{hoy.length} viaje{hoy.length === 1 ? '' : 's'}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">Hoy · {money(hoy.reduce((s, t) => s + (+t.amount || 0), 0))}</small></div>
+        <div className="min-w-0 text-right"><b className="block text-xl tabular-nums">{sig ? sig.time : '—'}</b><small className="block truncate text-xs font-bold tracking-widest text-gris uppercase">{sig ? `Siguiente · ${sig.clientName || 'Sin nombre'}` : 'Sin viajes por hacer'}</small></div>
       </div>
 
       {sinAvisar.length > 0 || list.some((t) => cuandoDe(t.date, today()) === 'mañana') ? (
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#1C1C23] px-3.5 py-3">
-          <div><b className={cx('block text-[26px] leading-none tabular-nums', sinAvisar.length ? 'text-tedebe' : 'text-cobrado')}>{sinAvisar.length}</b><small className="text-[10.5px] font-bold tracking-widest text-gris uppercase">{sinAvisar.length ? 'Sin avisar para mañana' : 'Todo avisado para mañana'}</small></div>
-          <Button variant="outline" className="h-10" disabled={!sinAvisar.length} onClick={() => startRemind(sinAvisar)}>Recordar a todos</Button>
+          <div><b className={cx('block text-[26px] leading-none tabular-nums', sinAvisar.length ? 'text-tedebe' : 'text-cobrado')}>{sinAvisar.length}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">{sinAvisar.length ? 'Sin avisar para mañana' : 'Todo avisado para mañana'}</small></div>
+          <Button variant="outline" className="h-11" disabled={!sinAvisar.length} onClick={() => startRemind(sinAvisar)}>Recordar a todos</Button>
         </div>
       ) : null}
 
@@ -97,7 +97,7 @@ export default function Agenda() {
 
       {groups.map(([d, items]) => (
         <section key={d} className="space-y-2" aria-label={dayLabel(d)}>
-          <h2 className="mt-1 text-[10.5px] font-bold tracking-widest text-gris uppercase">{dayLabel(d)}</h2>
+          <h2 className="mt-1 text-xs font-bold tracking-widest text-gris uppercase">{dayLabel(d)}</h2>
           {items.map((t) => {
             const c = clashes(trips, t);
             const s = stepOf(t);
@@ -106,13 +106,13 @@ export default function Agenda() {
             return (
               <article key={t.id} aria-label={`${t.clientName || 'Sin nombre'}, ${t.time}`} className={cx('space-y-2.5 rounded-2xl border bg-[#1C1C23] p-3.5', c.length ? 'border-tedebe/55' : main ? 'border-cobrado/45' : 'border-white/10')}>
                 <div className="flex items-start gap-3">
-                  <div className="min-w-[62px] text-[22px] leading-tight font-extrabold tabular-nums">{t.time}<small className="mt-0.5 block font-mono text-[11px] font-medium text-gris">→ {endTime(t)}</small></div>
+                  <div className="min-w-[62px] text-[22px] leading-tight font-extrabold tabular-nums">{t.time}<small className="mt-0.5 block font-mono text-xs font-medium text-gris">→ {endTime(t)}</small></div>
                   <div className="min-w-0 flex-1"><b className="block font-titulo text-base">{t.clientName || 'Sin nombre'}</b><small className="block text-[13px] break-words text-gris">{[t.from, t.to].filter(Boolean).join(' → ') || '—'}</small></div>
                   <span className="font-mono font-bold tabular-nums">{money(t.amount)}</span>
                 </div>
                 {t.serie && <div className="flex items-center gap-1.5 text-xs text-gris"><Repeat className="size-3.5" aria-hidden />Cada {diasTexto(t.dias)}{t.fin ? ` · hasta ${dayLong(t.fin)}` : ''}</div>}
                 {main && (
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase" aria-label={`Avance: ${STEPS[s]}`}>
+                  <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase" aria-label={`Avance: ${STEPS[s]}`}>
                     {STEPS.map((l, i) => (
                       <span key={l} className="contents">
                         {i > 0 && <i className={cx('h-[3px] flex-1 rounded', s >= i ? 'bg-cobrado' : 'bg-white/15')} />}

@@ -70,7 +70,7 @@ export default function SosButton() {
         onPointerCancel={cancel}
         onContextMenu={(e) => e.preventDefault()}
         onClick={() => { if (hold.current.fired) { hold.current.fired = false; return; } quickSend(); }}
-        className="flex select-none items-center gap-1 rounded-full bg-atrasado/15 px-3 py-1.5 text-xs font-semibold text-atrasado active:scale-95 disabled:opacity-60"
+        className="flex select-none items-center gap-1 rounded-full bg-atrasado/15 min-h-11 px-4 text-sm font-semibold text-atrasado active:scale-95 disabled:opacity-60"
         style={{ WebkitTouchCallout: 'none' }}
       >
         {sending ? <Loader2 className="size-4 animate-spin" /> : <ShieldAlert className="size-4" />} SOS
