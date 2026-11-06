@@ -1,7 +1,7 @@
 // 2 · Cotizador estilo app de viaje. Paso 1: ¿A dónde vas? Paso 2: elige servicio, cuándo (siempre programado) y pide por WhatsApp.
 // El precio sale de las tarifas del conductor (banderazo, km, minuto, recargos, caseta) o de su tarifa por hora.
 import { useEffect, useMemo, useState } from 'react';
-import { Users, Luggage, Info, Car, Plane, Route, Clock, Hourglass } from 'lucide-react';
+import { Users, Luggage, Info, Car, Plane, Route, Clock, Hourglass, Plus } from 'lucide-react';
 import { quote, hourlyQuote } from '../../lib/pricing.js';
 import { currentStatus, scheduleText } from '../../lib/status.js';
 import { money, kmText, minText } from '../../lib/format.js';
@@ -26,6 +26,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
 
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
+  const [via, setVia] = useState([]); // paradas entre origen y destino (máx. 3)
   const [slot, setSlot] = useState(nextSlot);
   const [passengers, setPassengers] = useState(1);
   const [bags, setBags] = useState(svc.key === 'airport' ? 1 : 0);
@@ -35,16 +36,17 @@ export default function QuoteSection({ config, service, onService, onState }) {
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
 
-  const r = useRoute(hourly ? null : from, hourly ? null : to);
+  const viaOk = via.filter(Boolean);
+  const r = useRoute(hourly ? null : from, hourly ? null : to, viaOk);
   const tollFee = +extras.tollDefault || 0;
-  const tripQ = useMemo(() => quote({ km: r.km, min: r.min, bags, tolls: toll ? tollFee : 0 }, config), [r.km, r.min, bags, toll, tollFee, config]);
+  const tripQ = useMemo(() => quote({ km: r.km, min: r.min, bags, stops: viaOk.length, tolls: toll ? tollFee : 0 }, config), [r.km, r.min, bags, viaOk.length, toll, tollFee, config]);
   const hourQ = useMemo(() => ({ ...hourlyQuote(hours, config), km: 0, min: 0 }), [hours, config]);
   const q = hourly ? hourQ : tripQ;
   const places = hourly ? !!from : !!(from && to);
   const same = !hourly && !!from && !!to && (from.label === to.label || (Math.abs(from.lat - to.lat) < 0.0005 && Math.abs(from.lon - to.lon) < 0.0005));
   const ready = places && !same && !!slot.time && !(r.loading && !hourly) && q.price > 0;
   const href = ready && driver.phone
-    ? waLink(driver.phone, clientRequestMessage({ service: svc, from, to, now: false, date: slot.date, time: slot.time, passengers, bags, name, notes, q, hours: q.hours }), driver.lada)
+    ? waLink(driver.phone, clientRequestMessage({ service: svc, from, to, via: hourly ? [] : viaOk, now: false, date: slot.date, time: slot.time, passengers, bags, name, notes, q, hours: q.hours }), driver.lada)
     : null;
 
   // La barra fija de abajo refleja si ya hay un viaje listo para pedir.
@@ -59,27 +61,48 @@ export default function QuoteSection({ config, service, onService, onState }) {
 
   return (
     <Card className="p-0">
-      <div className="overflow-hidden rounded-t-3xl"><RideMap from={from} to={hourly ? null : to} /></div>
+      <div className="overflow-hidden rounded-t-3xl"><RideMap from={from} to={hourly ? null : to} via={hourly ? [] : viaOk} /></div>
       <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4">
         <h3 className="font-titulo text-xl">{hourly ? '¿Dónde te recojo?' : '¿A dónde vas?'}</h3>
 
-        <div className="grid grid-cols-[28px_1fr] rounded-2xl border border-white/10 bg-asfalto">
-          <div className="flex flex-col items-center py-[18px]" aria-hidden>
-            <span className="size-2.5 rounded-full border-2 border-hueso" />
-            {!hourly && <><span className="my-0.5 w-0.5 flex-1 bg-humo" /><span className="size-2.5 bg-hueso" /></>}
-          </div>
-          <div className="min-w-0 divide-y divide-white/10 py-0.5">
-            <PlaceInput bare label="Origen" placeholder={svc.key === 'airport' ? 'Aeropuerto, hotel o domicilio' : '¿Dónde te recojo?'} value={from} onChange={setFrom} city={driver.city} allowGps />
-            {!hourly && <PlaceInput bare label="Destino" placeholder={svc.key === 'foraneo' ? '¿A qué ciudad vas?' : '¿A dónde vas?'} value={to} onChange={setTo} city={driver.city} />}
-          </div>
+        <div className="rounded-2xl border border-white/10 bg-asfalto">
+          {[{ k: 'o' }, ...(hourly ? [] : via.map((_, i) => ({ k: 'p', i }))), ...(hourly ? [] : [{ k: 'd' }])].map((row, idx, all) => (
+            <div key={`${row.k}${row.i ?? ''}`} className={idx ? 'border-t border-white/10' : ''}>
+              <div className="grid grid-cols-[28px_1fr]">
+                <div className="relative" aria-hidden>
+                  {idx > 0 && <span className="absolute top-0 left-1/2 h-1/2 w-0.5 -translate-x-1/2 bg-humo" />}
+                  {idx < all.length - 1 && <span className="absolute bottom-0 left-1/2 h-1/2 w-0.5 -translate-x-1/2 bg-humo" />}
+                  {row.k === 'o' && <span className="absolute top-1/2 left-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-hueso bg-asfalto" />}
+                  {row.k === 'p' && <span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gris" />}
+                  {row.k === 'd' && <span className="absolute top-1/2 left-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 bg-hueso" />}
+                </div>
+                <div className="min-w-0">
+                  {row.k === 'o' && <PlaceInput bare label="Origen" placeholder={svc.key === 'airport' ? 'Aeropuerto, hotel o domicilio' : '¿Dónde te recojo?'} value={from} onChange={setFrom} city={driver.city} allowGps />}
+                  {row.k === 'p' && <PlaceInput bare label={`Parada ${row.i + 1}`} placeholder={`Parada ${row.i + 1}`} value={via[row.i]} onChange={(p) => setVia((v) => v.map((x, j) => (j === row.i ? p : x)))} onRemove={() => setVia((v) => v.filter((_, j) => j !== row.i))} city={driver.city} />}
+                  {row.k === 'd' && <PlaceInput bare label="Destino" placeholder={svc.key === 'foraneo' ? '¿A qué ciudad vas?' : '¿A dónde vas?'} value={to} onChange={setTo} city={driver.city} />}
+                </div>
+              </div>
+              {/* El «+» vive sobre la línea, entre el origen y el destino. */}
+              {!hourly && idx === 0 && via.length === 0 && (
+                <div className="relative h-0">
+                  <button type="button" aria-label="Agregar parada" onClick={() => setVia([null])} className="group absolute -top-[22px] -left-[8px] z-10 grid size-11 place-items-center text-hueso"><span className="grid size-7 place-items-center rounded-full border border-humo bg-tablero group-active:scale-95"><Plus className="size-4" aria-hidden /></span></button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
+        {!hourly && via.length > 0 && via.length < 3 && (
+          <button type="button" onClick={() => setVia((v) => [...v, null])} className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-humo text-sm text-gris"><Plus className="size-4" aria-hidden /> Agregar otra parada</button>
+        )}
 
         {!places && (
           <>
-            <p className="text-sm text-gris">Escribe tu {hourly ? 'punto de recogida' : 'destino'} y ves el precio al momento.</p>
-            {noAparece && <a href={noAparece} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center text-sm text-gris underline underline-offset-4">¿No aparece tu dirección? Escríbeme por WhatsApp</a>}
-            {hasHourly && !hourly && <button type="button" onClick={() => onService('hourly')} className="flex min-h-11 items-center text-sm text-gris underline underline-offset-4">¿Necesitas el auto por horas?</button>}
-            {hourly && hasTrip && <button type="button" onClick={() => onService(tripKey)} className="flex min-h-11 items-center text-sm text-gris underline underline-offset-4">Prefiero un viaje de A a B</button>}
+            <p className="whitespace-nowrap text-[13px] text-gris">{hourly ? 'Escribe dónde te recojo y ves el precio.' : 'Escribe tu destino y ves el precio al momento.'}</p>
+            <div className="flex flex-col">
+              {noAparece && <a href={noAparece} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center whitespace-nowrap text-[13px] text-gris underline underline-offset-4">¿No aparece tu dirección? Escríbeme</a>}
+              {hasHourly && !hourly && <button type="button" onClick={() => onService('hourly')} className="flex min-h-11 items-center whitespace-nowrap text-[13px] text-gris underline underline-offset-4">¿Lo necesitas por horas?</button>}
+              {hourly && hasTrip && <button type="button" onClick={() => onService(tripKey)} className="flex min-h-11 items-center whitespace-nowrap text-[13px] text-gris underline underline-offset-4">¿Prefieres un viaje de A a B?</button>}
+            </div>
           </>
         )}
 

@@ -4,7 +4,7 @@ import { Crosshair, Loader2, MapPin, X } from 'lucide-react';
 import { searchPlaces, myLocation } from '../lib/maps.js';
 import { cx } from './ui.jsx';
 
-export default function PlaceInput({ label, value, onChange, city, placeholder, dot = 'bg-cobrado', allowGps, bare }) {
+export default function PlaceInput({ label, value, onChange, city, placeholder, dot = 'bg-cobrado', allowGps, bare, onRemove }) {
   const [text, setText] = useState(value?.label || '');
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
@@ -58,8 +58,9 @@ export default function PlaceInput({ label, value, onChange, city, placeholder, 
           autoComplete="off"
         />
         {busy && <Loader2 className="size-4 animate-spin text-gris" />}
-        {!busy && text && <button type="button" aria-label="Borrar" onClick={() => { setText(''); onChange(null); setItems([]); }} className="grid size-11 place-items-center"><X className="size-4 text-gris" /></button>}
-        {!busy && !text && allowGps && <button type="button" aria-label="Usar mi ubicación" onClick={gps} className="grid size-11 place-items-center"><Crosshair className="size-4 text-gris" /></button>}
+        {!busy && onRemove && <button type="button" aria-label="Quitar parada" onClick={onRemove} className="grid size-11 place-items-center"><X className="size-4 text-gris" /></button>}
+        {!busy && !onRemove && text && <button type="button" aria-label="Borrar" onClick={() => { setText(''); onChange(null); setItems([]); }} className="grid size-11 place-items-center"><X className="size-4 text-gris" /></button>}
+        {!busy && !onRemove && !text && allowGps && <button type="button" aria-label="Usar mi ubicación" onClick={gps} className="grid size-11 place-items-center"><Crosshair className="size-4 text-gris" /></button>}
       </div>
       {open && items.length > 0 && (
         <ul className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-2xl border border-white/10 bg-tablero p-1 shadow-2xl">
