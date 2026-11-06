@@ -68,6 +68,36 @@ function Debts() {
   );
 }
 
+/** Guía de primeros pasos: se va palomeando y desaparece al terminar. */
+function Empezar() {
+  const { config, clients } = useStore();
+  const pasos = [
+    { ok: !!config.driver.name, t: 'Tu nombre', d: config.driver.name || 'Para saludarte y firmar tus mensajes', to: '/app/pagina' },
+    { ok: !!config.driver.phone, t: 'Tu WhatsApp', d: 'Para que tus clientes te escriban', to: '/app/pagina' },
+    { ok: clients.length > 0, t: 'Tu primer cliente', d: 'Con su ruta habitual', to: '/app/clientes' },
+  ];
+  const hechos = pasos.filter((x) => x.ok).length;
+  if (hechos === pasos.length) return null;
+  return (
+    <>
+      <section className="space-y-2 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Primeros pasos">
+        <div className={cx(label, 'text-[#55555e]')}>Empieza aquí</div>
+        <div className="font-titulo text-xl leading-tight">Deja tu cuenta lista en 2 minutos</div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-[#d8d8d0]" role="progressbar" aria-valuenow={hechos} aria-valuemin={0} aria-valuemax={3} aria-label={`${hechos} de 3 pasos`}><div className="h-full rounded-full bg-cobrado" style={{ width: `${(hechos / 3) * 100}%` }} /></div>
+      </section>
+      <section className="divide-y divide-white/5 rounded-3xl border border-white/5 bg-tablero px-3" aria-label="Pasos">
+        {pasos.map((x, i) => (
+          <div key={x.t} className="flex min-h-[52px] items-center gap-3 py-1.5">
+            <span className={cx('grid size-7 shrink-0 place-items-center rounded-full border-2 font-mono text-xs font-bold', x.ok ? 'border-cobrado bg-cobrado text-[#04210f]' : 'border-humo')}>{x.ok ? '✓' : i + 1}</span>
+            <span className="min-w-0 flex-1"><b className="block font-titulo text-[15px]">{x.t}</b><small className="block truncate text-[13px] text-gris">{x.d}</small></span>
+            {!x.ok && <Link to={x.to} className="grid min-h-11 place-items-center rounded-xl border border-humo px-3 text-sm">Agregar</Link>}
+          </div>
+        ))}
+      </section>
+    </>
+  );
+}
+
 export default function Dashboard() {
   const { config, trips, expenses, update } = useStore();
   const [toast, showToast] = useToast();
@@ -83,7 +113,9 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1 className="font-titulo text-2xl">Hola{config.driver.name ? `, ${config.driver.name}` : ''}</h1>
+      <h1 className="font-titulo text-2xl">Hola, {config.driver.name || 'bienvenido'}</h1>
+
+      <Empezar />
 
       <EstadoAhora />
 
@@ -93,11 +125,11 @@ export default function Dashboard() {
 
       <section className="rounded-3xl border border-white/5 bg-tablero p-4" aria-label="Saldo de hoy">
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div><div className={cx(label, 'text-gris')}>Ingresos</div><div className="font-mono text-lg font-bold tabular-nums">{money(d.gross)}</div></div>
+          <div><div className={cx(label, 'text-gris')}>Ingresos</div><div className="font-mono text-lg font-bold tabular-nums">{d.trips ? money(d.gross) : '—'}</div></div>
           <div><div className={cx(label, 'text-gris')}>Gastos</div><div className="font-mono text-lg font-bold tabular-nums">{money(d.spent)}</div></div>
-          <div><div className={cx(label, 'text-gris')}>Neta</div><div className={cx('font-mono text-lg font-bold tabular-nums', d.net > 0 ? 'text-cobrado' : d.net < 0 ? 'text-atrasado' : '')}>{money(d.net)}</div></div>
+          <div><div className={cx(label, 'text-gris')}>Neta</div><div className={cx('font-mono text-lg font-bold tabular-nums', d.trips && d.net > 0 ? 'text-cobrado' : d.trips && d.net < 0 ? 'text-atrasado' : '')}>{d.trips ? money(d.net) : '—'}</div></div>
         </div>
-        <p className="mt-2 text-center text-xs text-gris">{d.trips} {d.trips === 1 ? 'viaje' : 'viajes'} hoy · {d.km} km</p>
+        <p className="mt-2 text-center text-xs text-gris">{d.trips ? `${d.trips} ${d.trips === 1 ? 'viaje' : 'viajes'} hoy · ${d.km} km` : 'Aún no cobras ningún viaje hoy'}</p>
         <div className="mt-2">
           <span className="grid grid-cols-2 gap-2">
             <Button variant="ghost" className="h-11 px-3 text-sm whitespace-nowrap" onClick={() => setGasto((g) => !g)} aria-expanded={gasto}>+ Gasto</Button>

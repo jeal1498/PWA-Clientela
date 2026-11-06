@@ -12,6 +12,7 @@ import { cuandoDe, sinAvisarManana, avisadoTexto } from '../lib/recordar.js';
 import Sheet from '../components/Sheet.jsx';
 import AgendaSheet from '../components/AgendaSheet.jsx';
 import { useToast } from '../components/Toast.jsx';
+import Vacio from '../components/Vacio.jsx';
 
 const PAYS = [
   { key: 'efectivo', label: 'Efectivo', icon: Banknote },
@@ -93,7 +94,7 @@ export default function Agenda() {
         </div>
       ) : null}
 
-      {!list.length && <div className="rounded-2xl border border-dashed border-white/15 py-8 text-center text-gris"><b className="text-hueso">Nada agendado</b><br />Toca «Agendar» o agéndalo desde una cotización.</div>}
+      {!list.length && <Vacio titulo="Nada agendado" texto="Agenda un viaje y te avisamos de empalmes y de a quién recordar." accion="Agendar un viaje" onClick={() => setNewOpen(true)} />}
 
       {groups.map(([d, items]) => (
         <section key={d} className="space-y-2" aria-label={dayLabel(d)}>
