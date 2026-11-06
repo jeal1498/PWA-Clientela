@@ -10,6 +10,7 @@ import Bitacora from './pages/Bitacora.jsx';
 import Gastos from './pages/Gastos.jsx';
 import Clientes from './pages/Clientes.jsx';
 import Agenda from './pages/Agenda.jsx';
+import Resumen from './pages/Resumen.jsx';
 import Cobros from './pages/Cobros.jsx';
 import Mas from './pages/Mas.jsx';
 import WifiPage from './pages/WifiPage.jsx';
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="gastos" element={<Gastos />} />
             <Route path="clientes" element={<Clientes />} />
             <Route path="agenda" element={<Agenda />} />
+            <Route path="resumen" element={<Resumen />} />
             <Route path="cobros" element={<Cobros />} />
             <Route path="mas" element={<Mas />} />
             <Route path="wifi" element={<WifiPage />} />

@@ -40,7 +40,7 @@ export default function Dashboard() {
 
       {/* Balance en vivo del turno + captura rápida */}
       <Card>
-        <CardTitle icon={Wallet} right={<Link to="/app/bitacora" className="flex items-center gap-1 text-xs text-cobrado"><BookOpen className="size-3.5" /> Bitácora</Link>}>Hoy</CardTitle>
+        <CardTitle icon={Wallet} right={<span className="flex gap-3 text-xs text-cobrado"><Link to="/app/resumen" className="flex items-center gap-1"><TrendingUp className="size-3.5" /> Resumen</Link><Link to="/app/bitacora" className="flex items-center gap-1"><BookOpen className="size-3.5" /> Bitácora</Link></span>}>Hoy</CardTitle>
         <DayBalance />
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Button icon={Plus} className="whitespace-nowrap px-3" onClick={() => setTripOpen(true)}>Viaje cobrado</Button>

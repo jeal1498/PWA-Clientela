@@ -29,7 +29,7 @@ export const DEFAULT_CONFIG = {
     stopFee: 30, // $ por parada intermedia
     tollDefault: 0, // caseta habitual (opcional): un toque la agrega a la cotización
   },
-  goals: { minPerKm: 10, minPerHour: 200 },
+  goals: { minPerKm: 10, minPerHour: 200, dayNet: 0, weekNet: 0 }, // dayNet / weekNet: metas de ganancia neta (0 = sin definir)
   // Wi-Fi a bordo. showPublic = se muestra en la página pública (el enlace lleva la contraseña).
   wifi: { ssid: '', password: '', security: 'WPA', showPublic: true },
   // Contacto de emergencia para el botón SOS. trackingLink: enlace de rastreo en vivo (opcional).

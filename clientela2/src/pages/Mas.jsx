@@ -1,6 +1,6 @@
 // «Más»: lo que se usa menos seguido, para no saturar la barra inferior.
 import { Link } from 'react-router-dom';
-import { History, Receipt, Wallet, CalendarClock, Wifi, Settings, Globe, ChevronRight, ShieldAlert } from 'lucide-react';
+import { History, Receipt, Wallet, CalendarClock, ChartColumn, Wifi, Settings, Globe, ChevronRight, ShieldAlert } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { upcoming } from '../lib/agenda.js';
 import { debtsByClient, debtTotals } from '../lib/debts.js';
@@ -17,6 +17,7 @@ export default function Mas() {
   const pending = history.filter((h) => h.status === 'pendiente').length;
   const items = [
     { to: '/app/pagina', icon: Globe, label: 'Mi página', hint: 'Datos, foto, vehículo, estado, Wi-Fi, pagos, políticas y QR' },
+    { to: '/app/resumen', icon: ChartColumn, label: 'Resumen', hint: 'Ganancias, metas, clientes y rutas' },
     { to: '/app/agenda', icon: CalendarClock, label: 'Agenda', hint: plan.length ? `${planHoy} hoy · ${plan.length} por hacer` : 'Viajes por hacer' },
     { to: '/app/cobros', icon: Wallet, label: 'Te deben', hint: owed.length ? `${money(owedTotal)} · ${owed.length} cliente${owed.length > 1 ? 's' : ''}` : 'Nadie te debe' },
     { to: '/app/gastos', icon: Receipt, label: 'Gastos', hint: 'Combustible, casetas, lavado, hormiga' },
