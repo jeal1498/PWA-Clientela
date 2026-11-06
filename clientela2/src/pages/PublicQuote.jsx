@@ -85,7 +85,7 @@ export default function PublicQuote() {
       {isPreview && !bannerOff && (
         <div className="mb-5 flex items-center gap-1 rounded-2xl border border-humo bg-tablero pl-3 text-sm">
           <Settings className="size-4 shrink-0 text-gris" aria-hidden />
-          <span className="flex-1 py-2.5">Vista previa con tus datos; solo la ves tú. <Link to="/app/pagina" className="underline underline-offset-4">Editar</Link></span>
+          <span className="flex-1 py-2.5">Vista previa: este enlace solo funciona en tu teléfono. <button type="button" className="underline underline-offset-4" onClick={async () => showToast((await copyText(publicLink(config))) ? 'Enlace para compartir copiado' : 'No se pudo copiar')}>Copiar enlace para compartir</button> · <Link to="/app/pagina" className="underline underline-offset-4">Editar</Link></span>
           <button type="button" aria-label="Cerrar aviso" onClick={() => setBannerOff(true)} className="grid size-11 place-items-center"><X className="size-4" /></button>
         </div>
       )}
@@ -132,7 +132,7 @@ export default function PublicQuote() {
           <li>Ahí toca otra vez <b className="text-hueso">«Guardar contacto»</b>.</li>
         </ol>
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button variant="ghost" icon={Copy} onClick={async () => showToast((await copyText(location.href)) ? 'Enlace copiado' : 'No se pudo copiar')}>Copiar enlace</Button>
+          <Button variant="ghost" icon={Copy} onClick={async () => showToast((await copyText(link)) ? 'Enlace copiado' : 'No se pudo copiar')}>Copiar enlace</Button>
           <Button variant="outline" icon={ExternalLink} onClick={() => saveContact()}>Intentar aquí</Button>
         </div>
       </Sheet>
