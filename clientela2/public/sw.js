@@ -1,6 +1,6 @@
 // Service worker de Clientela (raíz). Red primero para la página; caché primero solo para los archivos con hash de Vite,
 // las fuentes y los íconos de ESTA app. La app anterior (/v1/), la tarjeta y /cotiza/ pasan directo a la red.
-const CACHE = 'clientela-v31';
+const CACHE = 'clientela-v32';
 const ROOT = new URL('./', self.registration.scope).pathname; // p. ej. /PWA-Clientela/
 const MINE = [ROOT + 'assets/', ROOT + 'fonts/', ROOT + 'icon'];
 self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html']))); });

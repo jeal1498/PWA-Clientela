@@ -1,5 +1,6 @@
 // Agenda: viajes por hacer, agrupados por día. Un solo botón avanza el viaje: Confirmar → Ya llegué → Terminar.
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus, AlertTriangle, Banknote, Landmark, CreditCard, Clock, Repeat, MoreHorizontal } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { upcoming, clashes, stepOf, STEP_LABELS, advancePatch, finishPatch, reopenPatch, cancelPatch, endTime } from '../lib/agenda.js';
@@ -31,7 +32,7 @@ function dayLabel(iso) {
   return iso === t ? 'Hoy' : iso === m ? 'Mañana' : iso < t ? `${dayLong(iso)} · sin cerrar` : dayLong(iso);
 }
 
-export default function Agenda({ embedded = false }) {
+export default function Agenda({ embedded = false, slot = null }) {
   const { trips, clients, config, update } = useStore();
   const [newOpen, setNewOpen] = useState(false);
   const [paying, setPaying] = useState(null);
@@ -79,10 +80,17 @@ export default function Agenda({ embedded = false }) {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Por hacer</h1>
-        <Button icon={Plus} className="ml-auto h-11" onClick={() => setNewOpen(true)}>Agendar</Button>
-      </div>
+      {embedded ? (
+        <>
+          <h1 className="sr-only">Por hacer</h1>
+          {slot && createPortal(<Button icon={Plus} className="h-11" onClick={() => setNewOpen(true)}>Agendar</Button>, slot)}
+        </>
+      ) : (
+        <div className="flex items-center justify-between">
+          <h1 className="font-titulo text-2xl">Agenda</h1>
+          <Button icon={Plus} className="h-11" onClick={() => setNewOpen(true)}>Agendar</Button>
+        </div>
+      )}
 
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-tablero px-3.5 py-3">
         <div><b className="block text-xl tabular-nums">{hoy.length} viaje{hoy.length === 1 ? '' : 's'}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">Hoy · {money(hoy.reduce((s, t) => s + (+t.amount || 0), 0))}</small></div>
