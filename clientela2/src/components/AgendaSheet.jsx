@@ -9,7 +9,7 @@ import { dayLong } from '../lib/dates.js';
 import Sheet from './Sheet.jsx';
 import { Field, NumberInput, TextInput, Button, cx } from './ui.jsx';
 
-const blank = () => ({ date: today(), time: hm(), dur: 30, clientId: '', clientName: '', from: '', to: '', km: '', amount: '', repite: false, dias: [], finTipo: 'sin', semanas: 4 });
+const blank = () => ({ date: today(), time: hm(), dur: 30, clientId: '', clientName: '', clientPhone: '', from: '', to: '', km: '', amount: '', repite: false, dias: [], finTipo: 'sin', semanas: 4 });
 const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); return ymd(d); };
 
 export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
@@ -29,7 +29,7 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
     if (choque.length && !armed) return setArmed(true);
     const id = crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const serie = f.repite ? { repite: true, serie: id, dias, fin } : {};
-    const trip = add('trips', { id, status: 'agendado', pay: '', date: f.date, time: f.time, dur: +f.dur || 30, clientId: f.clientId, clientName: f.clientName, from: f.from, to: f.to, km: +f.km || 0, amount: +f.amount || 0, ...serie });
+    const trip = add('trips', { id, status: 'agendado', pay: '', date: f.date, time: f.time, dur: +f.dur || 30, clientId: f.clientId, clientName: f.clientName, clientPhone: f.clientPhone, from: f.from, to: f.to, km: +f.km || 0, amount: +f.amount || 0, ...serie });
     onSaved?.(trip);
     onClose();
   }
@@ -52,9 +52,10 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
         </div>
         <Field label="Cliente">
           <TextInput list="ag-clientes" value={f.clientName} placeholder="Nombre (opcional)"
-            onChange={(e) => { const c = clients.find((x) => x.name === e.target.value); set({ clientName: e.target.value, clientId: c?.id || '' }); }} />
+            onChange={(e) => { const c = clients.find((x) => x.name === e.target.value); set({ clientName: e.target.value, clientId: c?.id || '', ...(c?.phone ? { clientPhone: c.phone } : {}) }); }} />
           <datalist id="ag-clientes">{clients.map((c) => <option key={c.id} value={c.name} />)}</datalist>
         </Field>
+        <Field label="WhatsApp del cliente" hint="Para mandarle el recordatorio."><TextInput type="tel" inputMode="tel" value={f.clientPhone} onChange={(e) => set({ clientPhone: e.target.value })} placeholder="Opcional" /></Field>
         <div className="grid grid-cols-2 gap-2">
           <Field label="Origen"><TextInput value={f.from} onChange={(e) => set({ from: e.target.value })} placeholder="De" /></Field>
           <Field label="Destino"><TextInput value={f.to} onChange={(e) => set({ to: e.target.value })} placeholder="A" /></Field>

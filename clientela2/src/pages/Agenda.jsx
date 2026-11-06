@@ -6,7 +6,9 @@ import { upcoming, clashes, stepOf, STEP_LABELS, advancePatch, finishPatch, reop
 import { today, dayLong } from '../lib/dates.js';
 import { diasTexto, stopPatches } from '../lib/series.js';
 import { money } from '../lib/format.js';
-import { Button, cx } from '../components/ui.jsx';
+import { Button, TextArea, cx } from '../components/ui.jsx';
+import { waLink, tripReminderMessage } from '../lib/whatsapp.js';
+import { cuandoDe, sinAvisarManana, avisadoTexto } from '../lib/recordar.js';
 import Sheet from '../components/Sheet.jsx';
 import AgendaSheet from '../components/AgendaSheet.jsx';
 import { useToast } from '../components/Toast.jsx';
@@ -28,9 +30,11 @@ function dayLabel(iso) {
 }
 
 export default function Agenda() {
-  const { trips, update } = useStore();
+  const { trips, clients, config, update } = useStore();
   const [newOpen, setNewOpen] = useState(false);
   const [paying, setPaying] = useState(null);
+  const [queue, setQueue] = useState([]); // recordatorios por mandar, uno por uno
+  const [msg, setMsg] = useState('');
   const [toast, showToast] = useToast('bottom-28');
 
   const list = upcoming(trips);
@@ -38,6 +42,17 @@ export default function Agenda() {
   const sig = list.find((t) => t.date >= today());
   const groups = [...new Set(list.map((t) => t.date))].map((d) => [d, list.filter((t) => t.date === d)]);
 
+  const sinAvisar = sinAvisarManana(trips, today());
+  const rem = queue[0];
+  const phoneOf = (t) => clients.find((c) => c.id === t.clientId)?.phone || t.clientPhone || '';
+  const draftOf = (t) => tripReminderMessage({ clientName: t.clientName, cuando: cuandoDe(t.date, today()) || dayLong(t.date), time: t.time, from: t.from, to: t.to, amount: t.amount, driverName: config.driver.name });
+  function startRemind(list) { setQueue(list); setMsg(draftOf(list[0])); }
+  function sent() { // se abrió WhatsApp: queda avisado y pasa al siguiente
+    update('trips', rem.id, { recordadoAt: new Date().toISOString() });
+    const rest = queue.slice(1);
+    setQueue(rest);
+    if (rest.length) setMsg(draftOf(rest[0]));
+  }
   function advance(t) {
     if (stepOf(t) < 2) return update('trips', t.id, advancePatch(t, new Date().toISOString()));
     setPaying(t);
@@ -69,6 +84,13 @@ export default function Agenda() {
         <div className="min-w-0 text-right"><b className="block text-xl tabular-nums">{sig ? sig.time : '—'}</b><small className="block truncate text-[10.5px] font-bold tracking-widest text-gris uppercase">{sig ? `Siguiente · ${sig.clientName || 'Sin nombre'}` : 'Sin viajes por hacer'}</small></div>
       </div>
 
+      {sinAvisar.length > 0 || list.some((t) => cuandoDe(t.date, today()) === 'mañana') ? (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#1C1C23] px-3.5 py-3">
+          <div><b className={cx('block text-[26px] leading-none tabular-nums', sinAvisar.length ? 'text-tedebe' : 'text-cobrado')}>{sinAvisar.length}</b><small className="text-[10.5px] font-bold tracking-widest text-gris uppercase">{sinAvisar.length ? 'Sin avisar para mañana' : 'Todo avisado para mañana'}</small></div>
+          <Button variant="outline" className="h-10" disabled={!sinAvisar.length} onClick={() => startRemind(sinAvisar)}>Recordar a todos</Button>
+        </div>
+      ) : null}
+
       {!list.length && <div className="rounded-2xl border border-dashed border-white/15 py-8 text-center text-gris"><b className="text-hueso">Nada agendado</b><br />Toca «Agendar» o agéndalo desde una cotización.</div>}
 
       {groups.map(([d, items]) => (
@@ -95,6 +117,11 @@ export default function Agenda() {
                 </div>
                 {c.length > 0 && <div className="flex items-start gap-2 text-[12.5px] font-bold text-tedebe"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />Se empalma con {c[0].time} · {c[0].clientName || 'Sin nombre'}</div>}
                 <div className="flex items-center gap-2">
+                  {cuandoDe(t.date, today()) && <span className={cx('rounded-full border px-2.5 py-1 text-[10.5px] font-bold tracking-wider whitespace-nowrap uppercase', t.recordadoAt ? 'border-cobrado/55 text-cobrado' : 'border-tedebe/55 text-tedebe')}>{t.recordadoAt ? avisadoTexto(t.recordadoAt) : 'Sin avisar'}</span>}
+                  <button type="button" onClick={() => startRemind([t])} className="text-[13px] font-bold underline underline-offset-4">{t.recordadoAt ? 'Recordar otra vez' : 'Recordar'}</button>
+                  <span className="flex-1" />
+                </div>
+                <div className="flex items-center gap-2">
                   <Button className="h-11 flex-1" onClick={() => advance(t)}>{STEP_LABELS[s]}</Button>
                   <button type="button" onClick={() => cancel(t)} className="px-2 text-[13px] font-bold text-gris underline underline-offset-4">Cancelar</button>
                 </div>
@@ -115,6 +142,16 @@ export default function Agenda() {
               {PAYS.map(({ key, label, icon: Icon }) => <Button key={label} variant="outline" icon={Icon} onClick={() => finish(paying, key)}>{label}</Button>)}
             </div>
           </>
+        )}
+      </Sheet>
+      <Sheet open={!!rem} onClose={() => setQueue([])} title={rem ? `Recordar a ${rem.clientName || 'Sin nombre'}${queue.length > 1 ? ` · quedan ${queue.length}` : ''}` : ''}>
+        {rem && (
+          <div className="space-y-3">
+            <p className="text-sm text-gris">Puedes editar el mensaje antes de abrir WhatsApp.{!phoneOf(rem) && ' Este viaje no tiene número: WhatsApp te dejará elegir el chat.'}</p>
+            <TextArea rows={7} value={msg} onChange={(e) => setMsg(e.target.value)} aria-label="Mensaje" />
+            <Button variant="whatsapp" className="w-full" as="a" href={waLink(phoneOf(rem), msg, config.driver.lada)} target="_blank" rel="noopener" onClick={sent}>Abrir WhatsApp</Button>
+            <Button variant="outline" className="w-full" onClick={() => setQueue([])}>Cancelar</Button>
+          </div>
         )}
       </Sheet>
       {toast}
