@@ -1,4 +1,5 @@
 // Hoy (/app): estado, siguiente viaje, lo que te deben y el saldo del día.
+import Columnas from '../components/Columnas.jsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, CalendarPlus, ChevronRight } from 'lucide-react';
@@ -32,7 +33,7 @@ function NextTrip({ trip, onAdvance, onFinish }) {
   if (!trip) {
     return (
       <section className="rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Siguiente viaje">
-        <div className={cx(label, 'text-[#55555e]')}>Siguiente viaje</div>
+        <div className={cx(label, 'text-invgris')}>Siguiente viaje</div>
         <div className="mt-1 font-titulo text-xl">Sin viajes agendados</div>
         <Link to="/app/viajes?s=porhacer" className="mt-3 flex h-[52px] items-center justify-center gap-2 rounded-2xl bg-cobrado text-base font-bold text-[#04210f]"><CalendarPlus className="size-5" aria-hidden /> Agendar un viaje</Link>
       </section>
@@ -41,15 +42,15 @@ function NextTrip({ trip, onAdvance, onFinish }) {
   const s = stepOf(trip);
   return (
     <section className="space-y-2 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Siguiente viaje">
-      <div className="flex items-baseline justify-between gap-2"><span className={cx(label, 'text-[#55555e]')}>Siguiente viaje</span><span className="font-mono text-xs font-medium text-[#55555e]">{cuando(trip)}</span></div>
+      <div className="flex items-baseline justify-between gap-2"><span className={cx(label, 'text-invgris')}>Siguiente viaje</span><span className="font-mono text-xs font-medium text-invgris">{cuando(trip)}</span></div>
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-mono text-[34px] leading-none font-bold tracking-tight tabular-nums">{trip.time}<small className="ml-2 text-xs font-medium text-[#55555e]">→ {endTime(trip)}</small></span>
+        <span className="font-mono text-[34px] leading-none font-bold tracking-tight tabular-nums">{trip.time}<small className="ml-2 text-xs font-medium text-invgris">→ {endTime(trip)}</small></span>
         <span className="font-mono text-[15px] font-bold tabular-nums">{money(trip.amount)}</span>
       </div>
-      <div className="min-w-0"><b className="block truncate font-titulo text-lg">{trip.clientName || 'Sin nombre'}</b><span className="block truncate text-sm text-[#3a3a45]">{[trip.from, trip.to].filter(Boolean).join(' → ') || '—'}</span></div>
+      <div className="min-w-0"><b className="block truncate font-titulo text-lg">{trip.clientName || 'Sin nombre'}</b><span className="block truncate text-sm text-invsub">{[trip.from, trip.to].filter(Boolean).join(' → ') || '—'}</span></div>
       <Button className="h-[52px] w-full rounded-2xl bg-cobrado text-base font-bold text-[#04210f]" onClick={() => onFinish(trip)}>Terminar · {{ efectivo: 'Efectivo', spei: 'SPEI', tarjeta: 'Tarjeta', '': 'Me debe' }[lastPay()] ?? 'Efectivo'}</Button>
-      {s < 2 && <Button variant="outline" className="h-11 w-full rounded-2xl border-[#c9c9c2] text-sm font-bold text-asfalto" onClick={() => onAdvance(trip)}>{STEP_LABELS[s]}</Button>}
-      <Link to="/app/viajes?s=porhacer" className="flex min-h-11 items-center justify-center rounded-xl border border-[#c9c9c2] text-sm font-medium">Ver agenda · recordar o cancelar</Link>
+      {s < 2 && <Button variant="outline" className="h-11 w-full rounded-2xl border-invlinea text-sm font-bold text-asfalto!" onClick={() => onAdvance(trip)}>{STEP_LABELS[s]}</Button>}
+      <Link to="/app/viajes?s=porhacer" className="flex min-h-11 items-center justify-center rounded-xl border border-invlinea text-sm font-medium">Ver agenda · recordar o cancelar</Link>
     </section>
   );
 }
@@ -58,7 +59,7 @@ function Debts() {
   const { trips } = useStore();
   const groups = debtsByClient(trips, today());
   if (!groups.length) {
-    return <Link to="/app/clientes?f=debe" className="flex min-h-16 items-center justify-between rounded-2xl border border-cobrado/30 bg-cobrado/10 px-4 text-cobrado"><b className="font-titulo text-[15px]">Nadie te debe</b><ChevronRight className="size-5" aria-hidden /></Link>;
+    return <Link to="/app/clientes?f=debe" className="flex min-h-16 items-center justify-between rounded-2xl border border-cobrado/30 bg-cobrado/10 px-4 text-ok"><b className="font-titulo text-[15px]">Nadie te debe</b><ChevronRight className="size-5" aria-hidden /></Link>;
   }
   const { total, late } = debtTotals(groups);
   const lateN = groups.filter((g) => g.late).length;
@@ -83,11 +84,11 @@ function Empezar() {
   return (
     <>
       <section className="space-y-2 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Primeros pasos">
-        <div className={cx(label, 'text-[#55555e]')}>Empieza aquí</div>
+        <div className={cx(label, 'text-invgris')}>Empieza aquí</div>
         <div className="font-titulo text-xl leading-tight">Deja tu cuenta lista en 2 minutos</div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-[#d8d8d0]" role="progressbar" aria-valuenow={hechos} aria-valuemin={0} aria-valuemax={3} aria-label={`${hechos} de 3 pasos`}><div className="h-full rounded-full bg-cobrado" style={{ width: `${(hechos / 3) * 100}%` }} /></div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-invpista" role="progressbar" aria-valuenow={hechos} aria-valuemin={0} aria-valuemax={3} aria-label={`${hechos} de 3 pasos`}><div className="h-full rounded-full bg-cobrado" style={{ width: `${(hechos / 3) * 100}%` }} /></div>
       </section>
-      <section className="divide-y divide-white/5 rounded-3xl border border-white/5 bg-tablero px-3" aria-label="Pasos">
+      <section className="divide-y divide-hueso/5 rounded-3xl border border-hueso/5 bg-tablero px-3" aria-label="Pasos">
         {pasos.map((x, i) => (
           <div key={x.t} className="flex min-h-[52px] items-center gap-3 py-1.5">
             <span className={cx('grid size-7 shrink-0 place-items-center rounded-full border-2 font-mono text-xs font-bold', x.ok ? 'border-cobrado bg-cobrado text-[#04210f]' : 'border-humo')}>{x.ok ? '✓' : i + 1}</span>
@@ -123,6 +124,7 @@ export default function Dashboard() {
     <>
       <h1 className="font-titulo text-2xl">Hola, {config.driver.name || 'bienvenido'}</h1>
 
+      <Columnas>
       <Empezar />
 
       <EstadoAhora />
@@ -131,11 +133,11 @@ export default function Dashboard() {
 
       <Debts />
 
-      <section className="rounded-3xl border border-white/5 bg-tablero p-4" aria-label="Saldo de hoy">
+      <section className="rounded-3xl border border-hueso/5 bg-tablero p-4" aria-label="Saldo de hoy">
         <div className="grid grid-cols-3 gap-2 text-center">
           <div><div className={cx(label, 'text-gris')}>Ingresos</div><div className="font-mono text-lg font-bold tabular-nums">{d.trips ? money(d.gross) : '—'}</div></div>
           <div><div className={cx(label, 'text-gris')}>Gastos</div><div className="font-mono text-lg font-bold tabular-nums">{money(d.spent)}</div></div>
-          <div><div className={cx(label, 'text-gris')}>Neta</div><div className={cx('font-mono text-lg font-bold tabular-nums', d.trips && d.net > 0 ? 'text-cobrado' : d.trips && d.net < 0 ? 'text-atrasado' : '')}>{d.trips ? money(d.net) : '—'}</div></div>
+          <div><div className={cx(label, 'text-gris')}>Neta</div><div className={cx('font-mono text-lg font-bold tabular-nums', d.trips && d.net > 0 ? 'text-ok' : d.trips && d.net < 0 ? 'text-malo' : '')}>{d.trips ? money(d.net) : '—'}</div></div>
         </div>
         <p className="mt-2 text-center text-xs text-gris">{d.trips ? `${d.trips} ${d.trips === 1 ? 'viaje' : 'viajes'} hoy · ${d.km} km` : 'Aún no cobras ningún viaje hoy'}</p>
         <div className="mt-2">
@@ -145,8 +147,9 @@ export default function Dashboard() {
           </span>
         </div>
         {gasto && <div className="mt-3"><ExpenseQuick onSaved={(m) => { showToast(m); setGasto(false); }} /></div>}
-        <Link to="/app/resumen" className="mt-1 flex min-h-11 items-center justify-center text-xs text-cobrado">Ver resumen de la semana</Link>
+        <Link to="/app/resumen" className="mt-1 flex min-h-11 items-center justify-center text-xs text-ok">Ver resumen de la semana</Link>
       </section>
+      </Columnas>
 
       <TripSheet open={tripOpen} onClose={() => setTripOpen(false)} onSaved={() => showToast('Viaje guardado en bitácora')} />
       {toast}

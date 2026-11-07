@@ -92,14 +92,14 @@ export default function Agenda({ embedded = false, slot = null }) {
         </div>
       )}
 
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-tablero px-3.5 py-3">
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-hueso/10 bg-tablero px-3.5 py-3">
         <div><b className="block text-xl tabular-nums">{hoy.length} viaje{hoy.length === 1 ? '' : 's'}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">Hoy · {money(hoy.reduce((s, t) => s + (+t.amount || 0), 0))}</small></div>
         <div className="min-w-0 text-right"><b className="block text-xl tabular-nums">{sig ? sig.time : '—'}</b><small className="block truncate text-xs font-bold tracking-widest text-gris uppercase">{sig ? `Siguiente · ${sig.clientName || 'Sin nombre'}` : 'Sin viajes por hacer'}</small></div>
       </div>
 
       {sinAvisar.length > 0 || list.some((t) => cuandoDe(t.date, today()) === 'mañana') ? (
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#1C1C23] px-3.5 py-3">
-          <div><b className={cx('block text-[26px] leading-none tabular-nums', sinAvisar.length ? 'text-tedebe' : 'text-cobrado')}>{sinAvisar.length}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">{sinAvisar.length ? 'Sin avisar para mañana' : 'Todo avisado para mañana'}</small></div>
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-hueso/10 bg-elev px-3.5 py-3">
+          <div><b className={cx('block text-[26px] leading-none tabular-nums', sinAvisar.length ? 'text-aviso' : 'text-ok')}>{sinAvisar.length}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">{sinAvisar.length ? 'Sin avisar para mañana' : 'Todo avisado para mañana'}</small></div>
           <Button variant="outline" className="h-11" disabled={!sinAvisar.length} onClick={() => startRemind(sinAvisar)}>Recordar a todos</Button>
         </div>
       ) : null}
@@ -115,7 +115,7 @@ export default function Agenda({ embedded = false, slot = null }) {
             const main = t.id === activo;
             const open = menu === t.id;
             return (
-              <article key={t.id} aria-label={`${t.clientName || 'Sin nombre'}, ${t.time}`} className={cx('space-y-2.5 rounded-2xl border bg-[#1C1C23] p-3.5', c.length ? 'border-tedebe/55' : main ? 'border-cobrado/45' : 'border-white/10')}>
+              <article key={t.id} aria-label={`${t.clientName || 'Sin nombre'}, ${t.time}`} className={cx('space-y-2.5 rounded-2xl border bg-elev p-3.5', c.length ? 'border-tedebe/55' : main ? 'border-cobrado/45' : 'border-hueso/10')}>
                 <div className="flex items-start gap-3">
                   <div className="min-w-[62px] text-[22px] leading-tight font-extrabold tabular-nums">{t.time}<small className="mt-0.5 block font-mono text-xs font-medium text-gris">→ {endTime(t)}</small></div>
                   <div className="min-w-0 flex-1"><b className="block font-titulo text-base">{t.clientName || 'Sin nombre'}</b><small className="block text-[13px] break-words text-gris">{[t.from, t.to].filter(Boolean).join(' → ') || '—'}</small></div>
@@ -126,14 +126,14 @@ export default function Agenda({ embedded = false, slot = null }) {
                   <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase" aria-label={`Avance: ${STEPS[s]}`}>
                     {STEPS.map((l, i) => (
                       <span key={l} className="contents">
-                        {i > 0 && <i className={cx('h-[3px] flex-1 rounded', s >= i ? 'bg-cobrado' : 'bg-white/15')} />}
-                        <span className={s >= i ? 'text-cobrado' : 'text-gris'}>{l}</span>
+                        {i > 0 && <i className={cx('h-[3px] flex-1 rounded', s >= i ? 'bg-cobrado' : 'bg-hueso/15')} />}
+                        <span className={s >= i ? 'text-ok' : 'text-gris'}>{l}</span>
                       </span>
                     ))}
                   </div>
                 )}
-                {c.length > 0 && <div className="flex items-start gap-2 text-[13px] font-bold text-tedebe"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />Se empalma con {c[0].time} · {c[0].clientName || 'Sin nombre'}</div>}
-                {cuandoDe(t.date, today()) && <div><span className={cx('inline-block rounded-full border px-2.5 py-1 text-xs font-bold whitespace-nowrap', t.recordadoAt ? 'border-cobrado/55 text-cobrado' : 'border-tedebe/55 text-tedebe')}>{t.recordadoAt ? avisadoTexto(t.recordadoAt) : 'Sin avisar'}</span></div>}
+                {c.length > 0 && <div className="flex items-start gap-2 text-[13px] font-bold text-aviso"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />Se empalma con {c[0].time} · {c[0].clientName || 'Sin nombre'}</div>}
+                {cuandoDe(t.date, today()) && <div><span className={cx('inline-block rounded-full border px-2.5 py-1 text-xs font-bold whitespace-nowrap', t.recordadoAt ? 'border-cobrado/55 text-ok' : 'border-tedebe/55 text-aviso')}>{t.recordadoAt ? avisadoTexto(t.recordadoAt) : 'Sin avisar'}</span></div>}
                 {main && (
                   <Button className="h-[52px] w-full text-base font-bold" onClick={() => finish(t, lastPay())}>Terminar · {PAYS.find((p) => p.key === lastPay())?.label || 'Efectivo'} {money(t.amount)}</Button>
                 )}
@@ -150,9 +150,9 @@ export default function Agenda({ embedded = false, slot = null }) {
                 </div>
                 {open && (
                   <div role="menu" aria-label="Opciones del viaje" onKeyDown={(e) => e.key === 'Escape' && setMenu(null)} className="flex flex-col rounded-2xl border border-humo bg-tablero p-1.5">
-                    <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm active:bg-white/5" onClick={() => { setMenu(null); startRemind([t]); }}>{t.recordadoAt ? 'Recordar otra vez por WhatsApp' : 'Recordar por WhatsApp'}</button>
-                    {t.serie && <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm active:bg-white/5" onClick={() => { setMenu(null); stopSerie(t); }}>Detener serie</button>}
-                    <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm font-bold text-atrasado active:bg-white/5" onClick={() => { setMenu(null); cancel(t); }}>Cancelar viaje</button>
+                    <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm active:bg-hueso/5" onClick={() => { setMenu(null); startRemind([t]); }}>{t.recordadoAt ? 'Recordar otra vez por WhatsApp' : 'Recordar por WhatsApp'}</button>
+                    {t.serie && <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm active:bg-hueso/5" onClick={() => { setMenu(null); stopSerie(t); }}>Detener serie</button>}
+                    <button type="button" role="menuitem" className="min-h-11 rounded-xl px-3 text-left text-sm font-bold text-malo active:bg-hueso/5" onClick={() => { setMenu(null); cancel(t); }}>Cancelar viaje</button>
                   </div>
                 )}
               </article>

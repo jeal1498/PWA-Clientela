@@ -5,10 +5,10 @@ import { waLink } from '../../lib/whatsapp.js';
 import { Button, cx } from '../ui.jsx';
 
 const TONE = {
-  green: 'bg-cobrado/15 text-cobrado border-cobrado/30',
-  yellow: 'bg-white/5 text-hueso border-white/15', // el amarillo y el rojo de la marca son del dinero, no del estado
-  red: 'bg-white/5 text-hueso border-white/15',
-  gray: 'bg-white/5 text-gris border-white/10',
+  green: 'bg-cobrado/15 text-ok border-cobrado/30',
+  yellow: 'bg-hueso/5 text-hueso border-hueso/15', // el amarillo y el rojo de la marca son del dinero, no del estado
+  red: 'bg-hueso/5 text-hueso border-hueso/15',
+  gray: 'bg-hueso/5 text-gris border-hueso/10',
 };
 const DOT = { green: 'bg-cobrado', yellow: 'bg-hueso', red: 'bg-gris', gray: 'bg-gris' };
 
@@ -42,7 +42,7 @@ export default function ProfileHeader({ driver, vehicle, page, onSaveContact, on
       {stats.length > 0 && (
         <div className="mx-auto mt-4 grid max-w-sm gap-2" style={{ gridTemplateColumns: `repeat(${stats.length}, 1fr)` }}>
           {stats.map((x) => (
-            <div key={x.l} className="rounded-2xl border border-white/5 bg-tablero px-1 py-2.5">
+            <div key={x.l} className="rounded-2xl border border-hueso/5 bg-tablero px-1 py-2.5">
               <b className="block font-mono text-lg">{x.v}</b>
               <span className="text-[13px] text-gris">{x.l}</span>
             </div>
@@ -57,7 +57,7 @@ export default function ProfileHeader({ driver, vehicle, page, onSaveContact, on
       )}
 
       {(car || vehicle.plates) && (
-        <div className="mx-auto mt-3 flex max-w-sm items-center gap-3 rounded-2xl border border-white/5 bg-tablero p-3 text-left">
+        <div className="mx-auto mt-3 flex max-w-sm items-center gap-3 rounded-2xl border border-hueso/5 bg-tablero p-3 text-left">
           <div className="grid size-10 place-items-center rounded-xl bg-asfalto text-gris"><Car className="size-5" aria-hidden /></div>
           <div className="min-w-0 flex-1">
             <div className="text-[13px] tracking-wide text-gris uppercase">Así es mi auto</div>

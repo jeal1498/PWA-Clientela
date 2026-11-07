@@ -62,12 +62,12 @@ export default function QuoteSection({ config, service, onService, onState }) {
   return (
     <Card className="p-0">
       <div className="overflow-hidden rounded-t-3xl"><RideMap from={from} to={hourly ? null : to} via={hourly ? [] : viaOk} /></div>
-      <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4">
+      <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-hueso/10 bg-tablero p-4">
         <h3 className="font-titulo text-xl">{hourly ? '¿Dónde te recojo?' : '¿A dónde vas?'}</h3>
 
-        <div className="rounded-2xl border border-white/10 bg-asfalto">
+        <div className="rounded-2xl border border-hueso/10 bg-asfalto">
           {[{ k: 'o' }, ...(hourly ? [] : via.map((_, i) => ({ k: 'p', i }))), ...(hourly ? [] : [{ k: 'd' }])].map((row, idx, all) => (
-            <div key={`${row.k}${row.i ?? ''}`} className={idx ? 'border-t border-white/10' : ''}>
+            <div key={`${row.k}${row.i ?? ''}`} className={idx ? 'border-t border-hueso/10' : ''}>
               <div className="grid grid-cols-[28px_1fr]">
                 <div className="relative" aria-hidden>
                   {idx > 0 && <span className="absolute top-0 left-1/2 h-1/2 w-0.5 -translate-x-1/2 bg-humo" />}
@@ -127,7 +127,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
 
             <WhenPicker date={slot.date} time={slot.time} onChange={setSlot} />
 
-            <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex min-h-11 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
+            <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex min-h-11 items-center gap-1.5 rounded-full border border-hueso/15 bg-asfalto px-3 text-[13px] font-bold">
               <Users className="size-4 text-gris" aria-hidden /> Pasajeros {passengers} · <Luggage className="size-4 text-gris" aria-hidden /> Maletas {bags}
             </button>
             {more && (
@@ -136,7 +136,7 @@ export default function QuoteSection({ config, service, onService, onState }) {
                 <Stepper label="Pasajeros" icon={Users} value={passengers} onChange={setPassengers} min={1} max={4} />
                 <Stepper label="Maletas" icon={Luggage} value={bags} onChange={setBags} max={10} />
                 {!hourly && tollFee > 0 && (
-                  <label className="flex min-h-11 items-center gap-2 rounded-2xl border border-white/10 bg-asfalto/40 p-3 text-sm text-gris">
+                  <label className="flex min-h-11 items-center gap-2 rounded-2xl border border-hueso/10 bg-asfalto/40 p-3 text-sm text-gris">
                     <input type="checkbox" className="size-4 accent-cobrado" checked={toll} onChange={(e) => setToll(e.target.checked)} />
                     Ir por autopista de cuota (+{money(tollFee)})
                   </label>

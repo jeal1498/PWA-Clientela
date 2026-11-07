@@ -30,7 +30,7 @@ export default function Gastos({ embedded = false }) {
           ))}
         </div>
         {!list.length && <p className="py-4 text-center text-sm text-gris">Sin gastos esta semana.</p>}
-        <ul className="divide-y divide-white/5">
+        <ul className="divide-y divide-hueso/5">
           {list.map((e) => (
             <li key={e.id} className="flex items-center gap-2 py-2.5">
               <span className="text-lg" aria-hidden>{EXPENSE_CATS[e.cat]?.emoji}</span>
@@ -38,8 +38,8 @@ export default function Gastos({ embedded = false }) {
                 <div className="truncate text-sm">{EXPENSE_CATS[e.cat]?.label}{e.note && <span className="text-gris"> · {e.note}</span>}</div>
                 <div className="text-xs capitalize text-gris">{dayShort(e.date)} {e.time}</div>
               </div>
-              <span className="font-mono text-tedebe">{money(e.amount)}</span>
-              <button type="button" aria-label="Borrar gasto" onClick={() => confirm('¿Borrar este gasto?') && remove('expenses', e.id)} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-atrasado" /></button>
+              <span className="font-mono text-aviso">{money(e.amount)}</span>
+              <button type="button" aria-label="Borrar gasto" onClick={() => confirm('¿Borrar este gasto?') && remove('expenses', e.id)} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-malo" /></button>
             </li>
           ))}
         </ul>

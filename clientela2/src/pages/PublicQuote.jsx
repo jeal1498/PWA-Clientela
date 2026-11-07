@@ -73,7 +73,7 @@ export default function PublicQuote() {
     return (
       <div className="mx-auto grid min-h-dvh max-w-lg place-items-center px-4">
         <Card className="text-center">
-          <AlertTriangle className="mx-auto mb-2 size-8 text-tedebe" />
+          <AlertTriangle className="mx-auto mb-2 size-8 text-aviso" />
           <p>Este enlace está incompleto. Pídele al conductor que te lo vuelva a enviar.</p>
         </Card>
       </div>
@@ -111,7 +111,7 @@ export default function PublicQuote() {
 
       {/* Barra fija al pulgar: solo cuando el cotizador no está a la vista. Con precio, pide el viaje; si no, lleva al cotizador. */}
       {!cotizarVisible && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asfalto/95 p-3 backdrop-blur md:hidden" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + .75rem)' }}>
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-hueso/5 bg-asfalto/95 p-3 backdrop-blur md:hidden" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + .75rem)' }}>
           <div className="mx-auto max-w-lg">
             {cta.ready && cta.href ? (
               <Button icon={MessageCircle} className="h-[52px] w-full text-base font-bold" as="a" href={cta.href} target="_blank" rel="noopener">

@@ -20,7 +20,7 @@ const href = (net, v) => (/^https?:\/\//.test(v) ? v : net.url(String(v).replace
 export default function PublicFooter({ driver, social }) {
   const nets = NETS.filter((n) => String(social[n.key] || '').trim());
   return (
-    <footer className="mt-10 border-t border-white/5 pt-6 text-center">
+    <footer className="mt-10 border-t border-hueso/5 pt-6 text-center">
       {nets.length > 0 && (
         <div className="mb-4 flex justify-center gap-3">
           {nets.map((n) => (

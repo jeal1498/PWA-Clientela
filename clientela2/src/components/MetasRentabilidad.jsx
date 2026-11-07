@@ -13,7 +13,7 @@ export default function MetasRentabilidad() {
         <Field label="Neto mínimo por km" hint="Sobre los km que manejas."><NumberInput prefix="$" suffix="/ km" {...bind('minPerKm')} /></Field>
         <Field label="Neto mínimo por hora"><NumberInput prefix="$" suffix="/ h" {...bind('minPerHour')} /></Field>
       </div>
-      <p className="mt-3 text-xs text-gris"><span className="text-cobrado">Verde</span> cumple ambas · <span className="text-tedebe">amarillo</span> solo una · <span className="text-atrasado">rojo</span> ninguna.</p>
+      <p className="mt-3 text-xs text-gris"><span className="text-ok">Verde</span> cumple ambas · <span className="text-aviso">amarillo</span> solo una · <span className="text-malo">rojo</span> ninguna.</p>
     </Card>
   );
 }

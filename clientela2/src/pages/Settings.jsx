@@ -6,7 +6,9 @@ import { useStore } from '../store/AppStore.jsx';
 import { Card, CardTitle, Field, NumberInput, TextInput, Stat, Button, Segmented } from '../components/ui.jsx';
 import { fuelPerKm, costPerKm } from '../lib/pricing.js';
 import { money2 } from '../lib/format.js';
+import Columnas from '../components/Columnas.jsx';
 import CuentaCard from '../components/CuentaCard.jsx';
+import Apariencia from '../components/Apariencia.jsx';
 
 export default function Settings() {
   const { config, setSection, resetConfig } = useStore();
@@ -19,10 +21,13 @@ export default function Settings() {
     <>
       <h1 className="font-titulo text-2xl">Ajustes</h1>
 
+      <Columnas>
       <CuentaCard />
 
+      <Apariencia />
+
       {/* Nombre, foto, WhatsApp, ciudad y Wi-Fi viven en «Mi página» (todo lo que ve el pasajero en un solo lugar). */}
-      <Link to="/app/pagina" className="flex items-center gap-3 rounded-3xl border border-white/5 bg-tablero p-4">
+      <Link to="/app/pagina" className="flex items-center gap-3 rounded-3xl border border-hueso/5 bg-tablero p-4">
         <User className="size-5 text-gris" />
         <span className="flex-1"><span className="block">Tus datos, vehículo, Wi-Fi y QR</span><span className="text-xs text-gris">Se editan en Yo → Mi página</span></span>
         <ChevronRight className="size-4 text-gris" />
@@ -75,13 +80,14 @@ export default function Settings() {
           </div>
           <Segmented value={sos.channel} onChange={(channel) => setSection('sos', { channel })} options={[{ value: 'whatsapp', label: 'WhatsApp' }, { value: 'sms', label: 'SMS' }]} />
           <Field label="Enlace de rastreo en vivo (opcional)" hint="Ej. el enlace de «Compartir ubicación en tiempo real» de Google Maps."><TextInput type="url" {...text('sos', 'trackingLink')} placeholder="https://maps.app.goo.gl/…" /></Field>
-          <p className="text-xs text-gris">Botón rojo <b className="text-atrasado">SOS</b> del encabezado: <b className="text-hueso">un toque</b> manda «Estoy iniciando un viaje en [tu ubicación]»; <b className="text-hueso">mantenlo presionado</b> para «En ruta», «Necesito ayuda» o llamar al 911. La primera vez el teléfono te pide permiso de ubicación.</p>
+          <p className="text-xs text-gris">Botón rojo <b className="text-malo">SOS</b> del encabezado: <b className="text-hueso">un toque</b> manda «Estoy iniciando un viaje en [tu ubicación]»; <b className="text-hueso">mantenlo presionado</b> para «En ruta», «Necesito ayuda» o llamar al 911. La primera vez el teléfono te pide permiso de ubicación.</p>
         </div>
       </Card>
 
       <Button variant="ghost" icon={RotateCcw} className="w-full" onClick={() => confirm('¿Regresar costos y tarifas a los valores sugeridos?') && resetConfig()}>
         Restaurar valores sugeridos
       </Button>
+      </Columnas>
     </>
   );
 }

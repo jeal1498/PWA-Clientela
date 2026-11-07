@@ -52,7 +52,7 @@ export default function RoutePlaces({ f, set, city, onToast }) {
 
   const star = (which) => (
     <button type="button" aria-label={saved(f[which]) ? 'Quitar de mis lugares' : 'Guardar como lugar'} aria-pressed={!!saved(f[which])} disabled={!f[which]} onClick={() => toggleStar(which)}
-      className={cx('grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-asfalto disabled:opacity-40', saved(f[which]) ? 'border-tedebe/50 text-tedebe' : 'text-gris')}>
+      className={cx('grid size-12 shrink-0 place-items-center rounded-2xl border border-hueso/10 bg-asfalto disabled:opacity-40', saved(f[which]) ? 'border-tedebe/50 text-aviso' : 'text-gris')}>
       <Star className="size-[18px]" fill={saved(f[which]) ? 'currentColor' : 'none'} aria-hidden />
     </button>
   );
@@ -64,9 +64,9 @@ export default function RoutePlaces({ f, set, city, onToast }) {
       <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
         {places.map((p) => {
           const Icon = ICONS[p.name] || MapPin;
-          return <button key={p.id} type="button" onClick={() => usePlace(p)} className="flex h-11 shrink-0 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold active:scale-95"><Icon className="size-4 text-gris" aria-hidden />{p.name}</button>;
+          return <button key={p.id} type="button" onClick={() => usePlace(p)} className="flex h-11 shrink-0 items-center gap-1.5 rounded-full border border-hueso/15 bg-asfalto px-3 text-[13px] font-bold active:scale-95"><Icon className="size-4 text-gris" aria-hidden />{p.name}</button>;
         })}
-        <button type="button" onClick={aqui} className="flex h-11 shrink-0 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold active:scale-95"><Crosshair className="size-4 text-gris" aria-hidden />Aquí</button>
+        <button type="button" onClick={aqui} className="flex h-11 shrink-0 items-center gap-1.5 rounded-full border border-hueso/15 bg-asfalto px-3 text-[13px] font-bold active:scale-95"><Crosshair className="size-4 text-gris" aria-hidden />Aquí</button>
       </div>
       {!places.length && <p className="text-xs text-gris">Toca ☆ junto a un lugar para guardarlo como Casa, Trabajo, Escuela u otro.</p>}
 
@@ -78,16 +78,16 @@ export default function RoutePlaces({ f, set, city, onToast }) {
       {f.via.map((v, i) => (
         <div key={i} className="flex gap-2">
           <div className="min-w-0 flex-1"><PlaceInput label={`Parada ${i + 1}`} placeholder={`Parada ${i + 1}`} value={v} onChange={(p) => setVia(i, p)} city={city} dot="bg-gris" /></div>
-          <button type="button" aria-label={`Quitar parada ${i + 1}`} onClick={() => set({ via: f.via.filter((_, j) => j !== i) })} className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-asfalto text-gris"><X className="size-[18px]" aria-hidden /></button>
+          <button type="button" aria-label={`Quitar parada ${i + 1}`} onClick={() => set({ via: f.via.filter((_, j) => j !== i) })} className="grid size-12 shrink-0 place-items-center rounded-2xl border border-hueso/10 bg-asfalto text-gris"><X className="size-[18px]" aria-hidden /></button>
         </div>
       ))}
 
-      <button type="button" onClick={() => set({ via: [...f.via, null] })} className="flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl border border-dashed border-white/20 text-[13px] font-bold text-gris active:scale-[.99]">
+      <button type="button" onClick={() => set({ via: [...f.via, null] })} className="flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl border border-dashed border-hueso/20 text-[13px] font-bold text-gris active:scale-[.99]">
         <Plus className="size-4" aria-hidden />{f.via.length ? 'Otra parada' : 'Agregar parada'}
       </button>
 
       <div className="flex justify-center">
-        <button type="button" aria-label="Invertir origen y destino" onClick={() => set({ from: f.to, to: f.from, via: [...f.via].reverse() })} className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-asfalto text-gris active:scale-95"><ArrowDownUp className="size-4" aria-hidden /></button>
+        <button type="button" aria-label="Invertir origen y destino" onClick={() => set({ from: f.to, to: f.from, via: [...f.via].reverse() })} className="grid h-11 w-11 place-items-center rounded-xl border border-hueso/10 bg-asfalto text-gris active:scale-95"><ArrowDownUp className="size-4" aria-hidden /></button>
       </div>
 
       <div className="flex gap-2">
@@ -95,17 +95,17 @@ export default function RoutePlaces({ f, set, city, onToast }) {
         {star('to')}
       </div>
 
-      <div className="flex h-10 items-center gap-2 rounded-2xl border border-white/10 bg-asfalto px-3">
+      <div className="flex h-10 items-center gap-2 rounded-2xl border border-hueso/10 bg-asfalto px-3">
         <Link2 className="size-4 shrink-0 text-gris" aria-hidden />
         <input aria-label="Pegar enlace de Google Maps" value={link} onChange={(e) => setLink(e.target.value)} placeholder="Pegar enlace de Google Maps" className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-gris" />
       </div>
       {parsed && !parsed.unreadable && (
-        <button type="button" onClick={fromLink} className="flex w-full items-center gap-2.5 rounded-2xl border border-white/10 bg-asfalto px-3 py-2.5 text-left">
+        <button type="button" onClick={fromLink} className="flex w-full items-center gap-2.5 rounded-2xl border border-hueso/10 bg-asfalto px-3 py-2.5 text-left">
           <MapPin className="size-[18px] shrink-0 text-gris" aria-hidden />
           <span className="min-w-0"><b className="block truncate text-sm">{parsed.name || 'Punto del enlace'}</b><small className="text-xs text-gris">Del enlace pegado · toca para usarlo de destino</small></span>
         </button>
       )}
-      {parsed?.unreadable && <p className="text-xs text-tedebe">No pude leer ese enlace. Los cortos (maps.app.goo.gl) no se abren desde aquí: ábrelo y copia el enlace largo.</p>}
+      {parsed?.unreadable && <p className="text-xs text-aviso">No pude leer ese enlace. Los cortos (maps.app.goo.gl) no se abren desde aquí: ábrelo y copia el enlace largo.</p>}
 
       <Sheet open={!!saving} onClose={() => setSaving(null)} title="Guardar lugar">
         <p className="mb-3 truncate text-sm text-gris">{f[saving]?.label}</p>

@@ -4,10 +4,10 @@ import { STATUS_COPY } from '../lib/pricing.js';
 import { cx } from './ui.jsx';
 
 const STYLE = {
-  green: { cls: 'bg-cobrado/15 text-cobrado border-cobrado/30', Icon: CircleCheck },
-  yellow: { cls: 'bg-tedebe/15 text-tedebe border-tedebe/30', Icon: TriangleAlert },
-  red: { cls: 'bg-atrasado/15 text-atrasado border-atrasado/30', Icon: OctagonX },
-  idle: { cls: 'bg-white/5 text-gris border-white/10', Icon: CircleDashed },
+  green: { cls: 'bg-cobrado/15 text-ok border-cobrado/30', Icon: CircleCheck },
+  yellow: { cls: 'bg-tedebe/15 text-aviso border-tedebe/30', Icon: TriangleAlert },
+  red: { cls: 'bg-atrasado/15 text-malo border-atrasado/30', Icon: OctagonX },
+  idle: { cls: 'bg-hueso/5 text-gris border-hueso/10', Icon: CircleDashed },
 };
 
 export default function ProfitBadge({ status = 'idle', compact }) {

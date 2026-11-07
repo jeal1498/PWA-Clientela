@@ -1,25 +1,61 @@
 @import "tailwindcss";
 
-/* Marca Clientela (fuente única: /marca/tokens.css). Solo oscuro. */
+/* Marca Clientela (fuente única: /marca/tokens.css). Oscuro y claro (ver Tema abajo). */
 @font-face { font-family: 'Bricolage Grotesque'; font-weight: 800; font-display: swap; src: url('/fonts/bricolage-800.woff2') format('woff2'); }
 @font-face { font-family: 'DM Sans'; font-weight: 100 1000; font-display: swap; src: url('/fonts/dmsans.woff2') format('woff2'); }
 @font-face { font-family: 'JetBrains Mono'; font-weight: 100 800; font-display: swap; src: url('/fonts/jetbrains.woff2') format('woff2'); }
 
+/* Tema: oscuro por defecto; claro si el sistema lo pide (automático) o si el conductor lo fija en Ajustes → Apariencia
+   (<html data-theme="light|dark">). Los nombres de color son de uso, no de tono: «hueso» es el color del texto y «asfalto» el fondo. */
+:root {
+  color-scheme: dark;
+  --c-asfalto: #0C0C10; --c-tablero: #16161C; --c-humo: #3A3A45; --c-hueso: #F4F4EF; --c-gris: #A3A3AD;
+  --c-cobrado: #22C55E; --c-tedebe: #FACC15; --c-atrasado: #EF4444;
+  --c-ok: #22C55E; --c-aviso: #FACC15; --c-malo: #EF4444; /* colores de texto (en claro se oscurecen para leerse) */
+  --c-invgris: #55555e; --c-invlinea: #c9c9c2; --c-invsub: #3a3a45; --c-invpista: #d8d8d0; /* detalles sobre tarjetas invertidas */
+  --c-elev: #1C1C23;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+    --c-asfalto: #F4F4EF; --c-tablero: #FFFFFF; --c-humo: #D4D4DC; --c-hueso: #0C0C10; --c-gris: #5C5C66;
+    --c-ok: #15803D; --c-aviso: #A16207; --c-malo: #DC2626;
+    --c-invgris: #A3A3AD; --c-invlinea: #3A3A45; --c-invsub: #D4D4DC; --c-invpista: #3A3A45;
+    --c-elev: #FFFFFF;
+  }
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+  --c-asfalto: #F4F4EF; --c-tablero: #FFFFFF; --c-humo: #D4D4DC; --c-hueso: #0C0C10; --c-gris: #5C5C66;
+  --c-ok: #15803D; --c-aviso: #A16207; --c-malo: #DC2626;
+  --c-invgris: #A3A3AD; --c-invlinea: #3A3A45; --c-invsub: #D4D4DC; --c-invpista: #3A3A45;
+  --c-elev: #FFFFFF;
+}
+@theme inline {
+  --color-asfalto: var(--c-asfalto);
+  --color-tablero: var(--c-tablero);
+  --color-humo: var(--c-humo);
+  --color-hueso: var(--c-hueso);
+  --color-gris: var(--c-gris);
+  --color-cobrado: var(--c-cobrado);
+  --color-tedebe: var(--c-tedebe);
+  --color-atrasado: var(--c-atrasado);
+  --color-ok: var(--c-ok);
+  --color-aviso: var(--c-aviso);
+  --color-malo: var(--c-malo);
+  --color-invgris: var(--c-invgris);
+  --color-invlinea: var(--c-invlinea);
+  --color-invsub: var(--c-invsub);
+  --color-invpista: var(--c-invpista);
+  --color-elev: var(--c-elev);
+}
 @theme {
-  --color-asfalto: #0C0C10;
-  --color-tablero: #16161C;
-  --color-humo: #3A3A45;
-  --color-hueso: #F4F4EF;
-  --color-gris: #A3A3AD;
-  --color-cobrado: #22C55E;
-  --color-tedebe: #FACC15;
-  --color-atrasado: #EF4444;
   --font-titulo: 'Bricolage Grotesque', 'Arial Black', sans-serif;
   --font-sans: 'DM Sans', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 }
 
-html { color-scheme: dark; -webkit-tap-highlight-color: transparent; }
+html { -webkit-tap-highlight-color: transparent; }
 body { @apply bg-asfalto text-hueso font-sans antialiased; min-height: 100dvh; }
 input, select, textarea { font-size: 16px; } /* evita zoom en iOS */
 input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; }

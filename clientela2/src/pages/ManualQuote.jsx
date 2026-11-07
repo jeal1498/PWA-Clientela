@@ -119,15 +119,15 @@ export default function ManualQuote() {
 
       <Card className="overflow-hidden p-0">
         {search && <RideMap from={f.from} to={f.to} via={via} />}
-        <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-white/10 bg-tablero p-4 pt-2.5">
-        <div className="mx-auto h-1 w-10 rounded-full bg-white/15" aria-hidden />
+        <div className="relative -mt-5 space-y-3 rounded-t-3xl border-t border-hueso/10 bg-tablero p-4 pt-2.5">
+        <div className="mx-auto h-1 w-10 rounded-full bg-hueso/15" aria-hidden />
           {!showOptions ? (
             <>
               {search ? (
                 <>
                   <RoutePlaces f={f} set={set} city={config.driver.city} onToast={showToast} />
                   {r.loading && <p className="flex items-center gap-2 text-sm text-gris"><Loader2 className="size-4 animate-spin" /> Calculando ruta…</p>}
-                  {r.estimated && !r.loading && <p className="flex items-center gap-2 text-xs text-tedebe"><Info className="size-3.5" /> Sin ruta exacta: distancia estimada.</p>}
+                  {r.estimated && !r.loading && <p className="flex items-center gap-2 text-xs text-aviso"><Info className="size-3.5" /> Sin ruta exacta: distancia estimada.</p>}
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
@@ -143,7 +143,7 @@ export default function ManualQuote() {
             </>
           ) : (
             <>
-              <button type="button" onClick={() => setEditing(true)} aria-label="Cambiar ruta" className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-[#1C1C23] px-3 py-2.5 text-left">
+              <button type="button" onClick={() => setEditing(true)} aria-label="Cambiar ruta" className="flex w-full items-center gap-3 rounded-2xl border border-hueso/10 bg-elev px-3 py-2.5 text-left">
                 <span className="size-2.5 shrink-0 rounded-full bg-atrasado" aria-hidden />
                 <span className="min-w-0 flex-1">
                   <b className="block truncate text-sm">{search ? (f.to?.label || f.from?.label) : `${kmText(km)} · ${minText(min)}`}</b>
@@ -164,7 +164,7 @@ export default function ManualQuote() {
 
               <WhenPicker date={f.date} time={f.time} onChange={(w) => setF((s) => ({ ...s, ...w }))} />
 
-              <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex h-11 items-center gap-1.5 rounded-full border border-white/15 bg-asfalto px-3 text-[13px] font-bold">
+              <button type="button" aria-expanded={more} onClick={() => setMore((v) => !v)} className="flex h-11 items-center gap-1.5 rounded-full border border-hueso/15 bg-asfalto px-3 text-[13px] font-bold">
                 <Luggage className="size-4 text-gris" aria-hidden /> Maletas {f.bags} · Casetas {money(+f.tolls || 0)}{client ? ` · ${client.name}` : ''}
               </button>
               {more && (
@@ -176,7 +176,7 @@ export default function ManualQuote() {
                     <Field label="Casetas">
                       <NumberInput prefix="$" value={f.tolls} onChange={(tolls) => set({ tolls })} placeholder="0" />
                       {config.extras.tollDefault > 0 && (
-                        <button type="button" onClick={() => set({ tolls: +f.tolls === config.extras.tollDefault ? '' : config.extras.tollDefault })} className={cx('mt-1.5 h-11 rounded-lg px-2 text-xs', +f.tolls === config.extras.tollDefault ? 'bg-cobrado/15 text-cobrado' : 'bg-asfalto text-gris')}>
+                        <button type="button" onClick={() => set({ tolls: +f.tolls === config.extras.tollDefault ? '' : config.extras.tollDefault })} className={cx('mt-1.5 h-11 rounded-lg px-2 text-xs', +f.tolls === config.extras.tollDefault ? 'bg-cobrado/15 text-ok' : 'bg-asfalto text-gris')}>
                           Caseta habitual {money(config.extras.tollDefault)}
                         </button>
                       )}
@@ -203,7 +203,7 @@ export default function ManualQuote() {
               </div>
               <div className="pt-1 text-right text-sm text-gris">
                 {hourly ? <div>{hoursN} h</div> : <><div>{kmText(km)}</div><div>{minText(min)}</div></>}
-                {q.foraneo && <div className="text-tedebe">Foráneo</div>}
+                {q.foraneo && <div className="text-aviso">Foráneo</div>}
               </div>
             </div>
 
@@ -224,16 +224,16 @@ export default function ManualQuote() {
             </div>
             <div className="mt-1.5 grid grid-cols-2 gap-1.5">
               {prefPrice > 0 && (
-                <button type="button" onClick={() => setOverride(prefPrice)} className="col-span-2 flex h-11 items-center justify-center gap-1 rounded-xl bg-tedebe/10 text-sm text-tedebe active:scale-95">
+                <button type="button" onClick={() => setOverride(prefPrice)} className="col-span-2 flex h-11 items-center justify-center gap-1 rounded-xl bg-tedebe/10 text-sm text-aviso active:scale-95">
                   <Star className="size-4" /> Tarifa preferencial de {client.name} (−{client.discount} %): {money(prefPrice)}
                 </button>
               )}
-              <button type="button" disabled={!ready} onClick={() => setOverride(ev.minPriceForGoals)} className="flex h-11 items-center justify-center gap-1 rounded-xl bg-asfalto text-sm text-tedebe active:scale-95 disabled:opacity-40"><Wand2 className="size-4" /> Mínimo de mi meta</button>
+              <button type="button" disabled={!ready} onClick={() => setOverride(ev.minPriceForGoals)} className="flex h-11 items-center justify-center gap-1 rounded-xl bg-asfalto text-sm text-aviso active:scale-95 disabled:opacity-40"><Wand2 className="size-4" /> Mínimo de mi meta</button>
               <button type="button" disabled={override == null} onClick={() => setOverride(null)} className="h-11 rounded-xl bg-asfalto text-sm text-gris active:scale-95 disabled:opacity-40">Volver al sugerido</button>
             </div>
 
             {/* Bloque PRIVADO: solo para el conductor. Se puede ocultar si enseña la pantalla. */}
-            <div className="mt-4 rounded-2xl border border-white/5 bg-asfalto/50 p-3">
+            <div className="mt-4 rounded-2xl border border-hueso/5 bg-asfalto/50 p-3">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs font-semibold tracking-wide text-gris uppercase">Solo para ti</span>
                 <button type="button" onClick={() => setShowPrivate((v) => !v)} className="flex items-center gap-1 text-xs text-gris" aria-label="Mostrar u ocultar ganancia">
@@ -251,7 +251,7 @@ export default function ManualQuote() {
                   </div>
                   <p className="mt-2 text-xs text-gris">
                     Costo: gasolina {money(ev.cost.fuel)} + desgaste {money(ev.cost.wear)}{ev.cost.tolls ? ` + casetas ${money(ev.cost.tolls)}` : ''} = <b className="text-hueso">{money(ev.cost.total)}</b>
-                    {q.foraneo && ` (ida y vuelta, ${kmText(ev.drivenKm)})`}. No bajes de <b className="text-tedebe">{money(ev.minPriceForGoals)}</b> para cumplir tus metas.
+                    {q.foraneo && ` (ida y vuelta, ${kmText(ev.drivenKm)})`}. No bajes de <b className="text-aviso">{money(ev.minPriceForGoals)}</b> para cumplir tus metas.
                   </p>
                 </>
               )}
@@ -277,7 +277,7 @@ export default function ManualQuote() {
             <div className="grid grid-cols-1 gap-2">
               <Button variant="outline" icon={MessageCircle} disabled={!ready} as="a" href={ready ? waLink(f.clientPhone, message(), config.driver.lada) : undefined} target="_blank" rel="noopener">Enviar propuesta</Button>
             </div>
-            <details className="rounded-2xl border border-dashed border-white/15 px-3 py-2">
+            <details className="rounded-2xl border border-dashed border-hueso/15 px-3 py-2">
               <summary className="flex min-h-11 cursor-pointer items-center text-sm font-bold">Más opciones</summary>
               <div className="mt-1 grid grid-cols-2 gap-2 pb-1">
               <Button variant="ghost" icon={Copy} disabled={!ready} onClick={async () => showToast((await copyText(message())) ? 'Texto copiado' : 'No se pudo copiar')}>Copiar</Button>

@@ -45,7 +45,7 @@ export default function PlaceInput({ label, value, onChange, city, placeholder, 
 
   return (
     <div className="relative">
-      <div className={cx('flex items-center gap-2 px-3', bare ? 'min-h-12 rounded-xl focus-within:ring-2 focus-within:ring-inset focus-within:ring-hueso/40' : 'h-12 rounded-2xl border border-white/10 bg-asfalto focus-within:border-cobrado/70')}>
+      <div className={cx('flex items-center gap-2 px-3', bare ? 'min-h-12 rounded-xl focus-within:ring-2 focus-within:ring-inset focus-within:ring-hueso/40' : 'h-12 rounded-2xl border border-hueso/10 bg-asfalto focus-within:border-cobrado/70')}>
         {!bare && <span className={cx('size-2.5 shrink-0 rounded-full', dot)} aria-hidden />}
         <input
           aria-label={label}
@@ -63,10 +63,10 @@ export default function PlaceInput({ label, value, onChange, city, placeholder, 
         {!busy && !onRemove && !text && allowGps && <button type="button" aria-label="Usar mi ubicación" onClick={gps} className="grid size-11 place-items-center"><Crosshair className="size-4 text-gris" /></button>}
       </div>
       {open && items.length > 0 && (
-        <ul className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-2xl border border-white/10 bg-tablero p-1 shadow-2xl">
+        <ul className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-2xl border border-hueso/10 bg-tablero p-1 shadow-2xl">
           {items.map((p, i) => (
             <li key={i}>
-              <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pick(p)} className="flex w-full items-start gap-2 rounded-xl px-3 py-2.5 text-left active:bg-white/5">
+              <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pick(p)} className="flex w-full items-start gap-2 rounded-xl px-3 py-2.5 text-left active:bg-hueso/5">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-gris" />
                 <span className="min-w-0">
                   <span className="block truncate">{p.label}</span>

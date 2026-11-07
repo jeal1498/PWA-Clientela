@@ -40,7 +40,7 @@ export function QuoteStats() {
   const avgNetKm = kmSum ? netSum / kmSum : 0;
   return (
     <Card>
-      <CardTitle icon={TrendingUp} right={<Link to="/app/viajes?s=propuestas" className="inline-flex min-h-11 items-center text-xs text-cobrado">Ver propuestas</Link>}>Cotizaciones</CardTitle>
+      <CardTitle icon={TrendingUp} right={<Link to="/app/viajes?s=propuestas" className="inline-flex min-h-11 items-center text-xs text-ok">Ver propuestas</Link>}>Cotizaciones</CardTitle>
       <div className="grid grid-cols-2 gap-2">
         <Stat label="Neto de viajes aceptados" value={money(netSum)} tone="green" />
         <Stat label="Neto promedio por km" value={money2(avgNetKm)} tone={!kmSum ? undefined : avgNetKm >= config.goals.minPerKm ? 'green' : 'red'} />
@@ -55,14 +55,14 @@ export function MyNumbers() {
   const { config } = useStore();
   return (
     <Card>
-      <CardTitle icon={Fuel} right={<Link to="/app/settings" className="inline-flex min-h-11 items-center gap-1 text-xs text-cobrado"><Settings className="size-3.5" /> Editar</Link>}>Tus números</CardTitle>
+      <CardTitle icon={Fuel} right={<Link to="/app/settings" className="inline-flex min-h-11 items-center gap-1 text-xs text-ok"><Settings className="size-3.5" /> Editar</Link>}>Tus números</CardTitle>
       <div className="grid grid-cols-2 gap-2">
         <Stat small label="Te cuesta cada km" value={money2(costPerKm(config.costs))} tone="yellow" />
         <Stat small label="Cobras por km" value={money2(config.rates.perKm)} />
         <Stat small label="Meta neta por km" value={money2(config.goals.minPerKm)} />
         <Stat small label="Meta neta por hora" value={money(config.goals.minPerHour)} />
       </div>
-      {config.rates.perKm <= costPerKm(config.costs) && <p className="mt-2 text-xs text-atrasado">Tu tarifa por km no cubre tu costo por km.</p>}
+      {config.rates.perKm <= costPerKm(config.costs) && <p className="mt-2 text-xs text-malo">Tu tarifa por km no cubre tu costo por km.</p>}
     </Card>
   );
 }

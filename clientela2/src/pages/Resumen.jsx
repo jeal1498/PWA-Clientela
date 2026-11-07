@@ -61,22 +61,22 @@ export default function Resumen({ embedded = false }) {
   return (
     <>
       <h1 className={embedded ? 'sr-only' : 'font-titulo text-2xl'}>Resumen</h1>
-      <div className="grid grid-cols-2 rounded-xl border border-white/10 bg-asfalto p-0.5" role="tablist" aria-label="Periodo">
+      <div className="grid grid-cols-2 rounded-xl border border-hueso/10 bg-asfalto p-0.5" role="tablist" aria-label="Periodo">
         {[['sem', 'Semana'], ['mes', 'Mes']].map(([k, l]) => (
-          <button key={k} type="button" role="tab" aria-selected={kind === k} onClick={() => setKind(k)} className={cx('h-11 rounded-[10px] text-sm font-bold', kind === k ? 'bg-tablero text-hueso ring-1 ring-white/15' : 'text-gris')}>{l}</button>
+          <button key={k} type="button" role="tab" aria-selected={kind === k} onClick={() => setKind(k)} className={cx('h-11 rounded-[10px] text-sm font-bold', kind === k ? 'bg-tablero text-hueso ring-1 ring-hueso/15' : 'text-gris')}>{l}</button>
         ))}
       </div>
 
       <Card className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div><div className="text-xs font-bold tracking-widest text-gris uppercase">Ganancia neta</div><div className="text-3xl font-extrabold tabular-nums">{money(r.net)}</div></div>
-          {r.delta != null && <span className={cx('rounded-full border px-2.5 py-1 text-xs font-bold tracking-wider uppercase', r.delta >= 0 ? 'border-cobrado/55 text-cobrado' : 'border-tedebe/55 text-tedebe')}>{r.delta >= 0 ? '+' : ''}{r.delta} % vs. anterior</span>}
+          {r.delta != null && <span className={cx('rounded-full border px-2.5 py-1 text-xs font-bold tracking-wider uppercase', r.delta >= 0 ? 'border-cobrado/55 text-ok' : 'border-tedebe/55 text-aviso')}>{r.delta >= 0 ? '+' : ''}{r.delta} % vs. anterior</span>}
         </div>
 
         {objetivo > 0 ? (
           <div>
-            <div className="mb-1.5 flex justify-between text-sm"><span className="text-gris">Meta {kind === 'sem' ? 'semanal' : 'del mes'} {money(objetivo)}</span><b className={cx('font-mono', avance >= 100 && 'text-cobrado')}>{avance} %</b></div>
-            <div className="h-2.5 overflow-hidden rounded-full border border-white/10 bg-asfalto" role="progressbar" aria-valuenow={avance} aria-valuemin={0} aria-valuemax={100} aria-label="Avance de la meta"><div className="h-full rounded-full bg-hueso" style={{ width: `${avance}%` }} /></div>
+            <div className="mb-1.5 flex justify-between text-sm"><span className="text-gris">Meta {kind === 'sem' ? 'semanal' : 'del mes'} {money(objetivo)}</span><b className={cx('font-mono', avance >= 100 && 'text-ok')}>{avance} %</b></div>
+            <div className="h-2.5 overflow-hidden rounded-full border border-hueso/10 bg-asfalto" role="progressbar" aria-valuenow={avance} aria-valuemin={0} aria-valuemax={100} aria-label="Avance de la meta"><div className="h-full rounded-full bg-hueso" style={{ width: `${avance}%` }} /></div>
             <p className="mt-1.5 text-xs text-gris">{falta > 0 ? `Te faltan ${money(falta)}${quedan > 0 ? ` · ${money(falta / quedan)} por día los ${quedan} días que quedan` : ''}` : 'Meta lograda'}</p>
           </div>
         ) : (
@@ -85,8 +85,8 @@ export default function Resumen({ embedded = false }) {
 
         {kind === 'sem' && meta.dia > 0 && (
           <div className="grid grid-cols-2 gap-2">
-            <div className="grid h-[60px] place-content-center rounded-2xl border border-white/10 bg-[#1C1C23] text-center"><b className="font-mono text-xl">{money(hoyNet)}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">Hoy · meta {money(meta.dia)}</small></div>
-            <div className="grid h-[60px] place-content-center rounded-2xl border border-white/10 bg-[#1C1C23] text-center"><b className={cx('text-xl', hoyNet >= meta.dia ? 'text-cobrado' : 'text-gris')}>{hoyNet >= meta.dia ? 'Meta lograda' : `Faltan ${money(meta.dia - hoyNet)}`}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">Hoy</small></div>
+            <div className="grid h-[60px] place-content-center rounded-2xl border border-hueso/10 bg-elev text-center"><b className="font-mono text-xl">{money(hoyNet)}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">Hoy · meta {money(meta.dia)}</small></div>
+            <div className="grid h-[60px] place-content-center rounded-2xl border border-hueso/10 bg-elev text-center"><b className={cx('text-xl', hoyNet >= meta.dia ? 'text-ok' : 'text-gris')}>{hoyNet >= meta.dia ? 'Meta lograda' : `Faltan ${money(meta.dia - hoyNet)}`}</b><small className="text-xs font-bold tracking-widest text-gris uppercase">Hoy</small></div>
           </div>
         )}
 
@@ -95,7 +95,7 @@ export default function Resumen({ embedded = false }) {
           <div className="flex h-[90px] items-end gap-1.5">
             {r.bars.map((b) => (
               <div key={b.date} className="flex h-full flex-1 flex-col items-center justify-end gap-1" role="img" aria-label={`${b.label}: ${money(b.net)}`}>
-                <i className={cx('w-full max-w-[26px] rounded-t', b.net > 0 ? 'bg-hueso' : 'bg-white/15')} style={{ height: `${Math.max(3, (Math.max(0, b.net) / maxBar) * 68)}px` }} />
+                <i className={cx('w-full max-w-[26px] rounded-t', b.net > 0 ? 'bg-hueso' : 'bg-hueso/15')} style={{ height: `${Math.max(3, (Math.max(0, b.net) / maxBar) * 68)}px` }} />
                 <span className="text-xs text-gris">{b.label}</span>
               </div>
             ))}

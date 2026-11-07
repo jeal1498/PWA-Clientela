@@ -18,16 +18,16 @@ export default function Yo() {
   return (
     <>
       <h1 className="font-titulo text-2xl">Yo</h1>
-      <Card className="divide-y divide-white/5 p-0">
+      <Card className="divide-y divide-hueso/5 p-0">
         {items.map(({ to, icon: Icon, label, hint }) => (
-          <Link key={to} to={to} className="flex min-h-16 items-center gap-3 px-4 py-3.5 active:bg-white/5">
+          <Link key={to} to={to} className="flex min-h-16 items-center gap-3 px-4 py-3.5 active:bg-hueso/5">
             <Icon className="size-5 text-gris" aria-hidden />
             <div className="min-w-0 flex-1"><div className="text-base">{label}</div><div className="truncate text-xs text-gris">{hint}</div></div>
             <ChevronRight className="size-4 text-gris" aria-hidden />
           </Link>
         ))}
       </Card>
-      <Link to="/?vista=1" className="flex min-h-11 items-center justify-center text-sm text-cobrado">Ver mi página pública</Link>
+      <Link to="/?vista=1" className="flex min-h-11 items-center justify-center text-sm text-ok">Ver mi página pública</Link>
     </>
   );
 }

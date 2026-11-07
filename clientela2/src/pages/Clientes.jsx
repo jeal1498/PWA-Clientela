@@ -103,9 +103,9 @@ export default function Clientes() {
       )}
       {best && (
         <section className="space-y-1 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Cliente del mes">
-          <div className="text-xs font-bold tracking-widest text-[#55555e] uppercase">Cliente del mes</div>
+          <div className="text-xs font-bold tracking-widest text-invgris uppercase">Cliente del mes</div>
           <b className="block truncate font-titulo text-xl">{best.name}</b>
-          <div className="flex items-baseline justify-between text-[13px] text-[#3a3a45]"><span>{best.n} viaje{best.n > 1 ? 's' : ''}</span><span className="font-mono text-xl font-bold text-asfalto">{money(best.total)}</span></div>
+          <div className="flex items-baseline justify-between text-[13px] text-invsub"><span>{best.n} viaje{best.n > 1 ? 's' : ''}</span><span className="font-mono text-xl font-bold text-asfalto">{money(best.total)}</span></div>
         </section>
       )}
       {!clients.length && (
@@ -124,7 +124,7 @@ export default function Clientes() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 truncate font-semibold">
                   {c.name}
-                  {+c.discount > 0 && <span className="flex items-center gap-0.5 rounded-full bg-tedebe/15 px-2 py-0.5 text-xs text-tedebe"><Star className="size-3" />−{c.discount} %</span>}
+                  {+c.discount > 0 && <span className="flex items-center gap-0.5 rounded-full bg-tedebe/15 px-2 py-0.5 text-xs text-aviso"><Star className="size-3" />−{c.discount} %</span>}
                 </div>
                 {c.phone && <div className="text-xs text-gris">{c.phone}</div>}
                 {c.notes && <div className="mt-1 text-xs text-hueso/80">📝 {c.notes}</div>}
@@ -179,7 +179,7 @@ function ClientEditor({ client, onClose, onSave, onDelete }) {
             {c.routes.map((r) => (
               <div key={r.id} className="flex items-center gap-2 rounded-2xl bg-asfalto p-2 pl-3 text-sm">
                 <span className="min-w-0 flex-1 truncate">{r.name || `${r.from} → ${r.to}`} <span className="text-gris">· {kmText(r.km)}{+r.price > 0 ? ` · ${money(r.price)} fijo` : ''}</span></span>
-                <button type="button" aria-label="Quitar ruta" onClick={() => set({ routes: c.routes.filter((x) => x.id !== r.id) })} className="grid size-11 place-items-center"><Trash2 className="size-4 text-atrasado" /></button>
+                <button type="button" aria-label="Quitar ruta" onClick={() => set({ routes: c.routes.filter((x) => x.id !== r.id) })} className="grid size-11 place-items-center"><Trash2 className="size-4 text-malo" /></button>
               </div>
             ))}
           </div>
@@ -209,7 +209,7 @@ function RouteForm({ city, onAdd, onCancel }) {
   useEffect(() => { if (r.km) { setKm(r.km); setMin(r.min); } }, [r.km, r.min]);
   const ok = +km > 0;
   return (
-    <div className={cx('mt-2 space-y-2 rounded-2xl border border-white/10 p-3')}>
+    <div className={cx('mt-2 space-y-2 rounded-2xl border border-hueso/10 p-3')}>
       <TextInput value={name} onChange={(e) => setName(e.target.value)} placeholder="Nombre: Casa → Oficina" />
       <PlaceInput label="Origen de la ruta" placeholder="Origen" value={from} onChange={setFrom} city={city} />
       <PlaceInput label="Destino de la ruta" placeholder="Destino" value={to} onChange={setTo} city={city} dot="bg-atrasado" />
