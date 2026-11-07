@@ -10,6 +10,7 @@ import { DEFAULT_CONFIG, withDefaults } from '../lib/pricing.js';
 import { load, save, importFromCartera, KEY } from '../lib/storage.js';
 import { missingCopies } from '../lib/series.js';
 import { today } from '../lib/dates.js';
+import { aplicarOps } from '../lib/nube-sync.js';
 
 const Store = createContext(null);
 export const COLLECTIONS = ['history', 'clients', 'trips', 'expenses', 'places'];
@@ -30,6 +31,8 @@ function initial() {
 export function AppStoreProvider({ children }) {
   const [state, setState] = useState(initial);
   const written = useRef('');
+  const latest = useRef(state);
+  latest.current = state;
   useEffect(() => { written.current = JSON.stringify(state); save(state); }, [state]);
 
   // Viajes frecuentes: agenda solos los que falten (al abrir, al cambiar los viajes y al volver a la app).
@@ -75,17 +78,30 @@ export function AppStoreProvider({ children }) {
 
   // CRUD genérico para las colecciones. Lo más nuevo va primero.
   const add = useCallback((coll, item) => {
-    const full = { id: newId(), createdAt: new Date().toISOString(), ...item };
+    const full = { id: newId(), createdAt: new Date().toISOString(), updatedAt: Date.now(), ...item };
     setState((s) => ({ ...s, [coll]: [full, ...s[coll]].slice(0, LIMIT) }));
     return full;
   }, []);
   const update = useCallback((coll, id, patch) => {
-    setState((s) => ({ ...s, [coll]: s[coll].map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
+    setState((s) => ({ ...s, [coll]: s[coll].map((x) => (x.id === id ? { ...x, ...patch, updatedAt: Date.now() } : x)) }));
   }, []);
   const remove = useCallback((coll, id) => setState((s) => ({ ...s, [coll]: s[coll].filter((x) => x.id !== id) })), []);
 
+  // Nube: datos vivos para sincronizar y aplicación de lo que trajo la nube (sobre el estado actual, sin pisar cambios recientes).
+  const snapshot = useCallback(() => latest.current, []);
+  const applyRemote = useCallback(({ config, ops }) => {
+    setState((s) => {
+      const n = { ...s };
+      if (config) n.config = withDefaults(config);
+      for (const c of COLLECTIONS) if (ops?.[c]) n[c] = aplicarOps(s[c], ops[c]);
+      return n;
+    });
+  }, []);
+
   const value = useMemo(() => ({
     ...state,
+    snapshot,
+    applyRemote,
     setSection,
     resetConfig,
     resetPublic,
@@ -97,7 +113,7 @@ export function AppStoreProvider({ children }) {
     addQuote: (q) => add('history', { status: 'pendiente', ...q }),
     updateQuote: (id, p) => update('history', id, p),
     removeQuote: (id) => remove('history', id),
-  }), [state, setSection, resetConfig, resetPublic, markPublished, add, update, remove]);
+  }), [state, snapshot, applyRemote, setSection, resetConfig, resetPublic, markPublished, add, update, remove]);
 
   return <Store.Provider value={value}>{children}</Store.Provider>;
 }

@@ -1,6 +1,7 @@
 import { HashRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { AppStoreProvider } from './store/AppStore.jsx';
 import AppShell from './components/AppShell.jsx';
+import RequireAuth from './components/RequireAuth.jsx';
 import PublicQuote from './pages/PublicQuote.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Settings from './pages/Settings.jsx';
@@ -18,7 +19,7 @@ export default function App() {
       <HashRouter>
         <Routes>
           <Route path="/" element={<PublicQuote />} />
-          <Route path="/app" element={<AppShell />}>
+          <Route path="/app" element={<RequireAuth><AppShell /></RequireAuth>}>
             <Route index element={<Dashboard />} />
             <Route path="manual" element={<ManualQuote />} />
             <Route path="viajes" element={<Viajes />} />
