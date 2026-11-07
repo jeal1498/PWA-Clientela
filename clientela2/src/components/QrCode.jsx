@@ -18,7 +18,7 @@ export default function QrCode({ text, size = 220, label = 'Código QR' }) {
     }
     return { cells: '', n: 0 };
   }, [text]);
-  if (!n) return <p className="text-center text-sm text-tedebe">El enlace es demasiado largo para un QR.</p>;
+  if (!n) return <p className="text-center text-sm text-aviso">El enlace es demasiado largo para un QR.</p>;
   const q = 2; // margen blanco (zona de silencio) para que lea bien la cámara
   return (
     <svg role="img" aria-label={label} width={size} height={size} viewBox={`${-q} ${-q} ${n + 2 * q} ${n + 2 * q}`} className="rounded-2xl bg-white" shapeRendering="crispEdges">

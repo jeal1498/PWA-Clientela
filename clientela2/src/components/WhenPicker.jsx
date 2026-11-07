@@ -13,9 +13,9 @@ export default function WhenPicker({ date, time, onChange }) {
       <div className="text-xs font-bold tracking-widest text-gris uppercase">¿Cuándo?</div>
       <div className="grid grid-cols-3 gap-2">
         {[['hoy', 'Hoy', today()], ['man', 'Mañana', tomorrow()]].map(([k, l, d]) => (
-          <button key={k} type="button" aria-pressed={day === k} onClick={() => { setOtra(false); onChange({ date: d, time }); }} className={cx(chip, day === k ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>{l}</button>
+          <button key={k} type="button" aria-pressed={day === k} onClick={() => { setOtra(false); onChange({ date: d, time }); }} className={cx(chip, day === k ? 'border-hueso bg-tablero' : 'border-hueso/10 bg-asfalto text-gris')}>{l}</button>
         ))}
-        <button type="button" aria-pressed={day === 'otra'} onClick={() => { setOtra(true); onChange({ date: day === 'otra' ? date : tomorrow(), time }); }} className={cx(chip, day === 'otra' ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>Otra fecha</button>
+        <button type="button" aria-pressed={day === 'otra'} onClick={() => { setOtra(true); onChange({ date: day === 'otra' ? date : tomorrow(), time }); }} className={cx(chip, day === 'otra' ? 'border-hueso bg-tablero' : 'border-hueso/10 bg-asfalto text-gris')}>Otra fecha</button>
       </div>
       <TextInput type="time" aria-label="Hora" value={time} onChange={(e) => onChange({ date, time: e.target.value })} className="h-11" />
       {day === 'otra' && <TextInput type="date" aria-label="Fecha" value={date} min={today()} onChange={(e) => onChange({ date: e.target.value || date, time })} className="h-11" />}

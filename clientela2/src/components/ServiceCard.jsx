@@ -1,7 +1,7 @@
 // Tarjeta de servicio estilo app de viaje: ícono, nombre, detalle y precio (y la ganancia neta si es para el conductor).
 import { cx } from './ui.jsx';
 
-const TONE = { green: 'text-cobrado', yellow: 'text-tedebe', red: 'text-atrasado' };
+const TONE = { green: 'text-ok', yellow: 'text-aviso', red: 'text-malo' };
 
 export default function ServiceCard({ icon: Icon, title, detail, price, net, tone, selected, onSelect }) {
   return (

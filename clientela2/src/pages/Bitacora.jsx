@@ -64,7 +64,7 @@ export default function Bitacora({ embedded = false, slot = null }) {
                 <div className="w-2.5 rounded-t bg-cobrado" style={{ height: `${(d.gross / maxGross) * 100}%` }} title={`${money(d.gross)}`} />
                 <div className="w-2.5 rounded-t bg-gris/50" style={{ height: `${(d.km / maxKm) * 100}%` }} title={`${d.km} km`} />
               </div>
-              <span className={cx('text-xs capitalize', d.date === today() ? 'font-semibold text-cobrado' : 'text-gris')}>{dayShort(d.date)}</span>
+              <span className={cx('text-xs capitalize', d.date === today() ? 'font-semibold text-ok' : 'text-gris')}>{dayShort(d.date)}</span>
             </div>
           ))}
         </div>
@@ -82,7 +82,7 @@ export default function Bitacora({ embedded = false, slot = null }) {
       <Card>
         <CardTitle icon={BookOpen}>Viajes ({weekTrips.length})</CardTitle>
         {!weekTrips.length && <p className="py-4 text-center text-sm text-gris">Sin viajes esta semana. Registra uno con «+ Viaje».</p>}
-        <ul className="divide-y divide-white/5">
+        <ul className="divide-y divide-hueso/5">
           {weekTrips.map((x) => (
             <li key={x.id} className="flex items-center gap-2 py-2.5">
               <div className="min-w-0 flex-1">
@@ -92,7 +92,7 @@ export default function Bitacora({ embedded = false, slot = null }) {
               <span className="font-mono">{money(x.amount)}</span>
               <button type="button" aria-label="Repetir viaje" onClick={() => setSheet({ prefill: repeatOf(x) })} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Repeat className="size-4 text-gris" /></button>
               <button type="button" aria-label="Editar" onClick={() => setSheet({ editing: x })} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Pencil className="size-4 text-gris" /></button>
-              <button type="button" aria-label="Borrar" onClick={() => confirm('¿Borrar este viaje?') && remove('trips', x.id)} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-atrasado" /></button>
+              <button type="button" aria-label="Borrar" onClick={() => confirm('¿Borrar este viaje?') && remove('trips', x.id)} className="grid size-11 place-items-center rounded-xl bg-asfalto"><Trash2 className="size-4 text-malo" /></button>
             </li>
           ))}
         </ul>

@@ -5,7 +5,7 @@ export const cx = (...c) => c.filter(Boolean).join(' ');
 
 export function Card({ className, children, ...p }) {
   const ownPad = /(^|\s)p-\d/.test(className || ''); // si la tarjeta trae su propio padding, no se suma p-4 (los dos chocaban)
-  return <section className={cx('rounded-3xl border border-white/5 bg-tablero', !ownPad && 'p-4', className)} {...p}>{children}</section>;
+  return <section className={cx('rounded-3xl border border-hueso/5 bg-tablero', !ownPad && 'p-4', className)} {...p}>{children}</section>;
 }
 
 export function CardTitle({ icon: Icon, children, right }) {
@@ -18,7 +18,7 @@ export function CardTitle({ icon: Icon, children, right }) {
   );
 }
 
-const fieldCls = 'h-12 w-full rounded-2xl border border-white/10 bg-asfalto px-3 text-hueso placeholder:text-gris outline-none transition focus:border-cobrado/70 focus:ring-2 focus:ring-cobrado/20';
+const fieldCls = 'h-12 w-full rounded-2xl border border-hueso/10 bg-asfalto px-3 text-hueso placeholder:text-gris outline-none transition focus:border-cobrado/70 focus:ring-2 focus:ring-cobrado/20';
 
 export function Field({ label, hint, children }) {
   return (
@@ -62,7 +62,7 @@ export function NumberInput({ value, onChange, prefix, suffix, step = 'any', cla
 export function Stepper({ label, icon: Icon, value, onChange, min = 0, max = 20 }) {
   const btn = 'grid size-10 place-items-center rounded-xl bg-asfalto text-hueso active:scale-95 disabled:opacity-30';
   return (
-    <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-asfalto/40 p-1.5 pl-3">
+    <div className="flex items-center gap-2 rounded-2xl border border-hueso/10 bg-asfalto/40 p-1.5 pl-3">
       {Icon && <Icon className="size-4 text-gris" aria-hidden />}
       <span className="flex-1 truncate text-sm text-gris">{label}</span>
       <button type="button" className={btn} disabled={value <= min} onClick={() => onChange(value - 1)} aria-label={`Menos ${label}`}><Minus className="size-4" /></button>
@@ -75,9 +75,9 @@ export function Stepper({ label, icon: Icon, value, onChange, min = 0, max = 20 
 const variants = {
   primary: 'bg-cobrado text-[#04210F] font-semibold',
   whatsapp: 'bg-[#25D366] text-[#04210F] font-semibold',
-  ghost: 'bg-white/5 text-hueso',
-  outline: 'border border-white/15 text-hueso',
-  danger: 'bg-atrasado/15 text-atrasado',
+  ghost: 'bg-hueso/5 text-hueso',
+  outline: 'border border-hueso/15 text-hueso',
+  danger: 'bg-atrasado/15 text-malo',
 };
 
 export function Button({ variant = 'primary', icon: Icon, className, children, as: As = 'button', disabled, ...p }) {
@@ -114,7 +114,7 @@ export function Segmented({ options, value, onChange }) {
 }
 
 export function Stat({ label, value, tone, small }) {
-  const tones = { green: 'text-cobrado', yellow: 'text-tedebe', red: 'text-atrasado' };
+  const tones = { green: 'text-ok', yellow: 'text-aviso', red: 'text-malo' };
   return (
     <div className="rounded-2xl bg-asfalto/60 p-3">
       <div className="text-xs text-gris">{label}</div>

@@ -50,15 +50,15 @@ export default function Cobros({ embedded = false }) {
 
       {groups.length > 0 ? (
         <section className="space-y-1.5 rounded-3xl bg-hueso p-4 text-asfalto" aria-label="Por cobrar">
-          <div className="text-xs font-bold tracking-widest text-[#55555e] uppercase">Por cobrar</div>
+          <div className="text-xs font-bold tracking-widest text-invgris uppercase">Por cobrar</div>
           <div className="font-mono text-4xl leading-none font-bold tracking-tight tabular-nums">{money(total)}</div>
-          <div className="flex items-center justify-between gap-2 text-[13px] text-[#3a3a45]">
+          <div className="flex items-center justify-between gap-2 text-[13px] text-invsub">
             <span>{groups.length} cliente{groups.length > 1 ? 's' : ''}</span>
             {late ? <span className="rounded-full bg-atrasado px-2.5 py-0.5 text-xs font-bold text-white">{money(late)} atrasados</span> : <span>Nada atrasado</span>}
           </div>
         </section>
       ) : (
-        <div className="rounded-2xl border border-white/10 py-8 text-center text-gris"><b className="text-hueso">Nadie te debe</b><br />Los viajes marcados «Me debe» aparecen aquí.</div>
+        <div className="rounded-2xl border border-hueso/10 py-8 text-center text-gris"><b className="text-hueso">Nadie te debe</b><br />Los viajes marcados «Me debe» aparecen aquí.</div>
       )}
 
       {groups.map((g, i) => (
@@ -69,11 +69,11 @@ export default function Cobros({ embedded = false }) {
               <b className="block truncate font-titulo text-base font-semibold">{g.name}</b>
               <small className="text-xs text-gris">{g.late ? `Atrasado · ${g.days} días` : `Hace ${g.days} ${g.days === 1 ? 'día' : 'días'}`} · {g.trips.length} viaje{g.trips.length > 1 ? 's' : ''}</small>
             </span>
-            <span className={cx('font-mono text-[17px] font-bold', g.late ? 'text-atrasado' : 'text-tedebe')}>{money(g.total)}</span>
+            <span className={cx('font-mono text-[17px] font-bold', g.late ? 'text-malo' : 'text-aviso')}>{money(g.total)}</span>
           </summary>
-          <div className="border-t border-white/10 px-3.5 pb-3.5 pt-1.5">
+          <div className="border-t border-hueso/10 px-3.5 pb-3.5 pt-1.5">
             {g.trips.map((t) => (
-              <div key={t.id} className="flex justify-between gap-2 border-b border-dashed border-white/10 py-2 text-[13px]">
+              <div key={t.id} className="flex justify-between gap-2 border-b border-dashed border-hueso/10 py-2 text-[13px]">
                 <span className="min-w-0"><span>{dayLong(t.date)}</span><small className="block truncate text-gris">{[t.from, t.to].filter(Boolean).join(' → ') || '—'}</small></span>
                 <span className="font-mono">{money(t.amount)}</span>
               </div>
@@ -92,7 +92,7 @@ export default function Cobros({ embedded = false }) {
           {paid.slice(0, 8).map((t) => (
             <div key={t.id} className="flex justify-between py-1.5 text-[13px] text-gris">
               <span className="truncate">{t.clientName || 'Sin nombre'} · {PAYS.find((p) => p.key === t.pay)?.label}</span>
-              <b className="font-mono text-cobrado">{money(t.amount)}</b>
+              <b className="font-mono text-ok">{money(t.amount)}</b>
             </div>
           ))}
         </section>

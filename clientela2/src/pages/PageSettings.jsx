@@ -39,7 +39,7 @@ const STATUS_OPTIONS = [
 /** Fila con casilla: más fácil de tocar que una casilla sola. */
 function Check2({ checked, onChange, children, sub }) {
   return (
-    <label className={cx('flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border px-3 py-2 transition', checked ? 'border-cobrado/40 bg-cobrado/10' : 'border-white/10')}>
+    <label className={cx('flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border px-3 py-2 transition', checked ? 'border-cobrado/40 bg-cobrado/10' : 'border-hueso/10')}>
       <input type="checkbox" className="size-5 shrink-0 accent-[#22C55E]" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       <span className="min-w-0 text-sm leading-tight">{children}{sub && <span className="block text-xs text-gris">{sub}</span>}</span>
     </label>
@@ -105,7 +105,7 @@ export default function PageSettings() {
 
       {/* Estado del enlace: los pasajeros ven lo que trae el enlace, no lo que hay en tu teléfono. */}
       <div className={cx('flex items-start gap-2 rounded-2xl border p-3 text-sm', 'border-humo bg-tablero text-hueso')} role="status">
-        {upToDate ? <CircleCheck className="mt-0.5 size-4 shrink-0 text-cobrado" /> : <CircleAlert className="mt-0.5 size-4 shrink-0" />}
+        {upToDate ? <CircleCheck className="mt-0.5 size-4 shrink-0 text-ok" /> : <CircleAlert className="mt-0.5 size-4 shrink-0" />}
         <div className="flex-1">
           {upToDate ? 'Tu enlace y tu QR están al día.' : published ? 'Hay cambios: toca «Guardar cambios» y vuelve a compartir tu enlace (y a imprimir el QR).' : 'Cada cambio ya se ve en tu vista previa. Al terminar, toca «Guardar cambios» y comparte tu enlace.'}
           {upToDate && <button type="button" onClick={async () => showToast((await copyText(link)) ? 'Enlace copiado' : 'No se pudo copiar')} className="mt-1 flex items-center gap-1 text-xs underline"><Copy className="size-3.5" /> Copiar enlace</button>}
@@ -120,7 +120,7 @@ export default function PageSettings() {
             {driver.photo && !photoBroken
               ? <img src={driver.photo} alt="Tu foto" className="size-16 rounded-full object-cover" onError={() => setPhotoBroken(true)} />
               : <div className="grid size-16 place-items-center rounded-full bg-asfalto text-gris"><Camera className="size-6" /></div>}
-            <label className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl bg-white/5 px-4 text-sm">
+            <label className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl bg-hueso/5 px-4 text-sm">
               <Camera className="size-4" /> {driver.photo ? 'Cambiar foto' : 'Subir foto'}
               <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                 const f = e.target.files?.[0];
@@ -128,7 +128,7 @@ export default function PageSettings() {
                 e.target.value = '';
               }} />
             </label>
-            {driver.photo && <button type="button" aria-label="Quitar foto" onClick={() => { setSection('driver', { photo: '' }); setPhotoUrl(''); }} className="grid size-11 place-items-center rounded-2xl bg-white/5"><Trash2 className="size-4 text-atrasado" /></button>}
+            {driver.photo && <button type="button" aria-label="Quitar foto" onClick={() => { setSection('driver', { photo: '' }); setPhotoUrl(''); }} className="grid size-11 place-items-center rounded-2xl bg-hueso/5"><Trash2 className="size-4 text-malo" /></button>}
           </div>
           <Field label="…o pega la URL de tu foto" hint={photoBroken ? 'No se pudo cargar esa imagen; revisa la URL.' : 'Debe empezar con https://. Ocupa menos que subir el archivo y también sale en el QR.'}>
             <div className="relative">
@@ -176,7 +176,7 @@ export default function PageSettings() {
       <Card>
         <CardTitle icon={Activity}>Estado actual</CardTitle>
         <select value={page.statusMode} onChange={(e) => setPage({ statusMode: e.target.value })} aria-label="Estado actual"
-          className="h-12 w-full rounded-2xl border border-white/10 bg-asfalto px-3 text-hueso outline-none focus:border-cobrado/70">
+          className="h-12 w-full rounded-2xl border border-hueso/10 bg-asfalto px-3 text-hueso outline-none focus:border-cobrado/70">
           {STATUS_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>
         <p className="mt-2 text-sm">Ahora se ve: <b>{status.label}</b></p>
@@ -187,7 +187,7 @@ export default function PageSettings() {
               {DAYS.map((d, i) => (
                 <button key={i} type="button" aria-pressed={page.days.includes(i)} aria-label={DAY_NAMES[i]}
                   onClick={() => setPage({ days: page.days.includes(i) ? page.days.filter((x) => x !== i) : [...page.days, i] })}
-                  className={cx('h-11 rounded-xl text-sm', page.days.includes(i) ? 'bg-cobrado/15 text-cobrado' : 'bg-asfalto text-gris')}>{d}</button>
+                  className={cx('h-11 rounded-xl text-sm', page.days.includes(i) ? 'bg-cobrado/15 text-ok' : 'bg-asfalto text-gris')}>{d}</button>
               ))}
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
@@ -285,11 +285,11 @@ export default function PageSettings() {
         </div>
       </Card>
 
-      <p className="text-center text-xs text-gris">Tarifas y costos: <Link to="/app/settings" className="text-cobrado underline">Ajustes</Link>.</p>
+      <p className="text-center text-xs text-gris">Tarifas y costos: <Link to="/app/settings" className="text-ok underline">Ajustes</Link>.</p>
       <div className="h-16" aria-hidden />
 
       {/* Barra de acciones: siempre a la mano, encima de la navegación */}
-      <div className="fixed inset-x-0 z-20 border-t border-white/5 bg-asfalto/95 px-4 py-2 backdrop-blur" style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}>
+      <div className="fixed inset-x-0 z-20 border-t border-hueso/5 bg-asfalto/95 px-4 py-2 backdrop-blur" style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}>
         <div className="mx-auto grid max-w-lg grid-cols-[auto_1fr] gap-2">
           <Button variant="ghost" icon={RotateCcw} className="h-11 px-3 text-sm" onClick={reset}>Restablecer</Button>
           <Button icon={savedFx ? Check : Save} className={cx('h-11', savedFx && 'bg-hueso text-asfalto')} onClick={save}>

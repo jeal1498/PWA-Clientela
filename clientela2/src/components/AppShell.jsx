@@ -45,24 +45,42 @@ export default function AppShell() {
     { icon: CalendarPlus, label: 'Agendar viaje', sub: 'Para otra fecha u hora', run: () => setAgenda(true) },
   ];
   const tab = ({ to, end, label, icon: Icon, also }) => (
-    <NavLink key={to} to={to} end={end} className={({ isActive }) => cx('flex h-16 flex-col items-center justify-center gap-1 text-xs', isActive || also?.some((p) => pathname.startsWith(p)) ? 'text-cobrado' : 'text-gris')}>
+    <NavLink key={to} to={to} end={end} className={({ isActive }) => cx('flex h-16 flex-col items-center justify-center gap-1 text-xs', isActive || also?.some((p) => pathname.startsWith(p)) ? 'text-ok' : 'text-gris')}>
       <Icon className="size-5" aria-hidden />
       {label}
     </NavLink>
   );
 
   return (
-    <div className="mx-auto min-h-dvh max-w-lg">
-      <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-white/5 bg-asfalto/90 px-4 py-3 backdrop-blur">
-        <img src="./icon.svg" alt="" className="size-8" />
-        <div className="flex-1 leading-tight">
+    <div className="min-h-dvh lg:grid lg:grid-cols-[15rem_1fr]">
+      {/* Computadora (lg): barra lateral en lugar de la barra inferior. */}
+      <aside className="sticky top-0 hidden h-dvh flex-col gap-1 border-r border-hueso/5 bg-tablero p-4 lg:flex">
+        <div className="mb-4 flex items-center gap-3 px-2">
+          <img src="./icon.svg" alt="" className="size-8" />
+          <div className="leading-tight"><div className="font-titulo text-lg">Clientela</div><div className="text-xs text-gris">Tus clientes, en orden</div></div>
+        </div>
+        {[...IZQ, ...DER].map(({ to, end, label, icon: Icon, also }) => (
+          <NavLink key={to} to={to} end={end} className={({ isActive }) => cx('flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold', isActive || also?.some((p) => pathname.startsWith(p)) ? 'bg-asfalto text-ok' : 'text-gris hover:bg-hueso/5')}>
+            <Icon className="size-5" aria-hidden />
+            {label}
+          </NavLink>
+        ))}
+        <button type="button" onClick={() => setMenu(true)} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-xl bg-cobrado font-semibold text-[#04210f] active:scale-[.98]"><Plus className="size-5" aria-hidden /> Nuevo</button>
+      </aside>
+
+      <div className="mx-auto w-full max-w-lg md:max-w-3xl lg:max-w-4xl">
+      <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-hueso/5 bg-asfalto/90 px-4 py-3 backdrop-blur md:px-6 lg:justify-end">
+        <img src="./icon.svg" alt="" className="size-8 lg:hidden" />
+        <div className="flex-1 leading-tight lg:hidden">
           <div className="font-titulo text-lg">Clientela</div>
           <div className="text-xs text-gris">Tus clientes, en orden</div>
         </div>
         <SosButton />
       </header>
-      <main className="space-y-4 px-4 pt-4 pb-safe"><Outlet /></main>
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-tablero/95 backdrop-blur" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <main className="space-y-4 px-4 pt-4 pb-safe md:px-6 lg:pb-8!"><Outlet /></main>
+      </div>
+
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-hueso/5 bg-tablero/95 backdrop-blur lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <div className="mx-auto grid max-w-lg grid-cols-5">
           {IZQ.map(tab)}
           <button type="button" aria-label="Nuevo: cotizar, registrar, anotar gasto o agendar" aria-haspopup="dialog" onClick={() => setMenu(true)} className="flex h-16 items-center justify-center">
@@ -75,7 +93,7 @@ export default function AppShell() {
       <Sheet open={menu} onClose={() => setMenu(false)} title="¿Qué quieres hacer?">
         <div className="space-y-2">
           {acciones.map(({ icon: Icon, label, sub, run }) => (
-            <button key={label} type="button" onClick={() => { setMenu(false); run(); }} className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-white/10 bg-asfalto px-3 py-2 text-left active:scale-[.99]">
+            <button key={label} type="button" onClick={() => { setMenu(false); run(); }} className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-hueso/10 bg-asfalto px-3 py-2 text-left active:scale-[.99]">
               <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-cobrado text-[#04210f]"><Icon className="size-5" aria-hidden /></span>
               <span><span className="block font-bold">{label}</span><span className="block text-xs text-gris">{sub}</span></span>
             </button>

@@ -21,7 +21,7 @@ export default function PaymentsPolicies({ page }) {
         {PAYS.map(({ key, icon: Icon, label }) => {
           const on = page.payments[key];
           return (
-            <div key={key} className={cx('flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-center text-xs', on ? 'border-white/5 bg-tablero' : 'border-dashed border-white/10 text-gris')}>
+            <div key={key} className={cx('flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-center text-xs', on ? 'border-hueso/5 bg-tablero' : 'border-dashed border-hueso/10 text-gris')}>
               <Icon className={cx('size-6', on ? 'text-hueso' : '')} aria-hidden />
               <span>{label}</span>
               <span className="sr-only">{on ? 'aceptado' : 'no aceptado'}</span>
@@ -31,7 +31,7 @@ export default function PaymentsPolicies({ page }) {
         })}
       </div>
       {policies.length > 0 && (
-        <ul className="mt-3 divide-y divide-white/5 rounded-3xl border border-white/5 bg-tablero px-4">
+        <ul className="mt-3 divide-y divide-hueso/5 rounded-3xl border border-hueso/5 bg-tablero px-4">
           {policies.map(({ icon: Icon, title, text }) => (
             <li key={title} className="flex gap-3 py-3">
               <Icon className="mt-0.5 size-5 shrink-0 text-gris" aria-hidden />

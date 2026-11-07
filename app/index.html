@@ -3,14 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0C0C10" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0C0C10" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F4EF" media="(prefers-color-scheme: light)" />
+    <script>
+      // Tema guardado (Ajustes → Apariencia): se aplica antes de pintar para que no parpadee.
+      try { var t = localStorage.getItem('clientela2_tema'); if (t === 'claro' || t === 'oscuro') document.documentElement.setAttribute('data-theme', t === 'claro' ? 'light' : 'dark'); } catch (e) {}
+    </script>
     <meta name="description" content="Cotiza tu viaje privado al instante y pídelo por WhatsApp." />
     <title>Clientela</title>
     <link rel="icon" href="./assets/icono-app-E4-OD_5S.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./assets/icono-app-180-BVaVR6LF.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <script type="module" crossorigin src="./assets/index-B68V-4-1.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-B82XKyfE.css">
+    <script type="module" crossorigin src="./assets/index-2cxhYm4A.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-9twvZu1c.css">
   </head>
   <body>
     <div id="root"></div>

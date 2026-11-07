@@ -14,7 +14,7 @@ export default function WifiCard({ wifi, onToast, startWithQr = false }) {
   return (
     <Card>
       <div className="flex items-center gap-3">
-        <div className="grid size-11 place-items-center rounded-2xl bg-cobrado/15 text-cobrado"><Wifi className="size-5" /></div>
+        <div className="grid size-11 place-items-center rounded-2xl bg-cobrado/15 text-ok"><Wifi className="size-5" /></div>
         <div className="min-w-0 flex-1">
           <div className="text-xs text-gris">Wi-Fi a bordo</div>
           <div className="truncate font-semibold">{wifi.ssid}</div>

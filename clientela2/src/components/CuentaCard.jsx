@@ -47,7 +47,7 @@ export default function CuentaCard() {
       </div>
       {sinRed || nube.error
         ? <p role="status" className="mt-3 rounded-2xl bg-tedebe px-4 py-3 text-sm font-semibold text-[#2B2200]">{sinRed ? 'Sin conexión. Tus cambios se suben cuando haya internet.' : 'No se pudo sincronizar. Intenta de nuevo.'}</p>
-        : <p className="mt-3 inline-flex items-center gap-2 font-mono text-xs font-bold text-cobrado"><i className="size-2 rounded-full bg-cobrado" />{hace(nube.ultima)}</p>}
+        : <p className="mt-3 inline-flex items-center gap-2 font-mono text-xs font-bold text-ok"><i className="size-2 rounded-full bg-cobrado" />{hace(nube.ultima)}</p>}
       <div className="mt-3 grid gap-2">
         <Button variant="outline" icon={RefreshCw} disabled={ocupado} onClick={ahora}>{ocupado ? 'Sincronizando…' : sinRed || nube.error ? 'Reintentar' : 'Sincronizar ahora'}</Button>
         {!saliendo && <Button variant="danger" icon={LogOut} disabled={ocupado} onClick={() => setSaliendo('confirmar')}>Cerrar sesión</Button>}

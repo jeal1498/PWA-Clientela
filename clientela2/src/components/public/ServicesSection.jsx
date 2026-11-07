@@ -21,12 +21,12 @@ export default function ServicesSection({ page, config, onPick }) {
   if (!list.length && !zones.length) return null;
   return (
     <Section id="servicios" title="Servicios" subtitle="Toca uno y cotiza al instante.">
-      <div className="divide-y divide-white/5 overflow-hidden rounded-2xl border border-white/5 bg-tablero" role="list">
+      <div className="divide-y divide-hueso/5 overflow-hidden rounded-2xl border border-hueso/5 bg-tablero" role="list">
         {list.map((s) => {
           const Icon = ICON[s.key] || Car;
           const d = desde(s, page, config);
           return (
-            <button key={s.key} type="button" role="listitem" onClick={() => onPick(s.key)} className="grid min-h-[68px] w-full grid-cols-[44px_1fr_auto] items-center gap-3 px-3 py-2.5 text-left active:bg-white/5">
+            <button key={s.key} type="button" role="listitem" onClick={() => onPick(s.key)} className="grid min-h-[68px] w-full grid-cols-[44px_1fr_auto] items-center gap-3 px-3 py-2.5 text-left active:bg-hueso/5">
               <span className="grid size-11 place-items-center rounded-xl bg-asfalto"><Icon className="size-6" strokeWidth={1.8} aria-hidden /></span>
               <span className="min-w-0"><b className="block font-titulo text-base">{s.short}</b><small className="block truncate text-[13.5px] text-gris">{s.line}</small></span>
               <span className="flex items-center gap-1 text-right">

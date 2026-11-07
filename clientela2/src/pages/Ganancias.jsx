@@ -17,7 +17,7 @@ export default function Ganancias() {
   const s = SECCIONES.some((x) => x.value === params.get('s')) ? params.get('s') : 'resumen';
   return (
     <>
-      <Link to="/app/yo" className="inline-flex min-h-11 items-center gap-1 text-sm text-cobrado"><ChevronLeft className="size-4" aria-hidden /> Yo</Link>
+      <Link to="/app/yo" className="inline-flex min-h-11 items-center gap-1 text-sm text-ok"><ChevronLeft className="size-4" aria-hidden /> Yo</Link>
       <h1 className="font-titulo text-2xl">Mis ganancias</h1>
       <Segmented options={SECCIONES} value={s} onChange={(v) => setParams({ s: v }, { replace: true })} />
       {s === 'resumen' && <Resumen embedded />}

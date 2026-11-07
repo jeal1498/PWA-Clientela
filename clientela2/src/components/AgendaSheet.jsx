@@ -45,7 +45,7 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
         </Field>
         <div className="grid grid-cols-3 gap-2">
           {[['Hoy', today()], ['Mañana', tomorrow()]].map(([l, d]) => (
-            <button key={l} type="button" onClick={() => set({ date: d })} className={cx('h-11 rounded-xl border text-sm font-bold', f.date === d ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>{l}</button>
+            <button key={l} type="button" onClick={() => set({ date: d })} className={cx('h-11 rounded-xl border text-sm font-bold', f.date === d ? 'border-hueso bg-tablero' : 'border-hueso/10 bg-asfalto text-gris')}>{l}</button>
           ))}
           <TextInput type="date" aria-label="Fecha" value={f.date} onChange={(e) => set({ date: e.target.value })} />
         </div>
@@ -63,10 +63,10 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
           <Field label="Origen"><TextInput value={f.from} onChange={(e) => set({ from: e.target.value })} placeholder="De" /></Field>
           <Field label="Destino"><TextInput value={f.to} onChange={(e) => set({ to: e.target.value })} placeholder="A" /></Field>
         </div>
-        <div className="flex items-center gap-3 border-t border-white/10 pt-3">
+        <div className="flex items-center gap-3 border-t border-hueso/10 pt-3">
           <div className="min-w-0 flex-1"><b className="block">Se repite</b><small className="text-xs text-gris">Mismo horario y mismo precio en cada viaje</small></div>
           <button type="button" role="switch" aria-checked={f.repite} aria-label="Se repite" onClick={() => set({ repite: !f.repite, dias: f.dias.length ? f.dias : [weekdayIdx(f.date)] })}
-            className={cx('relative h-[26px] w-11 shrink-0 rounded-full border border-white/15', f.repite ? 'bg-hueso' : 'bg-asfalto')}>
+            className={cx('relative h-[26px] w-11 shrink-0 rounded-full border border-hueso/15', f.repite ? 'bg-hueso' : 'bg-asfalto')}>
             <span className={cx('absolute top-[2px] left-[2px] size-5 rounded-full transition-transform', f.repite ? 'translate-x-[18px] bg-asfalto' : 'bg-gris')} />
           </button>
         </div>
@@ -76,16 +76,16 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
             <div className="flex gap-1.5">
               {DIAS_CORTO.map((n, i) => (
                 <button key={n} type="button" aria-pressed={dias.includes(i)} aria-label={n} onClick={() => set({ dias: dias.includes(i) ? dias.filter((x) => x !== i) : [...dias, i] })}
-                  className={cx('h-10 flex-1 rounded-xl border text-sm font-bold uppercase', dias.includes(i) ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>{n[0]}</button>
+                  className={cx('h-10 flex-1 rounded-xl border text-sm font-bold uppercase', dias.includes(i) ? 'border-hueso bg-tablero' : 'border-hueso/10 bg-asfalto text-gris')}>{n[0]}</button>
               ))}
             </div>
             <div className="text-xs font-bold tracking-widest text-gris uppercase">Termina</div>
             <div className="grid grid-cols-2 gap-2">
-              <button type="button" aria-pressed={f.finTipo === 'sin'} onClick={() => set({ finTipo: 'sin' })} className={cx('h-11 rounded-xl border text-sm font-bold', f.finTipo === 'sin' ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>Sin fin</button>
-              <button type="button" aria-pressed={f.finTipo === 'sem'} onClick={() => set({ finTipo: 'sem' })} className={cx('h-11 rounded-xl border text-sm font-bold', f.finTipo === 'sem' ? 'border-hueso bg-tablero' : 'border-white/10 bg-asfalto text-gris')}>Tras {f.semanas} semanas</button>
+              <button type="button" aria-pressed={f.finTipo === 'sin'} onClick={() => set({ finTipo: 'sin' })} className={cx('h-11 rounded-xl border text-sm font-bold', f.finTipo === 'sin' ? 'border-hueso bg-tablero' : 'border-hueso/10 bg-asfalto text-gris')}>Sin fin</button>
+              <button type="button" aria-pressed={f.finTipo === 'sem'} onClick={() => set({ finTipo: 'sem' })} className={cx('h-11 rounded-xl border text-sm font-bold', f.finTipo === 'sem' ? 'border-hueso bg-tablero' : 'border-hueso/10 bg-asfalto text-gris')}>Tras {f.semanas} semanas</button>
             </div>
             {f.finTipo === 'sem' && <NumberInput suffix="semanas" value={f.semanas} onChange={(semanas) => set({ semanas: Math.min(26, Math.max(1, semanas || 1)) })} aria-label="Semanas" />}
-            <div className="space-y-1 rounded-2xl border border-white/10 bg-[#1C1C23] p-3" aria-live="polite">
+            <div className="space-y-1 rounded-2xl border border-hueso/10 bg-elev p-3" aria-live="polite">
               <div className="text-xs font-bold tracking-widest text-gris uppercase">{fin ? `Se crearán ${proximas.length} viajes` : 'Se agendan los próximos 28 días y se rellenan solos'}</div>
               {proximas.slice(0, 5).map((d) => <div key={d} className="flex justify-between text-sm"><span className="capitalize">{dayLong(d)}</span><span className="font-mono text-gris">{f.time}</span></div>)}
               {proximas.length > 5 && <div className="text-xs text-gris">…y {proximas.length - 5} más</div>}
@@ -93,7 +93,7 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
           </div>
         )}
         {armed && choque.length > 0 && (
-          <div role="alert" className="flex items-start gap-2 rounded-2xl border border-tedebe/50 bg-tedebe/10 p-3 text-sm font-bold text-tedebe">
+          <div role="alert" className="flex items-start gap-2 rounded-2xl border border-tedebe/50 bg-tedebe/10 p-3 text-sm font-bold text-aviso">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
             Se empalma con {choque[0].time}–{endTime(choque[0])} · {choque[0].clientName || 'Sin nombre'} ({dayLong(choque[0].date)}). Cambia la hora o agéndalo igual.
           </div>

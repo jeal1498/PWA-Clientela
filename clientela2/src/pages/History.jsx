@@ -11,9 +11,9 @@ import { Card, cx } from '../components/ui.jsx';
 import ProfitBadge from '../components/ProfitBadge.jsx';
 
 const STATUS = {
-  pendiente: 'bg-tedebe/15 text-tedebe',
-  aceptada: 'bg-cobrado/15 text-cobrado',
-  rechazada: 'bg-white/5 text-gris',
+  pendiente: 'bg-tedebe/15 text-aviso',
+  aceptada: 'bg-cobrado/15 text-ok',
+  rechazada: 'bg-hueso/5 text-gris',
 };
 
 export default function History({ embedded = false }) {
@@ -26,7 +26,7 @@ export default function History({ embedded = false }) {
       <Card className="py-10 text-center text-gris">
         <Inbox className="mx-auto mb-2 size-8" />
         Aún no guardas cotizaciones.
-        <Link to="/app/manual" className="mt-3 block text-cobrado">Cotizar un viaje</Link>
+        <Link to="/app/manual" className="mt-3 block text-ok">Cotizar un viaje</Link>
       </Card>
     );
   }
@@ -47,7 +47,7 @@ export default function History({ embedded = false }) {
               </div>
               <div className="text-right">
                 <div className="font-mono text-lg">{money(h.price)}</div>
-                <div className={cx('font-mono text-xs', h.net > 0 ? 'text-cobrado' : 'text-atrasado')}>neto {money(h.net)}</div>
+                <div className={cx('font-mono text-xs', h.net > 0 ? 'text-ok' : 'text-malo')}>neto {money(h.net)}</div>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -55,10 +55,10 @@ export default function History({ embedded = false }) {
               {h.profit && <ProfitBadge status={h.profit} compact />}
               <div className="ml-auto flex gap-1.5">
                 <a className={icon} href={waLink(h.clientPhone, msg, config.driver.lada)} target="_blank" rel="noopener" aria-label="Reenviar por WhatsApp"><MessageCircle className="size-4 text-[#25D366]" /></a>
-                <button className={icon} onClick={() => updateQuote(h.id, { status: 'aceptada' })} aria-label="Marcar aceptada"><Check className="size-4 text-cobrado" /></button>
+                <button className={icon} onClick={() => updateQuote(h.id, { status: 'aceptada' })} aria-label="Marcar aceptada"><Check className="size-4 text-ok" /></button>
                 <button className={icon} onClick={() => setDone(h)} aria-label="Ya se hizo: pasar a bitácora" disabled={!!h.tripId}><CheckCheck className={h.tripId ? 'size-4 text-gris/40' : 'size-4 text-hueso'} /></button>
                 <button className={icon} onClick={() => updateQuote(h.id, { status: 'rechazada' })} aria-label="Marcar rechazada"><X className="size-4 text-gris" /></button>
-                <button className={icon} onClick={() => confirm('¿Borrar esta cotización?') && removeQuote(h.id)} aria-label="Borrar"><Trash2 className="size-4 text-atrasado" /></button>
+                <button className={icon} onClick={() => confirm('¿Borrar esta cotización?') && removeQuote(h.id)} aria-label="Borrar"><Trash2 className="size-4 text-malo" /></button>
               </div>
             </div>
           </Card>

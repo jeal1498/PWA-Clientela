@@ -70,7 +70,7 @@ export default function SosButton() {
         onPointerCancel={cancel}
         onContextMenu={(e) => e.preventDefault()}
         onClick={() => { if (hold.current.fired) { hold.current.fired = false; return; } quickSend(); }}
-        className="flex select-none items-center gap-1 rounded-full bg-atrasado/15 min-h-11 px-4 text-sm font-semibold text-atrasado active:scale-95 disabled:opacity-60"
+        className="flex select-none items-center gap-1 rounded-full bg-atrasado/15 min-h-11 px-4 text-sm font-semibold text-malo active:scale-95 disabled:opacity-60"
         style={{ WebkitTouchCallout: 'none' }}
       >
         {sending ? <Loader2 className="size-4 animate-spin" /> : <ShieldAlert className="size-4" />} SOS
@@ -79,12 +79,12 @@ export default function SosButton() {
         {!ready ? (
           <p className="text-sm text-gris">
             Primero agrega tu contacto de emergencia en{' '}
-            <Link to="/app/settings#sos" onClick={() => setOpen(false)} className="text-cobrado underline">Ajustes → Seguridad</Link>.
+            <Link to="/app/settings#sos" onClick={() => setOpen(false)} className="text-ok underline">Ajustes → Seguridad</Link>.
           </p>
         ) : (
           <div className="space-y-2">
             <p className="flex items-center gap-2 text-sm text-gris">
-              <MapPin className={loc ? 'size-4 text-cobrado' : 'size-4 text-tedebe'} />
+              <MapPin className={loc ? 'size-4 text-ok' : 'size-4 text-aviso'} />
               {loc ? 'Ubicación lista.' : 'Buscando ubicación… si no llega, se envía sin mapa.'}
             </p>
             <p className="text-xs text-gris">Se envía a <b className="text-hueso">{sos.name || sos.phone}</b> por {sos.channel === 'sms' ? 'SMS' : 'WhatsApp'}. Un toque al botón SOS manda el primero.</p>
