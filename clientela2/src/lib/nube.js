@@ -140,7 +140,21 @@ export function sincronizar(getData, aplicar) {
         post[c] = aplicarOps(data[c] || [], ops[c]);
       }
       const vacio = COLECCIONES.every((c) => !(data[c] || []).length) && !data.config?.driver?.name;
-      const cfgNube = mezclarConfig(data.config, filas.filter((f) => f.coleccion === 'config' && f.id === 'config').pop(), k, vacio);
+      let cfgNube = mezclarConfig(data.config, filas.filter((f) => f.coleccion === 'config' && f.id === 'config').pop(), k, vacio);
+
+      // Perfil compartido con Checa (mejor esfuerzo: si falla, lo demás sigue): gasolina por km y moneda.
+      let perfil = null;
+      try { perfil = (await pedir('GET', '/rest/v1/perfil_conductor?select=gasolina_km,moneda,simbolo,simbolo_despues,sep_miles,sep_decimal,decimales'))?.[0] || null; } catch { /* sin perfil */ }
+      let base = cfgNube || data.config, cfgCambio = false;
+      const gk = perfil?.gasolina_km != null ? +perfil.gasolina_km : 0;
+      // Gasolina por km que escribe Checa: si cambió en la nube, manda sobre lo de aquí.
+      if (gk > 0 && gk !== st.gk && +base.costs?.fuelKm !== gk) { base = { ...base, costs: { ...base.costs, fuelKm: gk } }; cfgCambio = true; }
+      // Moneda puesta desde Checa u otro teléfono: si aquí aún no se eligió una, se toma la de la cuenta.
+      if (perfil?.moneda && !base.currency && perfil.moneda !== 'MXN') {
+        base = { ...base, currency: { code: perfil.moneda, sym: perfil.simbolo, after: !!perfil.simbolo_despues, thou: perfil.sep_miles, dec: perfil.sep_decimal, digits: perfil.decimales } };
+        cfgCambio = true;
+      }
+      if (cfgCambio) cfgNube = base;
       const cambio = !!cfgNube || COLECCIONES.some((c) => ops[c].upsert.length || ops[c].remove.length);
       if (cambio) aplicar({ config: cfgNube, ops });
 
@@ -153,9 +167,18 @@ export function sincronizar(getData, aplicar) {
       const cfg = cfgNube || data.config, hc = hash(cfg);
       if (k[CFG] !== hc) { subirFilas.push({ coleccion: 'config', id: 'config', datos: cfg, borrado: false }); marcas[CFG] = hc; }
       if (subirFilas.length) await subir(subirFilas);
+      // Moneda elegida aquí → perfil compartido (solo esas columnas), para Checa y otros teléfonos.
+      let pm = st.pm;
+      const cur = cfg.currency;
+      if (cur && hash(cur) !== st.pm) {
+        try {
+          await pedir('POST', '/rest/v1/perfil_conductor?on_conflict=user_id', [{ moneda: cur.code, simbolo: cur.sym, simbolo_despues: !!cur.after, sep_miles: cur.thou, sep_decimal: cur.dec, decimales: cur.digits }], { Prefer: 'resolution=merge-duplicates,return=minimal' });
+          pm = hash(cur);
+        } catch { /* se reintenta en la siguiente */ }
+      }
       Object.assign(k, marcas);
       for (const b of borrados) delete k[b];
-      parche({ k, pc: masNuevo(filas, st.pc || ''), ultima: Date.now(), error: '' });
+      parche({ k, pm, gk: gk > 0 ? gk : st.gk, pc: masNuevo(filas, st.pc || ''), ultima: Date.now(), error: '' });
       return cambio;
     } catch (e) {
       if (e.sesion) cerrarSesion(); else parche({ error: navigator.onLine === false ? 'Sin conexión' : 'No se pudo sincronizar' });

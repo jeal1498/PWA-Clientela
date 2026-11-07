@@ -1,4 +1,5 @@
 // Captura ultrarrápida de un gasto: categoría (ya elegida) + monto + guardar.
+import { sym } from '../lib/moneda.js';
 import { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
@@ -60,7 +61,7 @@ export default function ExpenseSheet({ cat, onClose, onSaved, sugeridos = false 
             </button>
           ))}
         </div>
-        <NumberInput prefix="$" value={amount} onChange={setAmount} placeholder="0" autoFocus aria-label="Monto del gasto" onKeyDown={(e) => e.key === 'Enter' && +amount > 0 && save()} />
+        <NumberInput prefix={sym()} value={amount} onChange={setAmount} placeholder="0" autoFocus aria-label="Monto del gasto" onKeyDown={(e) => e.key === 'Enter' && +amount > 0 && save()} />
         <TextInput value={note} onChange={(e) => setNote(e.target.value)} placeholder="Nota (opcional)" />
         <Button icon={Check} className="w-full" disabled={!(+amount > 0)} onClick={save}>Guardar gasto</Button>
       </div>

@@ -6,6 +6,7 @@
 //  · «Guardar cambios» confirma y marca tu enlace actual como publicado; si después cambias algo, el panel
 //    avisa que tu enlace/QR ya no está al día (los pasajeros leen los datos del enlace, no de tu teléfono).
 //  · «Restablecer» vuelve la página a valores predeterminados (conserva nombre, foto, WhatsApp y Wi-Fi).
+import { sym } from '../lib/moneda.js';
 import { useMemo, useRef, useState } from 'react';
 import EstadoAhora from '../components/EstadoAhora.jsx';
 import { PublicLinkCard } from '../components/PanelBlocks.jsx';
@@ -268,7 +269,7 @@ export default function PageSettings() {
         </div>
         {page.services.hourly && (
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <Field label="Tarifa por hora"><NumberInput prefix="$" suffix="/ h" value={page.hourlyRate} onChange={(hourlyRate) => setPage({ hourlyRate })} /></Field>
+            <Field label="Tarifa por hora"><NumberInput prefix={sym()} suffix="/ h" value={page.hourlyRate} onChange={(hourlyRate) => setPage({ hourlyRate })} /></Field>
             <Field label="Mínimo de horas"><NumberInput suffix="h" step="1" value={page.minHours} onChange={(minHours) => setPage({ minHours })} /></Field>
           </div>
         )}

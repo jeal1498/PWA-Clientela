@@ -6,6 +6,7 @@ import { useSearchParams, Link, Navigate } from 'react-router-dom';
 import { MessageCircle, Calculator, Settings, Copy, ExternalLink, AlertTriangle, X } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
 import { decodeConfig, publicLink } from '../lib/share.js';
+import { setMoneda } from '../lib/moneda.js';
 import { saveVCard } from '../lib/vcard.js';
 import { copyText } from '../lib/whatsapp.js';
 import { money } from '../lib/format.js';
@@ -30,6 +31,7 @@ export default function PublicQuote() {
   const shared = useMemo(() => (code ? decodeConfig(code) : null), [code]);
   const broken = !!code && !shared;
   const config = shared || store.config;
+  if (shared) setMoneda(shared.currency); // el pasajero ve los precios en la moneda del conductor
   const { driver, vehicle, page, wifi } = config;
   const isPreview = !code && params.has('vista'); // «?vista=1»: tu propia página, desde Mi página
 

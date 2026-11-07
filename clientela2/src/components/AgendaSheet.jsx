@@ -1,4 +1,5 @@
 // Agendar un viaje (de la agenda o desde una cotización). Avisa si se empalma con otro, pero deja agendarlo igual.
+import { sym } from '../lib/moneda.js';
 import { useEffect, useState } from 'react';
 import { CalendarPlus, MessageCircle, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
@@ -41,7 +42,7 @@ export default function AgendaSheet({ open, onClose, prefill, onSaved }) {
     <Sheet open={open} onClose={onClose} title="Agendar viaje">
       <div className="space-y-3">
         <Field label="Monto">
-          <NumberInput prefix="$" value={f.amount} onChange={(amount) => set({ amount })} placeholder="0" autoFocus aria-label="Monto" />
+          <NumberInput prefix={sym()} value={f.amount} onChange={(amount) => set({ amount })} placeholder="0" autoFocus aria-label="Monto" />
         </Field>
         <div className="grid grid-cols-3 gap-2">
           {[['Hoy', today()], ['Mañana', tomorrow()]].map(([l, d]) => (
