@@ -6,6 +6,7 @@ import { useStore } from '../store/AppStore.jsx';
 import { Card, CardTitle, Field, NumberInput, TextInput, Stat, Button, Segmented } from '../components/ui.jsx';
 import { fuelPerKm, costPerKm } from '../lib/pricing.js';
 import { money2 } from '../lib/format.js';
+import CuentaCard from '../components/CuentaCard.jsx';
 
 export default function Settings() {
   const { config, setSection, resetConfig } = useStore();
@@ -17,6 +18,8 @@ export default function Settings() {
   return (
     <>
       <h1 className="font-titulo text-2xl">Ajustes</h1>
+
+      <CuentaCard />
 
       {/* Nombre, foto, WhatsApp, ciudad y Wi-Fi viven en «Mi página» (todo lo que ve el pasajero en un solo lugar). */}
       <Link to="/app/pagina" className="flex items-center gap-3 rounded-3xl border border-white/5 bg-tablero p-4">

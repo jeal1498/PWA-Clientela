@@ -53,6 +53,7 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [x] Subir solos los datos del teléfono la primera vez.
 - [x] Sincronizar clientes, viajes y ajustes (probado con nube simulada; falta con Google real).
 - [x] Prueba de punta a punta (Eduardo dio el OK, 4 nov).
+- [x] **Pasado a 2.0 (7 nov)**: acceso con Google + nube en `app/` (tabla `clientela2_datos`, maqueta https://claude.ai/artifact/DAXSt8XnqX9cPUpbg9naJV). **Falta que Eduardo corra `supabase/clientela2.sql` en Supabase.** Siguen: moneda, gasolina y traer los datos de v1.
 
 ### 6. APK
 - [x] Empaquetado elegido: **TWA** (4 nov). Proyecto Gradle propio en `android/` (androidbrowserhelper, paquete `com.jeal1498.clientela`), sin Bubblewrap; compila y firma bien en pruebas locales.
