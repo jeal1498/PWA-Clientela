@@ -1,4 +1,4 @@
-// La app vive ahora en la raíz. Este service worker viejo borra su caché, se desinstala y recarga las pestañas abiertas.
+// La app vive ahora en app/. Este service worker viejo borra su caché, se desinstala y recarga las pestañas abiertas.
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => {
   e.waitUntil((async () => {
