@@ -1,6 +1,6 @@
 # Plan de Clientela
 
-Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 6 nov 2026.
+Se actualiza en cada avance: `[x]` hecho, `[ ]` pendiente. Última actualización: 7 nov 2026.
 
 ## Resultado final
 Clientela publicada para conductores de Uber, DiDi, taxi y choferes independientes, gratis por ahora para recibir comentarios:
@@ -69,11 +69,11 @@ Clientela publicada para conductores de Uber, DiDi, taxi y choferes independient
 - [ ] Prueba con un pago real.
 
 ### 8. Página web
-- [ ] Repo propio, como `checa-web`.
-- [ ] Plan, textos y maqueta.
-- [ ] Landing con la marca, pensada para descargar.
+- [x] Decidido (7 nov): la web vive en la raíz de este repo y la app se movió a `app/` (sin repo propio por ahora).
+- [x] Plan, textos y maqueta (aprobada): https://claude.ai/artifact/Wy18pxVP1frX2gXUuhV1yZ
+- [x] Landing con la marca, publicada en https://jeal1498.github.io/PWA-Clientela/ (`index.html`).
+- [ ] Capturas reales de la app en lugar de la pantalla de ejemplo.
 - [ ] Medición sencilla.
-- [ ] Publicar.
 
 ### 9. Redes y videos
 - [ ] Nombres de cuentas y perfiles.

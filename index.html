@@ -1,18 +1,209 @@
 <!doctype html>
 <html lang="es-MX">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0C0C10" />
-    <meta name="description" content="Cotiza tu viaje privado al instante y pídelo por WhatsApp." />
-    <title>Clientela</title>
-    <link rel="icon" href="./marca/icono-app.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="./marca/png/icono-app-180.png" />
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <script type="module" crossorigin src="./assets/index-CRZg5gIp.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-5w_8bHe_.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0C0C10">
+<title>Clientela · Tus clientes, en orden</title>
+<meta name="description" content="Cotiza, agenda y cobra a tus clientes privados desde el celular. Gratis por ahora.">
+<meta property="og:title" content="Clientela · Tus clientes, en orden">
+<meta property="og:description" content="Cotiza, agenda y cobra a tus clientes privados desde el celular. Gratis por ahora.">
+<meta property="og:image" content="https://jeal1498.github.io/PWA-Clientela/marca/png/icono-app-512.png">
+<link rel="icon" href="marca/icono-app.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="marca/png/icono-app-180.png">
+<script>
+// Enlaces viejos (#/?c=…, #/app…) y la app ya instalada abren la app en app/.
+(function () {
+  var h = location.hash;
+  if (h.indexOf('#/') === 0 || matchMedia('(display-mode: standalone)').matches || navigator.standalone)
+    location.replace('app/' + location.search + h);
+})();
+</script>
+<link rel="stylesheet" href="marca/tokens.css">
+<style>
+/* Web de Clientela: una sola columna, oscura, con la luz verde/amarilla/roja como hilo. Marca: marca/tokens.css */
+:root {
+  --gris: var(--gris-texto); --debe: var(--te-debe);
+  --sobre-cobrado: var(--texto-sobre-cobrado); --sobre-debe: var(--texto-sobre-te-debe);
+  --titulos: var(--fuente-titulos); --texto: var(--fuente-texto); --datos: var(--fuente-datos);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--asfalto); color: var(--hueso); font: 400 16px/1.55 var(--texto); padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1040px; margin-inline: auto; }
+section { padding-block: 56px; border-top: 1px solid var(--humo); }
+section:first-of-type { border-top: 0; }
+h1, h2, h3 { font-family: var(--titulos); font-weight: 800; line-height: 1.05; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.4rem, 7vw, 4.2rem); }
+h2 { font-size: clamp(1.7rem, 4.5vw, 2.5rem); margin-bottom: 12px; }
+h3 { font-size: 1.25rem; margin-bottom: 6px; }
+p { margin: 0 0 12px; max-width: 62ch; }
+.mut { color: var(--gris); }
+.eyebrow { font: 700 .75rem/1 var(--datos); letter-spacing: .14em; text-transform: uppercase; color: var(--gris); margin-bottom: 14px; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--debe); outline-offset: 3px; }
+
+/* barra */
+nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 16px; }
+.logo { display: flex; align-items: center; gap: 10px; font: 800 1.2rem var(--titulos); text-decoration: none; }
+.luz { display: inline-flex; gap: 4px; }
+.luz i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+.luz i:nth-child(1) { background: var(--cobrado); } .luz i:nth-child(2) { background: var(--debe); } .luz i:nth-child(3) { background: var(--atrasado); }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border-radius: 20px; background: var(--cobrado); color: var(--sobre-cobrado); font: 700 1rem var(--texto); text-decoration: none; border: 0; cursor: pointer; }
+.btn.sec { background: transparent; color: var(--hueso); border: 1.5px solid var(--humo); }
+.btn.sm { min-height: 40px; padding: 0 16px; font-size: .9rem; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; padding-top: 24px; }
+.hero p.lead { font-size: 1.2rem; color: var(--gris); margin-block: 18px 26px; }
+.acciones { display: flex; flex-wrap: wrap; gap: 12px; }
+.nota { font: 500 .8rem var(--datos); color: var(--gris); margin-top: 14px; }
+
+/* teléfono de ejemplo */
+.tel { background: var(--tablero); border: 1.5px solid var(--humo); border-radius: 36px; padding: 18px; max-width: 340px; width: 100%; margin-inline: auto; display: grid; gap: 12px; }
+.tel .top { display: flex; justify-content: space-between; font: 700 .7rem var(--datos); color: var(--gris); letter-spacing: .1em; text-transform: uppercase; }
+.deben { background: var(--debe); color: var(--sobre-debe); border-radius: 20px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+.deben b { font: 800 1.7rem var(--titulos); }
+.deben span { font-weight: 700; font-size: .85rem; }
+.viaje { background: var(--asfalto); border-radius: 20px; padding: 14px 16px; display: grid; gap: 4px; }
+.viaje .h { font: 700 .75rem var(--datos); color: var(--gris); }
+.viaje .r { font-weight: 700; }
+.viaje .p { font: 700 1.1rem var(--datos); }
+.viaje .b { margin-top: 8px; min-height: 40px; border-radius: 14px; background: var(--cobrado); color: var(--sobre-cobrado); font-weight: 700; display: grid; place-items: center; }
+.pie-ej { text-align: center; font: 500 .7rem var(--datos); color: var(--gris); }
+
+/* problema */
+.dichos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+.dicho { background: var(--tablero); border-radius: 28px; padding: 22px; font: 800 1.35rem/1.15 var(--titulos); }
+.dicho small { display: block; margin-top: 10px; font: 400 .9rem var(--texto); color: var(--gris); }
+
+/* pasos (sí es una secuencia) */
+.pasos { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 0; counter-reset: p; }
+.pasos li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding-block: 18px; border-top: 1px solid var(--humo); counter-increment: p; }
+.pasos li::before { content: counter(p); font: 800 2rem var(--titulos); color: var(--cobrado); }
+.pasos li:last-child { border-bottom: 1px solid var(--humo); }
+
+/* funciones */
+.fun { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 28px; }
+.f { background: var(--tablero); border-radius: 28px; padding: 24px; min-width: 0; }
+.f .tag { display: inline-block; font: 700 .72rem var(--datos); letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 99px; margin-bottom: 12px; }
+.t-v { background: var(--cobrado); color: var(--sobre-cobrado); } .t-a { background: var(--debe); color: var(--sobre-debe); } .t-n { background: var(--humo); color: var(--hueso); }
+.f p { color: var(--gris); margin: 0; }
+
+/* precio y descarga */
+.gratis { background: var(--cobrado); color: var(--sobre-cobrado); border-radius: 28px; padding: clamp(24px, 5vw, 44px); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+.gratis h2 { margin: 0 0 8px; } .gratis p { margin: 0; max-width: 52ch; }
+.gratis .btn { background: var(--asfalto); color: var(--hueso); }
+.inst { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 24px; }
+
+/* faq */
+details { border-top: 1px solid var(--humo); padding-block: 16px; }
+details:last-of-type { border-bottom: 1px solid var(--humo); }
+summary { cursor: pointer; font: 700 1.1rem var(--texto); list-style: none; display: flex; justify-content: space-between; gap: 12px; min-height: 32px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '+'; font: 700 1.3rem var(--datos); color: var(--cobrado); }
+details[open] summary::after { content: '–'; }
+details p { margin: 10px 0 0; color: var(--gris); }
+
+footer { padding-block: 36px 48px; border-top: 1px solid var(--humo); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--gris); font-size: .9rem; }
+
+
+@media (max-width: 760px) {
+  .hero, .dichos, .fun, .inst, .gratis { grid-template-columns: 1fr; }
+  section { padding-block: 40px; }
+  .pasos li { grid-template-columns: 40px 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) { .btn { transition: transform .15s; } .btn:active { transform: scale(.97); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="logo" href="#top"><span class="luz" aria-hidden="true"><i></i><i></i><i></i></span>Clientela</a>
+    <a class="btn sm" href="app/">Empezar gratis</a>
+  </nav>
+
+  <section class="hero" id="top">
+    <div>
+      <span class="eyebrow">Para conductores con clientes privados</span>
+      <h1>Tus clientes, en orden.</h1>
+      <p class="lead">Cotiza en segundos, agenda cada viaje y sabe quién te debe. Todo en tu celular, sin perderte en WhatsApp.</p>
+      <div class="acciones">
+        <a class="btn" href="app/">Empezar gratis</a>
+        <a class="btn sec" href="#como">Ver cómo funciona</a>
+      </div>
+      <p class="nota">GRATIS POR AHORA · SIN CUENTA · TUS DATOS SE QUEDAN EN TU TELÉFONO</p>
+    </div>
+    <div>
+      <div class="tel" role="img" aria-label="Ejemplo de la pantalla Hoy de Clientela">
+        <div class="top"><span>Hoy</span><span>Ejemplo</span></div>
+        <div class="deben"><div><span>Te deben</span><br><b>$1,240</b></div><span>3 clientes</span></div>
+        <div class="viaje"><span class="h">18:30 · CONFIRMADO</span><span class="r">Ana M. → Aeropuerto</span><span class="p">$480</span><div class="b">Ya llegué</div></div>
+        <div class="viaje"><span class="h">20:15 · POR CONFIRMAR</span><span class="r">Carlos R. → Centro</span><span class="p">$220</span></div>
+        <div class="pie-ej">Nombres y montos de ejemplo</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Lo que pasa hoy</span>
+    <h2>Todo vive en WhatsApp y en tu memoria.</h2>
+    <div class="dichos">
+      <div class="dicho">«Se me olvida cobrar.»<small>Nadie te avisa quién te debe.</small></div>
+      <div class="dicho">«Estoy manejando.»<small>Tardas en contestar y el cliente se va con otro.</small></div>
+      <div class="dicho">«¿Cuántos servicios le hice?»<small>Lo tienes que adivinar.</small></div>
+    </div>
+  </section>
+
+  <section id="como">
+    <span class="eyebrow">Cómo funciona</span>
+    <h2>De «¿cuánto me cobras?» a cobrado, en tres pasos.</h2>
+    <ol class="pasos">
+      <li><div><h3>Cotiza</h3><p class="mut">Pones origen y destino. Clientela calcula con tu tarifa por km y por hora, y te deja la que más gana. Lo mandas por WhatsApp.</p></div></li>
+      <li><div><h3>Agenda y avisa</h3><p class="mut">El viaje queda en tu agenda. Con un toque confirmas, avisas «ya llegué» y recuerdas al cliente. Los viajes frecuentes se repiten solos.</p></div></li>
+      <li><div><h3>Cobra</h3><p class="mut">Terminas el viaje y marcas cómo te pagó, o lo dejas en «me debe». La franja amarilla te dice cuánto te deben y a quién cobrarle.</p></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <span class="eyebrow">Qué trae</span>
+    <h2>Lo que necesitas, sin llenar formularios.</h2>
+    <div class="fun">
+      <div class="f"><span class="tag t-v">Cotizar</span><h3>Precio al instante</h3><p>Tarifa por km y por hora, con extras de aeropuerto, noche y espera. Lugares guardados y paradas entre A y B.</p></div>
+      <div class="f"><span class="tag t-v">Agenda</span><h3>Nada se te olvida</h3><p>Viajes del día, avisos por WhatsApp y alerta si dos viajes se empalman.</p></div>
+      <div class="f"><span class="tag t-a">Te deben</span><h3>Cobra sin pena</h3><p>Quién debe y desde cuándo. Pasa a rojo a los 15 días y el recordatorio ya va escrito.</p></div>
+      <div class="f"><span class="tag t-n">Tu página</span><h3>Un enlace para tus clientes</h3><p>Tu foto, tu auto, tus tarifas y un botón para pedirte viaje por WhatsApp. Con QR para el auto.</p></div>
+    </div>
+  </section>
+
+  <section id="descargar">
+    <div class="gratis">
+      <div>
+        <h2>Gratis por ahora.</h2>
+        <p>Estamos en fase de pruebas. Úsala, dinos qué te falta y ayúdanos a mejorarla. Sin tarjeta, sin cuenta.</p>
+      </div>
+      <a class="btn" href="app/">Abrir Clientela</a>
+    </div>
+    <div class="inst">
+      <div class="f"><span class="tag t-n">iPhone y Android</span><h3>Instálala desde el navegador</h3><p>Abre el enlace, toca «Agregar a pantalla de inicio» y listo.</p></div>
+      <div class="f"><span class="tag t-n">Android</span><h3>App para Android</h3><p>Versión APK en camino.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Preguntas</span>
+    <h2>Lo que nos preguntan.</h2>
+    <details><summary>Me da flojera capturar.</summary><p>Un viaje se captura en pocos toques, y los viajes que repites se guardan para volver a usarlos con uno.</p></details>
+    <details><summary>Ya lo tengo todo en WhatsApp.</summary><p>WhatsApp no te dice quién te debe ni calcula el precio. Clientela sigue usando WhatsApp para avisar y cobrar.</p></details>
+    <details><summary>¿Dónde quedan mis datos?</summary><p>En tu teléfono. Por ahora no pide cuenta ni correo.</p></details>
+    <details><summary>¿Sirve para una flotilla?</summary><p>No. Está hecha para el conductor independiente que atiende a sus propios clientes.</p></details>
+    <details><summary>¿Cuánto cuesta?</summary><p>Nada por ahora. Si algún día cambia, lo sabrás antes.</p></details>
+  </section>
+
+  <footer>
+    <span class="logo"><span class="luz" aria-hidden="true"><i></i><i></i><i></i></span>Clientela</span>
+    <span>de la familia Checa</span>
+  </footer>
+</div>
+</body>
 </html>
