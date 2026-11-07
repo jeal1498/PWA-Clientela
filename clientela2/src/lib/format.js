@@ -1,9 +1,5 @@
-// Formatos para México.
-const mxn = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
-const mxn2 = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-export const money = (n) => mxn.format(Math.round(+n || 0));
-export const money2 = (n) => mxn2.format(+n || 0);
+// Formatos para México. El dinero sigue la moneda elegida en Ajustes (lib/moneda.js; por defecto pesos).
+export { money, money2, rate, sym } from './moneda.js';
 export const kmText = (n) => `${(+n || 0).toFixed(1)} km`;
 export function minText(m) {
   m = Math.round(+m || 0);

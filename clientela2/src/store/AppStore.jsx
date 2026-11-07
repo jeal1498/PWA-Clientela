@@ -11,6 +11,7 @@ import { load, save, importFromCartera, KEY } from '../lib/storage.js';
 import { missingCopies } from '../lib/series.js';
 import { today } from '../lib/dates.js';
 import { aplicarOps } from '../lib/nube-sync.js';
+import { setMoneda } from '../lib/moneda.js';
 
 const Store = createContext(null);
 export const COLLECTIONS = ['history', 'clients', 'trips', 'expenses', 'places'];
@@ -97,6 +98,8 @@ export function AppStoreProvider({ children }) {
       return n;
     });
   }, []);
+
+  setMoneda(state.config.currency); // la moneda del conductor vale para todo lo que se pinte debajo
 
   const value = useMemo(() => ({
     ...state,

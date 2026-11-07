@@ -50,7 +50,7 @@ export function NumberInput({ value, onChange, prefix, suffix, step = 'any', cla
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value === '' ? '' : +e.target.value)}
         onFocus={(e) => e.target.select()}
-        className={cx(fieldCls, 'font-mono', prefix && 'pl-7', suffix && 'pr-14')}
+        className={cx(fieldCls, 'font-mono', prefix && (String(prefix).length > 1 ? 'pl-11' : 'pl-7'), suffix && 'pr-14')}
         {...p}
       />
       {suffix && <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs text-gris">{suffix}</span>}

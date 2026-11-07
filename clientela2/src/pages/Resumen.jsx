@@ -1,4 +1,5 @@
 // Resumen de ganancias con tus metas: semana o mes contra el periodo anterior, por día, por cliente y por ruta.
+import { sym } from '../lib/moneda.js';
 import { useState } from 'react';
 import { Target } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
@@ -112,8 +113,8 @@ export default function Resumen({ embedded = false }) {
         {edit && (
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <Field label="Por día"><NumberInput prefix="$" value={edit.dayNet} onChange={(dayNet) => setEdit((e) => ({ ...e, dayNet }))} placeholder="0" /></Field>
-              <Field label="Por semana"><NumberInput prefix="$" value={edit.weekNet} onChange={(weekNet) => setEdit((e) => ({ ...e, weekNet }))} placeholder="0" /></Field>
+              <Field label="Por día"><NumberInput prefix={sym()} value={edit.dayNet} onChange={(dayNet) => setEdit((e) => ({ ...e, dayNet }))} placeholder="0" /></Field>
+              <Field label="Por semana"><NumberInput prefix={sym()} value={edit.weekNet} onChange={(weekNet) => setEdit((e) => ({ ...e, weekNet }))} placeholder="0" /></Field>
             </div>
             <p className="text-xs text-gris">Se compara con tu ganancia neta. Si pones solo una, la otra se calcula (6 días por semana). Déjalas en 0 para quitarlas.</p>
             <Button className="w-full" onClick={() => { setSection('goals', { dayNet: +edit.dayNet || 0, weekNet: +edit.weekNet || 0 }); setEdit(null); }}>Guardar</Button>

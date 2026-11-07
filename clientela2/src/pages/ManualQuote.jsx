@@ -1,6 +1,7 @@
 // Módulo C · Cotizador Exprés para el conductor (/app/manual), estilo app de viaje.
 // Paso 1: ruta (lugares guardados, paradas, ⇄, enlace de Maps) y cliente. Paso 2: servicios con su ganancia neta,
 // cuándo (siempre programado), lo privado («Solo para ti») y las salidas: agendar, enviar propuesta, guardar.
+import { sym } from '../lib/moneda.js';
 import { useMemo, useState } from 'react';
 import { Luggage, Eye, EyeOff, MessageCircle, Copy, Save, Wand2, Loader2, Info, CheckCheck, BookmarkPlus, Star, Map, CalendarPlus, Car, Clock, Users, Hourglass, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
@@ -174,7 +175,7 @@ export default function ManualQuote() {
                   {!search && !hourly && <Stepper label="Paradas" icon={Users} value={f.stops} onChange={(stops) => set({ stops })} />}
                   <div className="grid grid-cols-2 gap-2">
                     <Field label="Casetas">
-                      <NumberInput prefix="$" value={f.tolls} onChange={(tolls) => set({ tolls })} placeholder="0" />
+                      <NumberInput prefix={sym()} value={f.tolls} onChange={(tolls) => set({ tolls })} placeholder="0" />
                       {config.extras.tollDefault > 0 && (
                         <button type="button" onClick={() => set({ tolls: +f.tolls === config.extras.tollDefault ? '' : config.extras.tollDefault })} className={cx('mt-1.5 h-11 rounded-lg px-2 text-xs', +f.tolls === config.extras.tollDefault ? 'bg-cobrado/15 text-ok' : 'bg-asfalto text-gris')}>
                           Caseta habitual {money(config.extras.tollDefault)}
@@ -199,7 +200,7 @@ export default function ManualQuote() {
             <div className="flex items-start justify-between gap-2">
               <div>
                 <div className="text-xs text-gris">{override == null ? 'Tarifa sugerida' : `Precio negociado · sugerido ${money(q.price)}`}</div>
-                <NumberInput className="mt-1 w-40" prefix="$" value={ready ? price : ''} onChange={(v) => setOverride(v === '' ? null : v)} aria-label="Precio final" placeholder="0" />
+                <NumberInput className="mt-1 w-40" prefix={sym()} value={ready ? price : ''} onChange={(v) => setOverride(v === '' ? null : v)} aria-label="Precio final" placeholder="0" />
               </div>
               <div className="pt-1 text-right text-sm text-gris">
                 {hourly ? <div>{hoursN} h</div> : <><div>{kmText(km)}</div><div>{minText(min)}</div></>}

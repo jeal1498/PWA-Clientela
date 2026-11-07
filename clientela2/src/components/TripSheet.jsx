@@ -1,4 +1,5 @@
 // Registrar (o editar) un viaje realizado en la bitácora. Se abre vacío o precargado desde una cotización.
+import { sym } from '../lib/moneda.js';
 import { useEffect, useState } from 'react';
 import { Banknote, Landmark, CreditCard, Clock, Check, Repeat } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
@@ -62,7 +63,7 @@ export default function TripSheet({ open, onClose, prefill, editing, onSaved }) 
           </div>
         )}
         <Field label={f.pay ? 'Cobrado' : 'Monto'}>
-          <NumberInput prefix="$" value={f.amount} onChange={(amount) => set({ amount })} placeholder="0" autoFocus aria-label="Monto cobrado" />
+          <NumberInput prefix={sym()} value={f.amount} onChange={(amount) => set({ amount })} placeholder="0" autoFocus aria-label="Monto cobrado" />
         </Field>
         <Segmented value={f.pay} onChange={(pay) => set({ pay })} options={PAY_OPTIONS} />
         <Field label="Cliente">

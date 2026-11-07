@@ -1,5 +1,6 @@
 // Módulo A · Configuración de costos del conductor (/app/settings).
 // Todo se guarda al instante en localStorage. Lo público (datos, vehículo, Wi-Fi) está en «Mi página».
+import { sym } from '../lib/moneda.js';
 import { Link } from 'react-router-dom';
 import { Fuel, Wrench, Receipt, Sparkles, User, RotateCcw, ShieldAlert, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/AppStore.jsx';
@@ -9,6 +10,7 @@ import { money2 } from '../lib/format.js';
 import Columnas from '../components/Columnas.jsx';
 import CuentaCard from '../components/CuentaCard.jsx';
 import Apariencia from '../components/Apariencia.jsx';
+import MonedaCard from '../components/MonedaCard.jsx';
 
 export default function Settings() {
   const { config, setSection, resetConfig } = useStore();
@@ -26,6 +28,8 @@ export default function Settings() {
 
       <Apariencia />
 
+      <MonedaCard />
+
       {/* Nombre, foto, WhatsApp, ciudad y Wi-Fi viven en «Mi página» (todo lo que ve el pasajero en un solo lugar). */}
       <Link to="/app/pagina" className="flex items-center gap-3 rounded-3xl border border-hueso/5 bg-tablero p-4">
         <User className="size-5 text-gris" />
@@ -35,12 +39,18 @@ export default function Settings() {
 
       <Card>
         <CardTitle icon={Fuel}>Costos variables</CardTitle>
+        {+costs.fuelKm > 0 && (
+          <div className="mb-3 rounded-2xl bg-asfalto p-3 text-sm">
+            <p><b>Checa calcula tu gasolina en {money2(costs.fuelKm)} por km</b> y se usa en tus cotizaciones.</p>
+            <button type="button" onClick={() => setSection('costs', { fuelKm: 0 })} className="mt-2 min-h-11 text-ok">Usar mi litro y rendimiento</button>
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Gasolina"><NumberInput prefix="$" suffix="/ litro" {...bind('costs', 'gasPrice')} /></Field>
-          <Field label="Rendimiento"><NumberInput suffix="km / l" {...bind('costs', 'kmPerLitre')} /></Field>
+          <Field label="Gasolina"><NumberInput prefix={sym()} suffix="/ litro" disabled={+costs.fuelKm > 0} {...bind('costs', 'gasPrice')} /></Field>
+          <Field label="Rendimiento"><NumberInput suffix="km / l" disabled={+costs.fuelKm > 0} {...bind('costs', 'kmPerLitre')} /></Field>
         </div>
         <div className="mt-4"><CardTitle icon={Wrench}>Desgaste</CardTitle></div>
-        <Field label="Mantenimiento y desgaste" hint="Llantas, aceite, frenos y depreciación divididos entre los km que haces."><NumberInput prefix="$" suffix="/ km" {...bind('costs', 'wearPerKm')} /></Field>
+        <Field label="Mantenimiento y desgaste" hint="Llantas, aceite, frenos y depreciación divididos entre los km que haces."><NumberInput prefix={sym()} suffix="/ km" {...bind('costs', 'wearPerKm')} /></Field>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Stat small label="Combustible por km" value={money2(fuelPerKm(costs))} />
           <Stat small label="Costo total por km" value={money2(costPerKm(costs))} tone="yellow" />
@@ -50,11 +60,11 @@ export default function Settings() {
       <Card>
         <CardTitle icon={Receipt}>Tarifas base</CardTitle>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Banderazo"><NumberInput prefix="$" {...bind('rates', 'base')} /></Field>
-          <Field label="Por kilómetro"><NumberInput prefix="$" suffix="/ km" {...bind('rates', 'perKm')} /></Field>
-          <Field label="Por minuto" hint="Espera o tráfico."><NumberInput prefix="$" suffix="/ min" {...bind('rates', 'perMin')} /></Field>
-          <Field label="Tarifa mínima"><NumberInput prefix="$" {...bind('rates', 'minimum')} /></Field>
-          <Field label="Redondear a" hint="0 = sin redondeo."><NumberInput prefix="$" {...bind('rates', 'rounding')} /></Field>
+          <Field label="Banderazo"><NumberInput prefix={sym()} {...bind('rates', 'base')} /></Field>
+          <Field label="Por kilómetro"><NumberInput prefix={sym()} suffix="/ km" {...bind('rates', 'perKm')} /></Field>
+          <Field label="Por minuto" hint="Espera o tráfico."><NumberInput prefix={sym()} suffix="/ min" {...bind('rates', 'perMin')} /></Field>
+          <Field label="Tarifa mínima"><NumberInput prefix={sym()} {...bind('rates', 'minimum')} /></Field>
+          <Field label="Redondear a" hint="0 = sin redondeo."><NumberInput prefix={sym()} {...bind('rates', 'rounding')} /></Field>
         </div>
       </Card>
 
@@ -64,9 +74,9 @@ export default function Settings() {
           <Field label="Foráneo desde"><NumberInput suffix="km" {...bind('extras', 'foraneoKm')} /></Field>
           <Field label="Regreso vacío" hint="% de la tarifa por km."><NumberInput suffix="%" {...bind('extras', 'emptyReturnPct')} /></Field>
           <Field label="Maletas incluidas"><NumberInput suffix="pzas" step="1" {...bind('extras', 'freeBags')} /></Field>
-          <Field label="Maleta extra"><NumberInput prefix="$" {...bind('extras', 'bagFee')} /></Field>
-          <Field label="Parada intermedia"><NumberInput prefix="$" {...bind('extras', 'stopFee')} /></Field>
-          <Field label="Caseta habitual" hint="Opcional. 0 = no se ofrece."><NumberInput prefix="$" {...bind('extras', 'tollDefault')} /></Field>
+          <Field label="Maleta extra"><NumberInput prefix={sym()} {...bind('extras', 'bagFee')} /></Field>
+          <Field label="Parada intermedia"><NumberInput prefix={sym()} {...bind('extras', 'stopFee')} /></Field>
+          <Field label="Caseta habitual" hint="Opcional. 0 = no se ofrece."><NumberInput prefix={sym()} {...bind('extras', 'tollDefault')} /></Field>
         </div>
         <p className="mt-3 text-xs text-gris">La caseta habitual se agrega con un toque; en cada viaje puedes poner otro monto.</p>
       </Card>

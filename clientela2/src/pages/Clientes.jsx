@@ -1,5 +1,6 @@
 // Clientes frecuentes (CRM básico): datos, notas, tarifa preferencial y rutas habituales.
 // «Re-cotizar» abre WhatsApp con la propuesta de la ruta habitual en un toque.
+import { sym } from '../lib/moneda.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Plus, Search, Phone, MessageCircle, Pencil, Trash2, Repeat, Route as RouteIcon, Users, Star } from 'lucide-react';
@@ -216,7 +217,7 @@ function RouteForm({ city, onAdd, onCancel }) {
       <div className="grid grid-cols-3 gap-2">
         <NumberInput suffix="km" value={km} onChange={setKm} placeholder="km" aria-label="Kilómetros" />
         <NumberInput suffix="min" value={min} onChange={setMin} placeholder="min" aria-label="Minutos" />
-        <NumberInput prefix="$" value={price} onChange={setPrice} placeholder="fijo" aria-label="Precio fijo (opcional)" />
+        <NumberInput prefix={sym()} value={price} onChange={setPrice} placeholder="fijo" aria-label="Precio fijo (opcional)" />
       </div>
       <div className="grid grid-cols-2 gap-2">
         <Button variant="ghost" onClick={onCancel}>Cancelar</Button>

@@ -6,6 +6,8 @@
 //    (en un foráneo también regresa vacío, así que los km y el tiempo se duplican).
 //  - La GANANCIA NETA = precio − costo. La rentabilidad se mide contra las metas $/km y $/hora.
 
+import { sym } from './moneda.js';
+
 /** Configuración por defecto (MXN). El conductor la cambia en /app/settings. */
 export const DEFAULT_CONFIG = {
   driver: { name: '', phone: '', lada: '52', city: '', photo: '' }, // photo: data URL JPEG 160×160
@@ -13,6 +15,7 @@ export const DEFAULT_CONFIG = {
     gasPrice: 24.5, // $ por litro
     kmPerLitre: 12, // rendimiento real del vehículo
     wearPerKm: 1.2, // llantas, aceite, frenos, depreciación… por km
+    // fuelKm (opcional): gasolina por km que calcula Checa. Si es > 0 manda sobre litro y rendimiento.
   },
   rates: {
     base: 35, // banderazo
@@ -64,7 +67,7 @@ const round2 = (n) => Math.round(n * 100) / 100;
 export const roundUp = (n, step) => (step > 0 ? Math.ceil(n / step) * step : round2(n));
 
 /** Costo de combustible por km = precio litro / km por litro. */
-export const fuelPerKm = (costs) => (num(costs.kmPerLitre) > 0 ? num(costs.gasPrice) / num(costs.kmPerLitre) : 0);
+export const fuelPerKm = (costs) => (num(costs.fuelKm) > 0 ? num(costs.fuelKm) : num(costs.kmPerLitre) > 0 ? num(costs.gasPrice) / num(costs.kmPerLitre) : 0);
 
 /** Costo operativo total por km (combustible + desgaste). */
 export const costPerKm = (costs) => fuelPerKm(costs) + num(costs.wearPerKm);
@@ -74,6 +77,7 @@ export function withDefaults(cfg = {}) {
   const out = {};
   for (const k of Object.keys(DEFAULT_CONFIG)) out[k] = { ...DEFAULT_CONFIG[k], ...(cfg[k] || {}) };
   // Sub-objetos de la página (servicios, amenidades, pagos, redes, confianza) también se completan.
+  if (cfg.currency) out.currency = cfg.currency; // moneda elegida (opcional; sin ella, pesos)
   for (const k of ['services', 'amenities', 'payments', 'social', 'trust']) out.page[k] = { ...DEFAULT_CONFIG.page[k], ...(cfg.page?.[k] || {}) };
   return out;
 }
@@ -83,7 +87,7 @@ export function hourlyQuote(hours, config) {
   const { page, rates } = withDefaults(config);
   const h = Math.max(num(page.minHours, 1), num(hours, 1));
   const amount = h * num(page.hourlyRate);
-  return { hours: h, price: roundUp(amount, num(rates.rounding)), lines: [{ key: 'hourly', label: `Disposición (${h} h × $${num(page.hourlyRate)})`, amount }] };
+  return { hours: h, price: roundUp(amount, num(rates.rounding)), lines: [{ key: 'hourly', label: `Disposición (${h} h × ${sym()}${num(page.hourlyRate)})`, amount }] };
 }
 
 /**
