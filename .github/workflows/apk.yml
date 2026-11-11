@@ -1,4 +1,4 @@
-name: Compilar APK
+name: Compilar APK y AAB
 
 # Empaqueta la PWA como app de Android (TWA, carpeta android/). Se corre a mano desde Actions → «Compilar APK» → Run workflow,
 # o sola al cambiar android/. La web se actualiza sola dentro de la app: solo hace falta un APK nuevo si cambia android/.
@@ -46,13 +46,14 @@ jobs:
         env:
           CLIENTELA_FIRMA: ${{ secrets.CLIENTELA_FIRMA }}
           VERSION_CODE: ${{ github.run_number }}
-        run: gradle assembleRelease --no-daemon
+        run: gradle assembleRelease bundleRelease --no-daemon
 
       - name: Preparar descarga
         env:
           CLIENTELA_FIRMA: ${{ secrets.CLIENTELA_FIRMA }}
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk Clientela.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab Clientela.aab
           HUELLA=$(keytool -list -v -keystore "$CLIENTELA_KEYSTORE_PATH" -alias clientela -storepass "$CLIENTELA_FIRMA" | sed -n 's/.*SHA256: //p' | head -1)
           echo "HUELLA=$HUELLA" >> "$GITHUB_ENV"
           # Archivo que Android consulta para quitar la barra de direcciones (va en la raíz de jeal1498.github.io).
@@ -75,9 +76,11 @@ jobs:
           name: Clientela APK v${{ github.run_number }}
           body: |
             Descarga `Clientela.apk` e instálalo (Android). Se instala encima de la versión anterior.
+            `Clientela.aab` es el paquete para subir a Google Play Console.
 
             Huella SHA-256 de la firma (para `assetlinks.json`):
             `${{ env.HUELLA }}`
           files: |
             Clientela.apk
+            Clientela.aab
             assetlinks.json
